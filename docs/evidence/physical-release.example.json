@@ -12,19 +12,5 @@
     "phoneLocalInference": false,
     "airplaneModeFreshQuery": false,
     "cancellationAndRecovery": false
-  },
-  {
-    "platform": "ios",
-    "artifactSha256": "",
-    "sourceCommit": "",
-    "packVersion": "",
-    "modelId": "qwen2.5-0.5b-q4_k_m",
-    "modelRevision": "9217f5db79a29953eb74d5343926648285ec7e67",
-    "checkedAt": "",
-    "standaloneColdLaunch": false,
-    "nativeSqliteRestart": false,
-    "phoneLocalInference": false,
-    "airplaneModeFreshQuery": false,
-    "cancellationAndRecovery": false
   }
 ]

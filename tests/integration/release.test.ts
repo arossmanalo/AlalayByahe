@@ -42,3 +42,24 @@ test("physical evidence must cover this pack, model revision and all acceptance 
   assert.equal(matchesPhysicalProof({ ...proof, modelRevision: "old" }, artifact, "release_v1", MODEL_MANIFEST), false);
   assert.equal(matchesPhysicalProof({ ...proof, airplaneModeFreshQuery: false }, artifact, "release_v1", MODEL_MANIFEST), false);
 });
+
+// A non-release build must never satisfy the physical-evidence gate, even with a matching report.
+test("a benchmark or demo artifact cannot satisfy the release gate", async () => {
+  const { readFileSync } = await import("node:fs");
+  const releasePack = JSON.parse(readFileSync("assets/data/release.json", "utf8"));
+  const base = { platform: "android", artifactSha256: "d".repeat(64), sourceCommit: "e".repeat(40) };
+  const report = {
+    ...base, checkedAt: "2026-10-10T05:00:00+08:00", packVersion: releasePack.version,
+    modelId: MODEL_MANIFEST.id, modelRevision: MODEL_MANIFEST.revision,
+    standaloneColdLaunch: true, nativeSqliteRestart: true, phoneLocalInference: true,
+    airplaneModeFreshQuery: true, cancellationAndRecovery: true,
+  };
+  const blockersFor = (variant: string | undefined) => releaseBlockers({
+    pack: releasePack, ai: "integrated", commuteUi: "integrated", model: MODEL_MANIFEST,
+    physicalProof: [report], artifacts: [{ ...base, ...(variant ? { variant } : {}) }],
+  });
+  assert.deepEqual(blockersFor("release"), [], "a matching release artifact passes");
+  for (const variant of ["demo", "benchmark", undefined]) {
+    assert.equal(blockersFor(variant).length, 1, String(variant));
+  }
+});

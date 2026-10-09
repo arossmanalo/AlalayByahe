@@ -48,7 +48,10 @@ export function releaseBlockers(input: {
   const artifacts = Array.isArray(input.artifacts) ? input.artifacts : [];
   // iOS was excluded from production on 2026-10-10 (limited resources), so only Android evidence is required.
   for (const platform of ["android"] as const) {
+    // Only a build recorded as the release variant can satisfy the gate. A benchmark or demo APK
+    // (diagnostics screen, or the invented Luzon/road demo pack) is never release evidence.
     const valid = pack.ok && artifacts.some(artifact => artifact?.platform === platform
+      && artifact?.variant === "release"
       && proofs.some(proof => matchesPhysicalProof(proof, artifact, pack.value.version, input.model)));
     if (!valid) blockers.push("Missing matching " + platform + " physical release evidence.");
   }
