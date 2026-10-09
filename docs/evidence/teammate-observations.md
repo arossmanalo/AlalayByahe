@@ -131,3 +131,33 @@ Checks and cautions:
 - The LRT-1 leg is already in the pack; only the road legs and the walks to and from the stations are missing.
 
 Still needed before any of these can be pack records: map pins for the Hacienda Inn stop, the Mixue drop-off at Pedro Gil, the PITX bay, and the Taft/DLSU drop-off; measured walks (Mixue to the LRT Pedro Gil entrance, Taft/DLSU drop-off to a station if used); dates and recorders; confirmation of the two flagged items; a second checker; and the reverse trips.
+
+## Fifth message from the user, 2026-10-10: map pins and a correction
+
+Coordinates below were read from the redirect of each Google Maps short link the user sent (the pin each link points to). They are the user's pins, not independently surveyed.
+
+| Place | GPS | Cross-check (straight line, for sanity only) |
+|---|---|---|
+| Hacienda Inn stop, Candelaria (bus boarding) | 13.928780, 121.425215 | 11.8 km east of the Tiaong intersection; plausible for Candelaria |
+| Mixue Ice Cream & Tea, Gil Puyat, 2008e Taft Ave, Barangay 47, Pasay City (bus drop-off) | 14.555245, 120.997014 | about 125 m from the Gil Puyat LRT station point in the pack |
+| PITX | 14.510111, 120.991182 | about 182 m from the PITX LRT point in the pack |
+| DLSU on Taft Avenue (bus drop-off near Vito Cruz) | 14.565312, 120.994036 | about 216 m from the Vito Cruz LRT point in the pack |
+
+### Corrections that change the earlier records
+
+1. **The "Buendia" bus drops at Mixue in Gil Puyat, Pasay, not at Pedro Gil.** The user wrote "not pedro gil". So the first bus ends near the **Gil Puyat** LRT station.
+2. **The walk is from Gil Puyat LRT station to Mixue (Gil Puyat), Pasay**, so the LRT alternative is **Gil Puyat to Vito Cruz**, one station. Vito Cruz is north of Gil Puyat, so that train is **northbound, headed to Fernando Poe Jr.**, not Dr. Santos-bound as written in the previous message. The pack already has this direction. Documented fare: P18 stored value, P20 single journey.
+3. The earlier worry that the Quiapo/UST jeeps head away from Vito Cruz disappears if those jeeps are boarded at Gil Puyat: Quiapo and UST are north of Gil Puyat, so a northbound jeep passes Vito Cruz. This is an inference from the correction and still needs the user or a teammate to confirm where the jeep is boarded and where it drops at Vito Cruz.
+4. **PITX to Vito Cruz:** the Fairview bus boards at **PITX gate 9**.
+
+### What this leaves for the Candelaria to Vito Cruz corridor
+
+| Part | Known now | Still missing |
+|---|---|---|
+| Bus "Buendia", Hacienda Inn to Mixue (Gil Puyat) | Both pins; P250 / P230 | Date and recorder; confirm the bus drops exactly in front of Mixue |
+| Walk, Mixue (Gil Puyat) to Gil Puyat LRT station | Both ends named; about 125 m straight line from the pack's station point | Measured walking meters and steps to the station entrance |
+| LRT Gil Puyat to Vito Cruz | Already in the pack (northbound, P18 stored value, P20 single journey) | nothing |
+| Bus "PITX", Hacienda Inn to PITX | Both pins; P210 / P180 | Date and recorder; PITX arrival bay |
+| Fairview bus, PITX gate 9 to Taft Avenue near DLSU | Gate 9; DLSU pin; P20 | Whether it passes Vito Cruz (flagged unconfirmed in the user's own text); GPS of gate 9; the exact drop-off spot; the walk from the DLSU drop to Vito Cruz LRT (about 216 m straight line) |
+| Jeeps "Quiapo" / "UST" / "Gil Puyat" | Pass Vito Cruz (user) | Boarding spot and GPS, drop-off at Vito Cruz and GPS, fare P13 reported; confirm where they are boarded |
+| Return trips (Vito Cruz to Candelaria) | Not reported | Everything |
