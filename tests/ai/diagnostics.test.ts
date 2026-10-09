@@ -95,6 +95,41 @@ describe("device diagnostics runner (DEV FIXTURE runtime)", () => {
     assert.deepEqual(languageLines(perCase.runtime), cases.map((c) => `Language: ${c.locale}`));
   });
 
+  it("every report records which build produced it; demo or unidentified builds are not valid measurements", async () => {
+    const benchmarkBuild = {
+      diagnosticsFlag: true,
+      demoBuild: false,
+      devBuild: false,
+      packId: "pack_lrt1",
+      packVersion: "lrt1_2026_10_10_1",
+    };
+    const cases = HELD_OUT_CORPUS.cases.slice(0, 1);
+
+    const valid = await setup();
+    const report = await runBenchmark({ ...valid.deps, build: benchmarkBuild }, { version: "test", cases });
+    assert.deepEqual(report.build, benchmarkBuild);
+    assert.equal(report.validForMeasurement, true);
+    const lifecycle = await runLifecycleChecks({ ...valid.deps, build: benchmarkBuild, wait: async () => {} });
+    assert.equal(lifecycle.validForMeasurement, true);
+
+    const demo = await setup();
+    const demoReport = await runBenchmark(
+      { ...demo.deps, build: { ...benchmarkBuild, demoBuild: true, packId: "pack_demo" } },
+      { version: "test", cases },
+    );
+    assert.equal(demoReport.validForMeasurement, false);
+
+    const unknown = await setup();
+    const probe = await runProbeStep(unknown.deps, "Lipa papuntang San Pablo");
+    assert.equal(probe.build, null);
+    assert.equal(probe.validForMeasurement, false);
+  });
+
+  it("the diagnostics screen refuses demo builds", () => {
+    const source = readFileSync(join(__dirname, "..", "..", "app", "dev-ai.tsx"), "utf8");
+    assert.match(source, /if \(!ENABLED \|\| !manager \|\| DEMO_BUILD\)/);
+  });
+
   it("benchmark reports a failed model load instead of scoring", async () => {
     const { runtime, deps } = await setup();
     runtime.failLoad = new Error("simulated OOM");

@@ -1,6 +1,7 @@
 // Member 1 (AI-001/004/005): development-only AI diagnostics, reached by deep link
 // alalaybyahe://dev-ai. Not linked from product screens. Disabled in release
 // builds unless the build sets EXPO_PUBLIC_AI_DIAGNOSTICS=1 for a benchmark APK.
+// Refuses to run in a demo build (EXPO_PUBLIC_DEMO_BUILD=1): its pack is synthetic.
 import { useState } from "react";
 import { Text } from "react-native";
 import { HELD_OUT_CORPUS } from "../src/ai/corpus";
@@ -9,15 +10,18 @@ import {
   runBenchmark,
   runLifecycleChecks,
   runProbeStep,
+  type BuildIdentity,
   type DiagnosticsDeps,
 } from "../src/ai/diagnostics";
 import type { AiManager } from "../src/ai/manager";
 import { createPhoneModelStore, createPhoneRuntime } from "../src/ai/phone";
+import { DEMO_BUILD } from "../src/application/demo-build";
 import { useApplication } from "../src/application/react-context";
 import { AppButton, Body, Card, Heading, LabeledInput, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
 
-const ENABLED = __DEV__ || process.env.EXPO_PUBLIC_AI_DIAGNOSTICS === "1";
+const DIAGNOSTICS_FLAG = process.env.EXPO_PUBLIC_AI_DIAGNOSTICS === "1";
+const ENABLED = __DEV__ || DIAGNOSTICS_FLAG;
 const LOG_TAG = "[AI-DIAG]";
 
 function asManager(ai: unknown): AiManager | null {
@@ -36,19 +40,38 @@ export default function DevAiScreen() {
   const [progress, setProgress] = useState("");
   const [output, setOutput] = useState("");
 
-  if (!ENABLED || !manager) {
+  if (!ENABLED || !manager || DEMO_BUILD) {
+    const reason = !ENABLED
+      ? "AI diagnostics are disabled in this build."
+      : DEMO_BUILD
+        ? "This is a demo build with a synthetic test pack. AI measurements from it are not valid, so diagnostics are off."
+        : "The real AI manager is not wired.";
     return (
       <Screen title="AI diagnostics">
         <Card>
-          <Body>{!ENABLED ? "AI diagnostics are disabled in this build." : "The real AI manager is not wired."}</Body>
+          <Body>{reason}</Body>
         </Card>
       </Screen>
     );
   }
   const ai = manager;
 
-  const deps = (): DiagnosticsDeps => ({
+  // Recorded in every report so benchmark, release and demo results cannot be mixed up.
+  async function buildIdentity(): Promise<BuildIdentity> {
+    const pack = await services.repository.getPack().catch(() => null);
+    const loaded = pack?.ok ? pack.value : null;
+    return {
+      diagnosticsFlag: DIAGNOSTICS_FLAG,
+      demoBuild: DEMO_BUILD,
+      devBuild: __DEV__,
+      packId: loaded?.packId ?? null,
+      packVersion: loaded?.version ?? null,
+    };
+  }
+
+  const deps = async (): Promise<DiagnosticsDeps> => ({
     ai,
+    build: await buildIdentity(),
     createProbeTarget: () => ({ runtime: createPhoneRuntime(), store: createPhoneModelStore() }),
     platformLabel: platformLabel.trim() || "unlabelled device",
   });
@@ -99,7 +122,7 @@ export default function DevAiScreen() {
           label="Run native probe"
           busy={busy === "probe"}
           disabled={busy !== null || probeText.trim().length === 0}
-          onPress={() => void run("probe", () => runProbeStep(deps(), probeText.trim()))}
+          onPress={() => void run("probe", async () => runProbeStep(await deps(), probeText.trim()))}
         />
       </Card>
 
@@ -115,8 +138,8 @@ export default function DevAiScreen() {
           busy={busy === "bench"}
           disabled={busy !== null}
           onPress={() =>
-            void run("bench", () =>
-              runBenchmark(deps(), HELD_OUT_CORPUS, (done, total) => setProgress(`${done}/${total} cases`), "app"),
+            void run("bench", async () =>
+              runBenchmark(await deps(), HELD_OUT_CORPUS, (done, total) => setProgress(`${done}/${total} cases`), "app"),
             )
           }
         />
@@ -127,8 +150,8 @@ export default function DevAiScreen() {
           disabled={busy !== null}
           hint="Sends each case with its own en/fil/taglish value, for the locale decision only."
           onPress={() =>
-            void run("bench_locale", () =>
-              runBenchmark(deps(), HELD_OUT_CORPUS, (done, total) => setProgress(`${done}/${total} cases`), "per_case"),
+            void run("bench_locale", async () =>
+              runBenchmark(await deps(), HELD_OUT_CORPUS, (done, total) => setProgress(`${done}/${total} cases`), "per_case"),
             )
           }
         />
@@ -141,7 +164,7 @@ export default function DevAiScreen() {
           label="Run lifecycle checks"
           busy={busy === "lifecycle"}
           disabled={busy !== null}
-          onPress={() => void run("lifecycle", () => runLifecycleChecks(deps()))}
+          onPress={() => void run("lifecycle", async () => runLifecycleChecks(await deps()))}
         />
       </Card>
 

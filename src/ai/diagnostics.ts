@@ -10,9 +10,31 @@ import type { CompletionOutcome, LlamaRuntime } from "./runtime";
 // only; nothing is persisted or sent anywhere. Run from button handlers, never
 // during render. Each step keeps a single native context alive at a time.
 
+/**
+ * Which APK produced a report. There are three Android variants (release,
+ * benchmark, demo); every report carries this so results cannot be mixed up.
+ */
+export interface BuildIdentity {
+  /** EXPO_PUBLIC_AI_DIAGNOSTICS=1 was inlined at build time. */
+  diagnosticsFlag: boolean;
+  /** EXPO_PUBLIC_DEMO_BUILD=1: synthetic/unverified demo pack; never valid for measurement. */
+  demoBuild: boolean;
+  /** React Native development build (__DEV__). */
+  devBuild: boolean;
+  /** Pack actually loaded on the device, e.g. pack_lrt1 / lrt1_2026_10_10_1. */
+  packId: string | null;
+  packVersion: string | null;
+}
+
+export function isValidForMeasurement(build: BuildIdentity | null): boolean {
+  return build !== null && !build.demoBuild;
+}
+
 export interface DiagnosticsDeps {
   /** The app's single AI manager. */
   ai: AiManager;
+  /** Identity of the running build; reports without one are not valid measurements. */
+  build?: BuildIdentity;
   /** Fresh native runtime/store for the standalone probe (phone adapters on device). */
   createProbeTarget: () => { runtime: LlamaRuntime; store: ModelStore };
   /** Anonymized device label, e.g. "Android 14 / Realme 10 Pro+ 5G". No serials/IMEI. */
@@ -29,6 +51,8 @@ function errorText(result: Result<unknown>): string | null {
 
 export interface ProbeStepReport {
   kind: "ai_001_probe";
+  build: BuildIdentity | null;
+  validForMeasurement: boolean;
   probe: NativeProbeReport;
   appAiReinitialized: string | null;
 }
@@ -39,7 +63,14 @@ export async function runProbeStep(deps: DiagnosticsDeps, text: string): Promise
   const target = deps.createProbeTarget();
   const probe = await runNativeProbe({ ...target, platformLabel: deps.platformLabel, text, now: deps.now });
   const reinit = await deps.ai.initialize();
-  return { kind: "ai_001_probe", probe, appAiReinitialized: reinit.ok ? "ok" : errorText(reinit) };
+  const build = deps.build ?? null;
+  return {
+    kind: "ai_001_probe",
+    build,
+    validForMeasurement: isValidForMeasurement(build),
+    probe,
+    appAiReinitialized: reinit.ok ? "ok" : errorText(reinit),
+  };
 }
 
 export interface BenchmarkMiss {
@@ -60,6 +91,8 @@ export type BenchmarkLocaleMode = "app" | "per_case";
 
 export interface BenchmarkReport {
   kind: "ai_005_corpus";
+  build: BuildIdentity | null;
+  validForMeasurement: boolean;
   startedAt: string;
   platformLabel: string;
   corpusVersion: string;
@@ -85,6 +118,8 @@ export async function runBenchmark(
   const now = deps.now ?? (() => Date.now());
   const report: BenchmarkReport = {
     kind: "ai_005_corpus",
+    build: deps.build ?? null,
+    validForMeasurement: isValidForMeasurement(deps.build ?? null),
     startedAt: new Date().toISOString(),
     platformLabel: deps.platformLabel,
     corpusVersion: corpus.version,
@@ -143,6 +178,8 @@ export interface LifecycleCheck {
 
 export interface LifecycleReport {
   kind: "ai_004_device_lifecycle";
+  build: BuildIdentity | null;
+  validForMeasurement: boolean;
   startedAt: string;
   platformLabel: string;
   checks: LifecycleCheck[];
@@ -202,6 +239,8 @@ export async function runLifecycleChecks(deps: DiagnosticsDeps): Promise<Lifecyc
 
   return {
     kind: "ai_004_device_lifecycle",
+    build: deps.build ?? null,
+    validForMeasurement: isValidForMeasurement(deps.build ?? null),
     startedAt: new Date(stamp).toISOString(),
     platformLabel: deps.platformLabel,
     checks,
