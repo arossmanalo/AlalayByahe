@@ -5,7 +5,7 @@ You are one AI coding assistant supporting a registered member of a four-person 
 
 AlalayByahe is a standalone Android AND iPhone commute assistant: ask in Filipino, English or Taglish and receive a grounded journey. Meaningful inference executes on the phone after one-time model setup; graph routing/fares and stored-place lookup are also local. Never invent boarding points, transit connections or peso amounts. Local inference interprets language; deterministic verified data decides routes.
 
-Architecture: Expo 57/RN0.86.3 native app, llama.rn0.12.9 with Qwen2.5-0.5B-Instruct Q4_K_M (~491 MB), SQLite offline pack, strict TypeScript contracts and deterministic instructions. The exact pins/manifest are included below. This native package combination is untested: build/install/actual-inference gate on both OS first. Mac/Xcode 26.6 is reported available with free Personal Team signing; no paid Apple developer membership. Personal Team build expires in seven days; no TestFlight/App Store claim. Windows has Node 24.14/npm11.9, JDK 17, AndroidStudio but missing NDK/cmake/cmdline tools at inspected SDK; verify/install required tool versions early.
+Architecture: Expo 57/RN0.86.3 native app, llama.rn0.12.9 with Qwen2.5-0.5B-Instruct Q4_K_M (~491 MB), SQLite offline pack, strict TypeScript contracts and deterministic instructions. The exact pins/manifest are included below. Android standalone compilation has passed; installed-app inference on both OS and the iOS native build remain unverified. Read docs/evidence/builds.md before making compatibility claims. Mac/Xcode 26.6 is reported available with free Personal Team signing; no paid Apple developer membership. Personal Team build expires in seven days; no TestFlight/App Store claim. The current Windows build host uses Node 24.14/npm11.9 and Android Studio JBR 21, with SDK 36, NDK 27.1.12297006 and CMake 3.22.1 provisioned during the build. Use short physical checkout/cache paths as documented in README.
 
 Phones: iPhone14Pro; Huawei "Pro50" exact identity pending; Realme10Pro+5G and HonorX9b. Actual installed OS/physical RAM/free storage must be inspected. No benchmarks or device compatibility results exist yet.
 
@@ -30,7 +30,7 @@ Your work must integrate with three peers through the complete shared contract b
 - **Priority:** P0
 - **Objective:** Give all members one reproducible base and early build gate.
 - **Functional requirements:** Create/connect authorized team repo, scaffold native Expo app, freeze contracts, install pins once; verify Windows Android and Mac signing.
-- **Technical requirements:** Node 24, npm lockfile, Expo 57/RN0863, JDK 17, compileSDK36/NDK/cmake as required by the generated project; Xcode 26.6 reported.
+- **Technical requirements:** Node 24, npm lockfile, Expo 57/RN0863, current host JBR 21, compileSDK36/NDK/cmake as required by the generated project; Xcode 26.6 reported.
 - **Files/modules involved:** package.json/lock; app.config.ts; tsconfig; .gitignore; app/_layout.tsx; src/contracts/; native folders; README.
 - **Dependencies:** Plan implementation approval; repo availability/credentials required for remote.
 - **Inputs:** Empty workspace,approved contract, target device/toolchain.

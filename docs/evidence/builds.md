@@ -1,4 +1,4 @@
-# Native build evidence — October 9, 2026
+# Native build evidence — October 9–10, 2026
 
 ## Host and reproducible configuration
 
@@ -27,11 +27,29 @@ These are observed build fixes, not evidence that every failure has the same roo
 
 Actual integrated Android and iOS exports passed through Metro/Hermes using a writable workspace temp directory. Integrated bundles: Android `entry-653bfbe756fcb3ccc7a1400ac6b9018f.hbc` (3.2 MB), iOS `entry-170963502c42a50281dc71b632893591.hbc` (2.9 MB), at `.native-builds/integrated-bundles`. This does not establish an iOS native build or inference.
 
+Final runtime source at `34236a508544c5347285564937c07f3fcf4a6127` also passed the iOS export: `entry-cf5d4dd8c787e0288c7d5faff2741f82.hbc` (2.9 MB), at `.native-builds/ios-final-bundle`.
+
 The default sandbox temp path initially denied Hermes output. Setting process-local TEMP/TMP to the workspace's .tmp and retrying outside that restrictive temp sandbox succeeded.
 
 ## Final Android artifact
 
-Initial standalone Android build passed at source `9df5106` (838 tasks). Rebuilding from the final committed integration source before recording the distributable test artifact's size and SHA-256 below.
+Initial standalone Android build passed at source `9df5106` (838 tasks). The final integration runtime source also built successfully: **838 tasks, 16m 6s**, exit 0. Build source checkout was clean.
+
+| Field | Verified value |
+|---|---|
+| Source commit | `34236a508544c5347285564937c07f3fcf4a6127` |
+| Built at | October 10, 2026, 00:02:40 PHT (`2026-10-09T16:02:40.7537544Z`) |
+| Saved test APK | `.native-builds/artifacts/alalaybyahe-0.1.0-34236a5.apk` in the Member 4 editing checkout |
+| Size | 208,301,781 bytes (about 199 MiB) |
+| SHA-256 | `9c34c0420ac7e8f7dc54c1231f05c368678131d87fd57b43e4bc8d550ac04b5f` |
+| Package | `ph.alalaybyahe.app`, version 0.1.0/code 1 |
+| Android SDK | Minimum 24, compile/target 36 |
+| Signature | `apksigner verify --verbose`: verifies, v2, one signer |
+| Bundle | `assets/index.android.bundle`, 2,628,856 bytes, Hermes header `C61FBC03C103191F` |
+| Native payload | arm64 SQLite/Hermes/llama/JNI libraries verified in the APK; llama's prebuilt ABIs are arm64-v8a and x86_64 |
+| Data/model payload | No GGUF or synthetic fixture asset; reviewed release pack remains unavailable |
+
+The same copied APK hash was rechecked. Its build identity is in `native-artifacts.json`; it is not physical acceptance evidence. Later commits only update release tooling/tests/documentation, so runtime sources still match this build. `release:check` verifies that relationship.
 
 The generated Release variant uses the template's debug signing key for local testing. It is not a store-signed release. A successful APK still needs a physical install, cold launch and inference test.
 

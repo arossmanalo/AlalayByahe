@@ -1,7 +1,7 @@
 # AlalayByahe
 A native Android/iPhone commute assistant for Filipino, English and Taglish requests. Local Qwen extracts journey fields; users confirm them; deterministic routing uses documented services, pedestrian links and fare evidence. Scanner/maps are deferred.
 
-**Development status:** real AI, routing and UI adapters are integrated. The app has no source-backed release pack yet, so it reports data unavailable. Phone inference, offline operation and iOS signing are not yet verified. The three requested corridors remain targets: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
+**Development status:** real AI, routing and UI adapters are integrated, and a standalone Android test APK has been built. The app has no source-backed release pack yet, so it reports data unavailable. Phone inference, offline operation and iOS signing are not yet verified. The three requested corridors remain targets: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
 
 ## Get the installed baseline
 

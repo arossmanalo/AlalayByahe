@@ -1,4 +1,5 @@
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readFileSync, readdirSync } from "node:fs";
+import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import { MODEL_MANIFEST } from "../src/application/config";
 import { INTEGRATION_STATUS } from "../src/application/integration-status";
@@ -6,6 +7,7 @@ import { releaseBlockers } from "../src/application/release-gate";
 import { BUNDLED_TRANSIT_PACK } from "../src/application/bundled-pack";
 import { validateTransitPack } from "../src/contracts/validators";
 import { canonicalJson } from "../src/data/canonicalJson";
+import { forbiddenReleaseImports } from "./release-source-guard";
 
 function readJson(path: string): unknown {
   try { return existsSync(path) ? JSON.parse(readFileSync(path, "utf8")) : null; }
@@ -35,6 +37,19 @@ if (!bundled.ok || canonicalJson(bundled.value) !== canonicalJson(releaseFile)) 
   blockers.push("The reviewed release pack is not connected to the native bundle.");
 }
 const tracked = execFileSync("git", ["ls-files"], { encoding: "utf8" }).split(/\r?\n/);
+function inspectSources(directory: string): void {
+  for (const entry of readdirSync(directory, { withFileTypes: true })) {
+    const path = join(directory, entry.name);
+    if (entry.isDirectory()) inspectSources(path);
+    else if (/\.tsx?$/.test(entry.name)) {
+      for (const problem of forbiddenReleaseImports(path, readFileSync(path, "utf8"))) {
+        blockers.push("Forbidden native source in " + path + ": " + problem);
+      }
+    }
+  }
+}
+inspectSources("app");
+inspectSources("src");
 for (const path of tracked) {
   if (/\.(gguf|part|apk|aab|ipa|jks|keystore|p12|mobileprovision)$/i.test(path)
       || /(^|\/)\.env(\..*)?$/.test(path) && !path.endsWith(".example")) {

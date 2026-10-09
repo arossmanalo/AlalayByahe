@@ -1,4 +1,4 @@
-# Member 4 integration checkpoint — October 9, 2026
+# Member 4 integration checkpoint — October 9–10, 2026
 
 Branch: `feat/integration/int-001-foundation`. Implementation is authorized by the user's Member 4 assignment. The original checkout changed to Member 2's branch during work; integration was isolated in `.worktrees/member4`.
 
@@ -9,8 +9,8 @@ Branch: `feat/integration/int-001-foundation`. Implementation is authorized by t
 | INT-001 | Pinned Expo/RN/llama baseline, npm lockfile, native config, contracts and runtime validators |
 | INT-002 | Private serialized SQLite repository, bound statements, transactional import, rollback, payload/index/alias/metadata checks; incremental hash adapter |
 | INT-003 | Real AiPort from Member 1, RoutePort from Member 2, UiProvider/screens from Member 3; confirmation, manual path, correlated cancellation, typed errors |
-| INT-005 | Android build attempts and Windows toolchain fixes; Mac Release procedure documented; physical installs Not Run |
-| INT-006 | 366 behavior tests pass, TypeScript passes; release gate rejects incomplete evidence and unbundled/fixture data |
+| INT-005 | Standalone Android test APK built and signature/hash/runtime checked; Mac Release procedure documented; physical installs Not Run |
+| INT-006 | 369 behavior tests pass, TypeScript passes; release gate rejects incomplete evidence and unbundled/fixture data |
 | INT-007 | README, build handoff and reviewable submission outline; video/publication/submission Not Performed |
 
 Published peer commits integrated: routing/data/source register `b376524` (includes `7ebddfb`, `928e092`), AI `58f48ba`, UI `84e029f`. Whitespace-only contract conflict retained the approved v1.0 type block; the temporary foundation home screen was replaced with Member 3's actual screen.
@@ -19,9 +19,9 @@ Published peer commits integrated: routing/data/source register `b376524` (inclu
 
 | Check | Result and limit |
 |---|---|
-| `npm ci` | Pass; 570 installed packages. No wildcard upgrades |
+| `npm ci` | Pass from final lockfile in native build copy; 571 installed packages. No wildcard upgrades |
 | `npm run typecheck` | Pass after safe UI array access fixes; strict/noUncheckedIndexedAccess retained |
-| Combined Node tests through tsx | **366/366 pass** across AI, routing, UI and integration |
+| Combined Node tests through tsx | **369/369 pass** across AI, routing, UI and integration |
 | SQLite tests | Real Node SQLite: persistent close/reopen, invalid import, storage-full rollback, snapshot/queued reads, corrupt indexes/metadata/aliases; Expo device SQLite Not Run |
 | `npm run doctor` | Pinned expo-doctor 1.20.4: **21/21 pass** |
 | `npx expo install --check` | Installed SDK mapping passes; the offline invocation could not check the live endpoint |
@@ -44,6 +44,7 @@ Test doubles occur only in tests. Native composition imports no test pack, fake 
 - A reviewed bundled pack installs only when storage is empty. Invalid/fixture packs are refused and an existing pack is preserved.
 - The confirmed onboard endpoint can use either its stored place point or that next stop's documented point; arbitrary coordinates are rejected.
 - Physical reports must match the recorded native artifact's hash and source commit, pack version, model revision and every acceptance case. The release script also rejects artifacts whose runtime sources differ from the current checkout; documentation-only commits do not invalidate them.
+- Release source inspection rejects imports/reexports/dynamic loads from test or fixture modules and explicit fixture-provider wiring. Warning copy and type declarations remain valid.
 
 ## Remaining gates
 

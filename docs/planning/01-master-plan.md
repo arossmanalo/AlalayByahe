@@ -94,7 +94,7 @@ File bytes are not runtime RAM. Peak memory, cold initialization, Taglish accura
 Sources: [0.5B publisher revision](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/commit/9217f5db79a29953eb74d5343926648285ec7e67), [1.5B publisher revision](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/tree/91cad51170dc346986eccefdc2dd33a9da36ead9).
 
 ### Actual environment and device limits
-Windows laptop: i5-13450HX, RTX4050 Laptop ~6 GB VRAM, 23.71 GiB physical RAM; Node/npm/Git and JDK 17 installed. Android Studio/SDK present but NDK/cmake/cmdline-tools absent at inspected SDK; exact compileSDK36 must be installed/verified. No working Python or preinstalled model/runtime was established. Laptop free RAM changes; measure it before inference.
+Windows laptop: i5-13450HX, RTX4050 Laptop ~6 GB VRAM, 23.71 GiB physical RAM. Current Android build uses Node 24.14.0/npm 11.9.0, Android Studio JBR 21.0.10, SDK 36, NDK 27.1.12297006 and CMake 3.22.1. The initial inspection's missing SDK components were provisioned during the actual build; standalone Android compilation now passes. See docs/evidence/builds.md for path/temp fixes and remaining phone gates. No preinstalled model was established. Laptop free RAM changes; measure it before inference.
 
 User reports Mac with Xcode 26.6, no paid Apple Developer membership. Expo 57 documentation requires Xcode 26.4+ and iOS16.4+. [Apple Personal Team](https://developer.apple.com/help/account/basics/about-your-developer-account) permits local device testing with seven-day provisioning; this does not supply TestFlight/App Store distribution. Verify device trust/developer mode/signing immediately. Build and install Release with bundled JS; Expo Go and a Metro-dependent development build are not the demo.
 

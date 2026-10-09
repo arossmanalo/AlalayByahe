@@ -437,7 +437,7 @@ All tasks are Not Started. Estimates exclude build/download waiting and unresolv
 - **Priority:** P0
 - **Objective:** Give all members one reproducible base and early build gate.
 - **Functional requirements:** Create/connect authorized team repo, scaffold native Expo app, freeze contracts, install pins once; verify Windows Android and Mac signing.
-- **Technical requirements:** Node 24, npm lockfile, Expo 57/RN0863, JDK 17, compileSDK36/NDK/cmake as required by the generated project; Xcode 26.6 reported.
+- **Technical requirements:** Node 24, npm lockfile, Expo 57/RN0863, current host JBR 21, compileSDK36/NDK/cmake as required by the generated project; Xcode 26.6 reported.
 - **Files/modules involved:** package.json/lock; app.config.ts; tsconfig; .gitignore; app/_layout.tsx; src/contracts/; native folders; README.
 - **Dependencies:** Plan implementation approval; repo availability/credentials required for remote.
 - **Inputs:** Empty workspace,approved contract, target device/toolchain.
