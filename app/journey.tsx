@@ -1,7 +1,9 @@
-// Member 3 (UI-003): full journey detail: diagram, ordered steps, fares, sources and warnings.
+// Member 3 (UI-003, ALERT-003): full journey detail: diagram, ordered steps, fares, sources, warnings
+// and the optional near-drop-off alert.
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { AppButton, Body, Heading, Notice, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
+import { DropoffAlertCard } from "../src/ui/dropoff-alert-card";
 import { FareSummary, LegSequence } from "../src/ui/journey-card";
 import { optionIssues } from "../src/ui/journey-presenter";
 import { JourneySteps, RouteDiagram } from "../src/ui/journey-steps";
@@ -44,6 +46,8 @@ export default function JourneyScreen() {
         <Body>{t.confirmServiceFare}</Body>
         <Body>{t.noTracking}</Body>
       </Notice>
+
+      <DropoffAlertCard option={option} />
 
       {option.warnings.length > 0 ? (
         <Notice tone="warning" title={t.warningsHeading}>

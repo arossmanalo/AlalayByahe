@@ -130,6 +130,16 @@ Branch `feat/ui/ui-006-device-r3` from `main` `69536ea`. Device verification is 
 
 `tests/ui/manual.md` has a device session record to fill in, the Demo build section and the adb steps for the walk.
 
+## ALERT-003 near-drop-off alert (October 10, 2026, 04:50 PHT)
+
+Status: **code and pure tests done; device behaviour Not Run; not active in any build yet.** The journey screen has a "Notify me near my stop" card (`src/ui/dropoff-alert-card.tsx`). It is a foreground-only convenience alert from the phone's own location, not vehicle tracking, and is offered only for drop-offs with a verified coordinate in the reviewed release pack (LRT-1 platforms). Pure logic and copy are in `src/ui/dropoff-alert.ts`; the expo-location adapter is in `src/ui/expo-location-watch.ts`.
+
+It needs two optional `UiServices` ports: `location` (expo-location adapter) and `createDropoffWatcher` (Member 2's ALERT-001, not pushed yet). Until Member 4 wires both, the card says alerts are not available in this version. The exact wiring, the no-new-dependency note and the rebuild/staleness warning are in `docs/evidence/dropoff-alert-ui.md`.
+
+Tests: `tests/ui/dropoff-alert.test.ts` covers every state (off, asking, denied, unavailable, no GPS fix, far, approaching, arrived, paused) in English and Filipino, the target rules (verified only; demo, no coordinate and no ride refused), the state machine, vibration on one-time events only, and an alert copy audit (no tracking, live, arrival-time or speed wording). It uses a local stub watcher. Manual device cases A1–A12 are in `tests/ui/manual.md`, all **Not Run**. **Alert distances are untested** until walked with a real phone.
+
+MAP-001 (optional map): **deferred to roadmap**, decided at 04:50 ahead of the 05:30 checkpoint. It needs a new native dependency, a key decision and a rebuild that cannot be proven on a phone by 06:00. The written request for Member 4 is in `docs/evidence/dropoff-alert-ui.md`.
+
 ## Gaps to resolve with owners
 
 - Model setup cancellation is now supplied as an optional UiServices capability from Member 1's existing AiManager extension. Canonical AiPort remains unchanged; the real setup screen offers cancellation during download/checking.

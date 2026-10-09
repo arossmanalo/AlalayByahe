@@ -26,6 +26,7 @@ import type {
 import { supersededError } from "./error-logic";
 import { MAX_QUERY_CHARS, newQueryId } from "./form-logic";
 import { strings, type Strings, type UiLanguage } from "./i18n";
+import type { DropoffWatcherFactory, LocationWatchPort } from "./dropoff-alert";
 
 export interface UiServices {
   /** "dev_fixture" shows a DEV FIXTURE banner on every screen. Release wiring must pass "real". */
@@ -39,6 +40,10 @@ export interface UiServices {
   onlineHelpersEnabled: boolean;
   /** Optional native setup control supplied by Member 4; canonical AiPort is unchanged. */
   cancelModelSetup?: () => void;
+  /** ALERT-003: foreground phone location for the near-stop alert (wired by Member 4). */
+  location?: LocationWatchPort;
+  /** ALERT-003: Member 2's createDropoffWatcher (wired by Member 4 once ALERT-001 merges). */
+  createDropoffWatcher?: DropoffWatcherFactory;
 }
 
 export type PackState = { status: "loading" } | { status: "loaded"; result: Result<TransitPack> };

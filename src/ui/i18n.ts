@@ -226,6 +226,35 @@ const en = {
   checkDirection: "Check the vehicle direction before boarding.",
   confirmServiceFare: "Confirm current service and fare.",
   noTracking: "The app does not know where vehicles are or when they arrive.",
+
+  // Alert near the drop-off (ALERT-003): phone location only, foreground only.
+  alertTitle: "Alert near your stop",
+  alertExplain: (stop: string) =>
+    `Get a vibration and an on-screen alert when your phone is near ${stop}. Alerts need your phone's location while the app is open. Your location stays on this phone and is not saved or sent anywhere.`,
+  alertStart: "Notify me near my stop",
+  alertStop: "Stop alerts",
+  alertResume: "Resume alerts",
+  alertAsking: "Waiting for your answer on location permission…",
+  alertDenied: "Alerts are off: location not allowed.",
+  alertUnavailable: "Alerts are off: location is not available on this phone right now.",
+  alertJourneyStillWorks: "Your journey steps still work without alerts.",
+  alertOn: "Alerts are on while the app is open.",
+  alertNoFix: "Waiting for a location fix. GPS can be weak indoors, underground or inside trains.",
+  alertFar: (distance: string, stop: string) =>
+    `About ${distance} from ${stop} (straight-line distance from your phone's location).`,
+  alertApproaching: (stop: string) => `You are near ${stop}.`,
+  alertApproachingBody: "Get ready to get off. Check the station sign before you alight.",
+  alertArrived: (stop: string) => `You are at or very close to ${stop}.`,
+  alertArrivedBody: "Check the station sign before you get off. This alert uses your phone's location only.",
+  alertPaused: "Alerts paused: app in background.",
+  alertPausedBody: "Location is not used while the app is in the background. Resume when you are back in the app.",
+  alertNoTargetUnverified:
+    "Alerts are only offered for drop-offs with a verified location. This drop-off is unverified (demo data).",
+  alertNoTargetCoordinate: "Alerts are not available: this drop-off has no recorded location.",
+  alertNoTargetRide: "Alerts are not available for this journey.",
+  alertNotInBuild: "Alerts near your stop are not available in this version of the app.",
+  alertLimits:
+    "It uses only your phone's location. It does not know where the vehicle is or when you will reach the stop.",
   evidenceHeading: "Sources and checks",
   checkedOn: (date: string) => `Checked ${date}`,
   reliabilityLabel: (r: string) => `Reliability: ${r}`,
@@ -522,6 +551,35 @@ const fil: Strings = {
   checkDirection: "Tingnan ang direksyon ng sasakyan bago sumakay.",
   confirmServiceFare: "Kumpirmahin ang kasalukuyang serbisyo at pamasahe.",
   noTracking: "Hindi alam ng app kung nasaan ang mga sasakyan o kailan sila darating.",
+
+  // Alerto malapit sa babaan (ALERT-003)
+  alertTitle: "Alerto malapit sa iyong babaan",
+  alertExplain: (stop: string) =>
+    `Mag-vibrate at magpakita ng alerto kapag malapit na ang phone mo sa ${stop}. Kailangan ng alerto ang lokasyon ng phone mo habang bukas ang app. Nananatili sa phone na ito ang lokasyon mo at hindi ito sine-save o ipinapadala kahit saan.`,
+  alertStart: "Abisuhan ako malapit sa babaan ko",
+  alertStop: "Itigil ang alerto",
+  alertResume: "Ituloy ang alerto",
+  alertAsking: "Hinihintay ang sagot mo sa pahintulot sa lokasyon…",
+  alertDenied: "Naka-off ang alerto: hindi pinayagan ang lokasyon.",
+  alertUnavailable: "Naka-off ang alerto: hindi magamit ang lokasyon sa phone na ito ngayon.",
+  alertJourneyStillWorks: "Gumagana pa rin ang mga hakbang ng biyahe mo kahit walang alerto.",
+  alertOn: "Naka-on ang alerto habang bukas ang app.",
+  alertNoFix: "Naghihintay ng lokasyon. Maaaring mahina ang GPS sa loob ng gusali, sa ilalim ng lupa o sa loob ng tren.",
+  alertFar: (distance: string, stop: string) =>
+    `Mga ${distance} mula sa ${stop} (tuwid na layo mula sa lokasyon ng phone mo).`,
+  alertApproaching: (stop: string) => `Malapit ka na sa ${stop}.`,
+  alertApproachingBody: "Maghanda nang bumaba. Tingnan ang karatula ng istasyon bago bumaba.",
+  alertArrived: (stop: string) => `Nasa ${stop} ka na o napakalapit na.`,
+  alertArrivedBody: "Tingnan ang karatula ng istasyon bago bumaba. Lokasyon lang ng phone mo ang gamit ng alertong ito.",
+  alertPaused: "Naka-pause ang alerto: nasa background ang app.",
+  alertPausedBody: "Hindi ginagamit ang lokasyon habang nasa background ang app. Ituloy kapag bumalik ka sa app.",
+  alertNoTargetUnverified:
+    "May alerto lang para sa babaan na may beripikadong lokasyon. Hindi beripikado ang babaang ito (demo data).",
+  alertNoTargetCoordinate: "Walang alerto: walang nakatalang lokasyon ang babaang ito.",
+  alertNoTargetRide: "Walang alerto para sa biyaheng ito.",
+  alertNotInBuild: "Wala pa ang alerto malapit sa babaan sa bersyong ito ng app.",
+  alertLimits:
+    "Lokasyon lang ng phone mo ang gamit nito. Hindi nito alam kung nasaan ang sasakyan o kailan ka makakarating sa babaan.",
   evidenceHeading: "Mga source at pagsusuri",
   checkedOn: (date) => `Sinuri noong ${date}`,
   reliabilityLabel: (r) => `Katiyakan: ${r}`,
