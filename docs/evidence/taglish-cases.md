@@ -1,14 +1,21 @@
 # AI-003 / AI-005 Taglish extraction cases — evidence log
 
-Owner: Member 1. **Device accuracy: Not Run.** No real model output has been scored yet.
+Owner: Member 1. **Device accuracy: Not Run.** No real model output has been scored yet. Results go in [ai-benchmarks.md](ai-benchmarks.md).
 
 ## Corpus
 
-`tests/ai/corpus.json` has 26 hand-labelled held-out cases (version 1): 11 Taglish, 9 Filipino and 6 English.
+`src/ai/corpus.json` (moved from `tests/ai/` on 2026-10-10 so a device build can load it without importing test files) has 42 hand-labelled held-out cases, version 2: 15 Taglish, 18 Filipino and 9 English.
 
-- Coverage: role order (`galing`/`papunta`, "to X from Y"), negation (`ayoko`, `ayaw`, `walang`, "no", "avoid"), allowed-only modes, slang (`tryk`, UV Express, `byahe`), current location, home/`uwi`, direct-only, walk limits (general and transfer-only), budgets (`200 pesos`, `₱150`), priorities, onboard, unrelated text, prompt injection, contradictory modes, and missing origin/both.
-- Held-out rule: no case text equals a prompt example in `src/ai/prompt.ts`. `tests/ai/corpus.test.ts` enforces this.
-- Labels are expected **slots**, not model output. `requiresClarification: true` marks cases where a correct extraction must carry an ambiguity note (c07 home, c16 contradictory modes).
+- **v1, c01–c26:** role order (`galing`/`papunta`, "to X from Y"), negation (`ayoko`, `ayaw`, `walang`, "no", "avoid"), allowed-only modes, slang (`tryk`, UV Express, `byahe`), current location, home/`uwi`, direct-only, walk limits (general and transfer-only), budgets (`200 pesos`, `₱150`), priorities, onboard, unrelated text, prompt injection, contradictory modes, missing origin/both.
+- **v2, c27–c42 (added 2026-10-10, before any model run):**
+  - `uwi` with an explicit place (c27), `pauwi` with no place (c28)
+  - onboard "nasa jeep ako" and "I am already on a van" (c29, c30, c42)
+  - reversed roles: "Going to X, I am coming from Y" and "Sa X ang punta ko, nandito ako sa Y" (c31, c32)
+  - mode refusals with `bawal` and `wag` (c33, c34)
+  - budgets: `singkwenta pesos`, `P120`, `under 100 pesos` (c35–c37)
+  - a 2 km walking limit (c38), unrelated text (c39), "from here" (c40), Filipino prompt injection (c41)
+- Held-out rule: no case text equals a prompt example in `src/ai/prompt.ts`, and no case was tuned on model output. `tests/ai/corpus.test.ts` enforces the first rule. Any future case must be written before seeing the model's answer to it.
+- Labels are expected **slots**, not model output. `requiresClarification: true` marks cases where a correct extraction must carry an ambiguity note (c07 and c28 home, c16 contradictory modes).
 - Place names are text only. This file is not transit data and implies no route coverage.
 
 ## Scoring (`src/ai/evaluation.ts`)
@@ -16,30 +23,14 @@ Owner: Member 1. **Device accuracy: Not Run.** No real model output has been sco
 - A case is **exact** when all 12 critical slots match: kind, originText, destinationText, useCurrentLocation, allowedModes (set), excludedModes (set), priority, the 3 walk limits, budgetCentavos and directOnly. Places compare after case, diacritic and punctuation normalization.
 - `exactRate = exact / cases`. Errors, timeouts and invalid output count as misses.
 - A **silent wrong role** is a swapped origin/destination with no ambiguity note. It must be 0.
-- Latency is the median/p95 of `Extraction.elapsedMs` over completed runs. Cold runs (the first after load) are reported separately.
+- Latency: the first case after a cold load is reported separately (`coldElapsedMs`). Warm median/p95 cover the rest.
 - Target, not result: ≥ 90% exact over ≥ 20 cases per primary phone, warm p95 ≤ 10 s.
 
-## Executed so far
+## Executed so far (laptop, fake runtime only)
 
 | Check | Command | Result |
 |---|---|---|
-| Corpus integrity, held-out rule, labels valid as RawIntent, deterministic notes silent on correct labels and present on c07/c16 | `tsx --test tests/ai/*.test.ts` (Node 24.14.0, tsx 4.23.15) | Pass (part of 75/75 tests, 2026-10-09) |
-| Scorer exact/swap/percentile behavior and `runCorpus` through the real manager with the **fake** runtime | same | Pass. This does not measure model accuracy. |
+| Corpus integrity (42 cases): held-out rule, labels valid as RawIntent, deterministic notes silent on correct labels and present on c07/c16/c28 | `npm test` (Node 24.14.0, tsx 4.23.15), 2026-10-10 | Pass (392/392 tests) |
+| Scorer and benchmark plumbing: exact, swap and percentile behavior; cold/warm split; raw output on misses; `runCorpus` through the real manager with the **fake** runtime | same | Pass. This does not measure model accuracy. |
 
-## Device runs (AI-005) — to fill in
-
-From a development build, after AI-001 passes:
-
-```ts
-import corpus from "../tests/ai/corpus.json";
-import { runCorpus, summarize } from "../src/ai";
-const records = await runCorpus(ai, corpus.cases, `bench_${Date.now()}`);
-console.log(JSON.stringify({ summary: summarize(records), records }, null, 2));
-```
-
-| Device (anonymized) | OS | Model | Runtime | Cases | Exact | Exact rate | Silent role swaps | Errors | Warm median ms | Warm p95 ms | Cold ms | Result |
-|---|---|---|---|---|---|---|---|---|---|---|---|---|
-| iPhone 14 Pro | — | qwen2.5-0.5b-q4_k_m @9217f5d | llama.rn 0.12.9 | 26 | — | — | — | — | — | — | — | **Not Run** |
-| Android primary | — | qwen2.5-0.5b-q4_k_m @9217f5d | llama.rn 0.12.9 | 26 | — | — | — | — | — | — | — | **Not Run** |
-
-Publish every miss with its raw output. If 0.5B misses the target, record it honestly. Only consider the 1.5B candidate if storage and latency measurements allow it (AI-005).
+The c35 case exposed that the deterministic "limit not in your message" note did not count Spanish-derived numerals. `singkwenta`, `bente` and the like are now counted as numbers.
