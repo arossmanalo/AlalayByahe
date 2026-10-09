@@ -39,7 +39,7 @@ Source of the event rules: the public event page, `https://cerebralvalley.ai/e/a
 |---|---|---|
 | Repository visibility | Public: an unauthenticated GitHub API request for `arossmanalo/AlalayByahe` returned HTTP 200 on 2026-10-10 | Visibility may change; recheck before submitting |
 | Built during the event | First commit on `main` is 2026-10-09 20:51 +0800, after the 1:00 PM kickoff | The file layout and documents were planned in the same window; a clean history does not prove nothing pre-existed, so the team should confirm |
-| Open-source and AI-tool disclosure | `docs/disclosures.md` lists libraries, licences and the model | Members 1 to 3 must add the AI assistants they used; this file names only Member 4's (Claude Code) |
+| Open-source and AI-tool disclosure | `docs/disclosures.md` lists libraries, licences, the model and, as reported by the team on 2026-10-10, the AI assistants: Claude (Members 1, 3 and 4, with Member 4 using Claude Code) and Claude plus Codex (Member 2) | Based on the team's statement, not independently checked. Add versions only if accurate. The page requires disclosure; the exact form it takes is not stated |
 | Licence file | **There is no `LICENSE` file** in the repository | Choosing a licence is the team's decision. Dependencies are MIT/Apache-2.0 (see disclosures). Not created here |
 | Team size | `git log` shows five author names on `main`: Aryl Manalo, Aryl Ross A. Manalo, Yohann Joachim Zapata, Allen, EnzoGRosas | Two names are probably one person on two git identities, but the page limits teams to 4. The team should confirm the registered members. Do not assume |
 | Demo video | None exists | Not Run |
@@ -53,5 +53,5 @@ Source of the event rules: the public event page, `https://cerebralvalley.ai/e/a
 2. Confirm the real submission deadline and where to submit. If it is later than 10:00 AM the team has more time, but the internal target is safer.
 3. Confirm the registered team (at most 4) against the five git author names.
 4. Decide on a licence and add a `LICENSE` file.
-5. Ask Members 1 to 3 for their AI-tool disclosures.
+5. Confirm the AI-tool list in `docs/disclosures.md` (Claude; Codex for Member 2) is complete and correct, since it is based on a verbal report.
 6. Decide whether the team will present at Demo Day (finalists must attend in person) and what runs on the demo phone.

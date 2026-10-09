@@ -56,4 +56,13 @@ No paid service is used and no paid tier or automatic upgrade exists.
 
 ## AI-assisted development disclosure
 
-The code and documents were written with AI coding assistants in a four-role workflow. Member 4's assistant is Claude Code (Anthropic). The other members should list the assistants they used here before submission; none are named in this file on their behalf.
+The code and documents were written with AI coding assistants in a four-role workflow. As reported by the team on 2026-10-10:
+
+| Member | Role | AI assistant(s) used |
+|---|---|---|
+| Member 1 | Local AI | Claude |
+| Member 2 | Data and routing | Claude and Codex |
+| Member 3 | Frontend | Claude |
+| Member 4 | Integration, release and QA | Claude (Claude Code) |
+
+Product names only, as reported; specific model versions are not recorded here and should be added only if the team can state them accurately. These tools were used to write code, tests and documents; the people on the team directed the work, reviewed it, and ran the data review. The language model that runs inside the app (Qwen2.5-0.5B-Instruct) is separate from these development tools.
