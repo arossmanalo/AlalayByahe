@@ -2,14 +2,17 @@
 // Foreground only: location is requested only when the user taps the button, the watch
 // stops on "Stop alerts", when the screen closes and when the app leaves the foreground.
 // Alerts are always visible text and announced to TalkBack, never vibration alone.
-import { useCallback, useEffect, useMemo, useReducer, useRef } from "react";
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
+import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
 import { AccessibilityInfo, AppState, Vibration } from "react-native";
 import type { JourneyOption } from "../contracts";
 import { AppButton, Body, Notice, Small } from "./components/primitives";
 import {
   alertTargetFor,
   isWatching,
+  isWeakSignal,
   nextAlertStatus,
+  nextWeakCount,
   presentAlert,
   presentNoTarget,
   vibrationFor,
@@ -54,6 +57,7 @@ function ActiveAlert({
   const subscription = useRef<{ stop(): void } | null>(null);
   // Bumped on every start/stop so a late permission answer or watch cannot revive a stopped alert.
   const generation = useRef(0);
+  const [weakCount, setWeakCount] = useState(0);
 
   const stopWatch = useCallback(() => {
     generation.current++;
@@ -70,7 +74,8 @@ function ActiveAlert({
     if (mine !== generation.current) return;
     dispatch({ type: "permission", outcome });
     if (outcome !== "granted") return;
-    const created = createWatcher({ target: target.point });
+    setWeakCount(0);
+    const created = createWatcher({ target: target.point, ...target.thresholds });
     if (!created.ok) {
       dispatch({ type: "watch_failed" });
       return;
@@ -81,6 +86,7 @@ function ActiveAlert({
         (fix) => {
           if (mine !== generation.current) return;
           const reading = watcher.update(fix);
+          setWeakCount((count) => nextWeakCount(count, reading.ignored));
           dispatch({ type: "reading", state: reading.state, distanceMeters: reading.distanceMeters });
           const pattern = vibrationFor(reading.event);
           if (pattern) Vibration.vibrate(pattern);
@@ -94,7 +100,7 @@ function ActiveAlert({
     } catch {
       if (mine === generation.current) dispatch({ type: "watch_failed" });
     }
-  }, [createWatcher, location, stopWatch, target.point]);
+  }, [createWatcher, location, stopWatch, target.point, target.thresholds]);
 
   const stop = useCallback(() => {
     stopWatch();
@@ -112,6 +118,16 @@ function ActiveAlert({
     return () => sub.remove();
   }, [stopWatch]);
 
+  // The alert pauses when the app is in the background, so hold the screen awake only while it is watching.
+  const watching = isWatching(status);
+  useEffect(() => {
+    if (!watching) return;
+    activateKeepAwakeAsync("stop-alert").catch(() => undefined);
+    return () => {
+      deactivateKeepAwake("stop-alert").catch(() => undefined);
+    };
+  }, [watching]);
+
   // Leaving the journey screen (cancel, new search) stops the watch.
   useEffect(() => stopWatch, [stopWatch]);
 
@@ -126,6 +142,7 @@ function ActiveAlert({
       onPrimary={() => void start()}
       onStop={stop}
       showLimits={isWatching(status) || status.phase === "off"}
+      weakSignal={isWatching(status) && isWeakSignal(weakCount) ? (status.phase === "waiting_fix" ? t.alertWeakSignal : t.alertWeakSignalShort) : null}
     />
   );
 }
@@ -135,11 +152,13 @@ function AlertNotice({
   onPrimary,
   onStop,
   showLimits = false,
+  weakSignal = null,
 }: {
   view: AlertView;
   onPrimary?: () => void;
   onStop?: () => void;
   showLimits?: boolean;
+  weakSignal?: string | null;
 }) {
   const { t } = useUi();
   const actions =
@@ -152,7 +171,9 @@ function AlertNotice({
   return (
     <Notice tone={view.tone} title={view.title} actions={actions}>
       {view.body ? <Body>{view.body}</Body> : null}
+      {weakSignal ? <Body>{weakSignal}</Body> : null}
       {showLimits ? <Small>{t.alertLimits}</Small> : null}
+      {showLimits ? <Small>{t.alertScreenOn}</Small> : null}
     </Notice>
   );
 }

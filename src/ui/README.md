@@ -162,3 +162,7 @@ npx tsx --test tests/ui/format.test.ts tests/ui/form-logic.test.ts tests/ui/jour
 TypeScript 6 defaults `compilerOptions.types` to `[]`, so a config that typechecks `tests/` needs `"types": ["node"]` and `@types/node`.
 
 Manual device checks are in [tests/ui/manual.md](../../tests/ui/manual.md).
+
+## ALERT-003 wiring and follow-up fixes (October 10, 2026)
+
+The alert card is wired in `src/application/ui-bridge.tsx`. Distances are sized to the final ride; approximate-only Android location and weak GPS show their own messages; the screen is held awake only while the alert is watching (`expo-keep-awake`, pinned 57.0.2). Details and limits: `docs/evidence/dropoff-alert-ui.md`. Device checks AL-18 to AL-23 are Not Run.
