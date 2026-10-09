@@ -131,6 +131,11 @@ describe("coverageSummary (UI-006)", () => {
     const summary = coverageSummary(["Corridor A"], ["Coverage: Corridor B", "Some fares are unknown, so cheapest cannot be confirmed."]);
     assert.deepEqual(summary.notes, ["Coverage: Corridor B", "Some fares are unknown, so cheapest cannot be confirmed."]);
   });
+  it("matches a repeated label with any spacing after the prefix, without eating the label's first letter", () => {
+    // The prefix pattern once read /^coverage:s*/, which stripped a leading "S" when no space followed the colon.
+    const summary = coverageSummary(["San Pablo terminal"], ["Coverage:San Pablo terminal", "Coverage:   San Pablo terminal"]);
+    assert.deepEqual(summary.notes, []);
+  });
 });
 
 describe("optionIssues / partitionOptions (EC-111)", () => {

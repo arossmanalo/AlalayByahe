@@ -4,6 +4,7 @@ import { Stack } from "expo-router";
 import type { ReactNode } from "react";
 import { ScrollView, StyleSheet, Text, View } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { testDataBanner } from "../banner-logic";
 import { useReadiness, useUi } from "../services";
 import { colors, spacing, toneColors, toneGlyph, type } from "../theme";
 
@@ -38,10 +39,10 @@ export function Screen({ title, children }: { title: string; children: ReactNode
 function FixtureBanners() {
   const { services, t } = useUi();
   const { pack } = useReadiness();
-  const fixturePack = pack.status === "loaded" && pack.result.ok && pack.result.value.kind === "test_fixture";
-  if (services.kind !== "dev_fixture" && !fixturePack) return null;
+  const banner = testDataBanner(services.kind, pack.status === "loaded" && pack.result.ok ? pack.result.value.kind : null);
+  if (!banner) return null;
   const c = toneColors.fixture;
-  const body = services.kind === "dev_fixture" ? t.devFixtureBody : t.testPackWarning;
+  const body = banner === "dev_fixture" ? t.devFixtureBody : t.testPackWarning;
   return (
     <View
       accessible

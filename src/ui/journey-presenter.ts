@@ -90,7 +90,7 @@ export interface CoverageSummary {
 export function coverageSummary(packLabels: readonly string[], coverageWarnings: readonly string[]): CoverageSummary {
   const labels = [...new Set(packLabels.map((l) => l.trim()).filter((l) => l !== ""))];
   const known = new Set(labels.map((l) => l.toLowerCase()));
-  const notes = coverageWarnings.filter((w) => !known.has(w.replace(/^coverage:s*/i, "").trim().toLowerCase()));
+  const notes = coverageWarnings.filter((w) => !known.has(w.replace(/^coverage:\s*/i, "").trim().toLowerCase()));
   return { labels, notes: [...new Set(notes)] };
 }
 
