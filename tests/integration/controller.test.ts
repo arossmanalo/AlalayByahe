@@ -19,6 +19,8 @@ test("interpretation creates an editable draft and never plans automatically", a
   assert.equal(draft.destinationCandidates[0]?.place.id, "place_test_c");
   const journey = value(await controller.submitConfirmed(request(pack())));
   assert.equal(journey.options[0]?.transfers, 1); assert.equal(journey.options[0]?.fare.status, "partial");
+  assert.equal((await controller.submitConfirmed(request(pack()))).ok, true);
+  await controller.cancel("query_test");
   assert.equal(errorCode(await controller.submitConfirmed(request(pack()))), "NEEDS_CLARIFICATION");
   await h.repo.close();
 });
@@ -105,4 +107,25 @@ test("application init, close, and remount are serialized", async () => {
   await Promise.all([services.initialize(), services.close(), services.initialize()]);
   assert.deepEqual(events, ["init", "ai-init", "release", "close", "init", "ai-init"]);
   assert.equal(errorCode(await services.geo.searchAddress("new address")), "NETWORK_UNAVAILABLE");
+});
+test("AI initialization failure keeps installed manual data available", async () => {
+  const h = await repository();
+  const services = createApplicationServices({ repository: h.repo, ai: ai({
+    initialize: async () => { throw new Error("Native load failed"); },
+  }) });
+  const readiness = await services.initialize();
+  assert.equal(readiness.data.ok, true);
+  assert.equal(errorCode(readiness.ai), "AI_INIT_FAILED");
+  await services.close();
+});
+test("bundled fixtures are refused and cannot initialize a release database", async () => {
+  let installed = false;
+  const services = createApplicationServices({ bundledPack: pack(), repository: {
+    initialize: async () => ok(undefined), getPack: async () => fail("DATA_NOT_READY", "Missing"),
+    replacePack: async () => { installed = true; return ok(undefined); },
+    getPlace: async () => fail("PLACE_NOT_FOUND", "Missing"),
+    resolvePlace: async () => ok({ candidates: [], needsConfirmation: true }), close: async () => undefined,
+  } });
+  assert.equal(errorCode((await services.initialize()).data), "DATA_INVALID");
+  assert.equal(installed, false); await services.close();
 });

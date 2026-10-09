@@ -127,7 +127,8 @@ export function explicitFields(intent: RawIntent | null): Set<ExplicitField> {
  * multiple candidates always require the user to choose.
  */
 export function initialCandidate(candidates: PlaceCandidate[]): Place | null {
-  if (candidates.length === 1 && candidates[0].match === "exact") return candidates[0].place;
+  const candidate = candidates[0];
+  if (candidates.length === 1 && candidate?.match === "exact") return candidate.place;
   return null;
 }
 

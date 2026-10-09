@@ -37,6 +37,8 @@ export interface UiServices {
   modelManifest: ModelManifest | null;
   /** Mirrors configuration enableOnlineHelpers; false by default. */
   onlineHelpersEnabled: boolean;
+  /** Optional native setup control supplied by Member 4; canonical AiPort is unchanged. */
+  cancelModelSetup?: () => void;
 }
 
 export type PackState = { status: "loading" } | { status: "loaded"; result: Result<TransitPack> };

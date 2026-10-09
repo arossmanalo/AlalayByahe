@@ -20,6 +20,7 @@ describe("onboard selection (UI-005)", () => {
   });
   it("builds the onboard context from the confirmed stop only", () => {
     const [choice] = nextStopChoices(devPack, "dir_test_001");
+    assert.ok(choice);
     const { origin, onboard } = onboardOrigin(choice, "dir_test_001", "2026-10-09T22:00:00+08:00");
     assert.equal(origin.placeId, "place_test_mid");
     assert.equal(origin.provenance, "stored");

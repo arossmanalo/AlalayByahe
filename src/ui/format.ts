@@ -32,7 +32,7 @@ export function formatMeters(meters: number): string {
 /** ISO 8601 timestamp -> "2026-10-09". Returns the input unchanged when it is not a date. */
 export function formatDate(iso: string): string {
   const match = /^(\d{4}-\d{2}-\d{2})/.exec(iso);
-  return match ? match[1] : iso;
+  return match?.[1] ?? iso;
 }
 
 export type ParseResult<T> = { ok: true; value: T } | { ok: false };
@@ -49,7 +49,8 @@ export function parsePesosToCentavos(input: string): ParseResult<number | null> 
   text = text.replace(/^(₱|php|p)\s*/i, "").replace(/,/g, "");
   const match = /^(\d+)(?:\.(\d{1,2}))?$/.exec(text);
   if (!match) return { ok: false };
-  const [, whole, fraction = ""] = match;
+  const whole = match[1]!;
+  const fraction = match[2] ?? "";
   if (whole.replace(/^0+(?=\d)/, "").length > MAX_PESOS_DIGITS) return { ok: false };
   const centavos = Number(whole) * 100 + Number(fraction.padEnd(2, "0"));
   return Number.isSafeInteger(centavos) ? { ok: true, value: centavos } : { ok: false };

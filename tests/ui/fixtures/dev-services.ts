@@ -288,7 +288,7 @@ export function createDevFixtureServices(options: { aiReady?: boolean } = {}): U
           .map((p) => ({ place: p, match: p.name.toLowerCase() === q ? "exact" : p.aliases.includes(q) ? "alias" : "fuzzy" }));
         return {
           ok: true,
-          value: { candidates, needsConfirmation: !(candidates.length === 1 && candidates[0].match === "exact") },
+          value: { candidates, needsConfirmation: !(candidates.length === 1 && candidates[0]?.match === "exact") },
         };
       },
     },

@@ -92,7 +92,7 @@ export default function ConfirmScreen() {
     if (!origin || !destination || errors.origin || errors.destination || !prefs.ok) return;
 
     const request: RouteRequest = {
-      queryId: newQueryId(),
+      queryId: draft?.queryId ?? newQueryId(),
       origin: origin.endpoint,
       destination: destination.endpoint,
       preferences: prefs.value,

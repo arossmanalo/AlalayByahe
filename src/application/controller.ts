@@ -37,7 +37,7 @@ export function createJourneyController(
   let active: Job | null = null;
   let generation = 0;
   const drafts = new Map<string, JourneyDraft>();
-  const timeoutMs = options.inferenceTimeoutMs ?? APP_LIMITS.inferenceTimeoutMs;
+  const timeoutMs = options.inferenceTimeoutMs ?? APP_LIMITS.controllerTimeoutMs;
   const current = (job: Job): boolean => active === job && job.generation === generation;
   const cancelled = <T>(): Result<T> => fail("CANCELLED", "Query cancelled.", true);
   const finish = (job: Job): void => { if (active === job) active = null; };
@@ -72,6 +72,7 @@ export function createJourneyController(
     if (!shape.ok) return shape;
     // Snapshot at entry: edits to UI state during an await cannot alter this job.
     request = JSON.parse(JSON.stringify(shape.value)) as RouteRequest;
+    if (!needsDraft) drafts.clear();
     if (needsDraft && !drafts.has(request.queryId)) {
       return fail("NEEDS_CLARIFICATION", "Confirm a current journey draft, or use manual planning.", false, { field: "confirmation" });
     }
@@ -95,7 +96,8 @@ export function createJourneyController(
       if (!current(job)) return cancelled();
       if (!result.ok) return result;
       const validated = validateRouteResult(result.value, scoped.value, validatedPack.value);
-      if (validated.ok) drafts.delete(request.queryId);
+      // Keep the current draft for explicit edits/reconfirmation. New input,
+      // manual planning, cancellation, or backgrounding invalidates it.
       return validated;
     } catch {
       return job && !current(job) ? cancelled()

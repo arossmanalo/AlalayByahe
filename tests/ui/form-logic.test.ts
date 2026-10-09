@@ -15,6 +15,7 @@ import {
 import { devPack } from "./fixtures/dev-pack";
 
 const [placeA, placeB] = devPack.places;
+assert.ok(placeA && placeB);
 
 describe("checkQueryText (EC-014)", () => {
   it("rejects empty and over-limit text without truncating", () => {

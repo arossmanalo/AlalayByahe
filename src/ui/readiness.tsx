@@ -100,6 +100,8 @@ export function ModelReadinessCard({ onManual }: { onManual: () => void }) {
       <Heading level={2}>{t.modelSection}</Heading>
       <StatusPill tone={modelTone(modelState)} label={t.aiPhase[modelState.phase]} />
       {body}
+      {(modelState.phase === "downloading" || modelState.phase === "checking")
+        && services.cancelModelSetup ? <AppButton label={t.cancel} variant="secondary" onPress={services.cancelModelSetup} /> : null}
       {manifest ? <Small>{t.modelDetails(manifest.id, manifest.revision, manifest.license)}</Small> : null}
     </Card>
   );

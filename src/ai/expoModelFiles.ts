@@ -1,4 +1,4 @@
-import { Directory, File, Paths } from "expo-file-system";
+import { Directory, File, FileMode, Paths } from "expo-file-system";
 import type { ChunkReader, ModelFiles } from "./modelStore";
 
 // expo-file-system 57 adapter (File/Directory/DownloadTask/FileHandle, checked
@@ -33,7 +33,7 @@ export function createExpoModelFiles(directoryName = "models"): ModelFiles {
       f.write(text);
     },
     async openReader(name): Promise<ChunkReader> {
-      const handle = file(name).open();
+      const handle = file(name).open(FileMode.ReadOnly);
       return {
         async read(maxBytes) {
           return handle.readBytes(maxBytes);

@@ -93,7 +93,7 @@ export function PlacePicker({
       {error ? <Notice tone="danger" title={error} /> : null}
 
       {candidates.length > 1 ? <Small>{aiText ? t.whichPlace(aiText) : t.chooseOne}</Small> : null}
-      {candidates.length === 1 && candidates[0].match !== "exact" ? <Small>{t.didYouMean}</Small> : null}
+      {candidates.length === 1 && candidates[0]?.match !== "exact" ? <Small>{t.didYouMean}</Small> : null}
       <CandidateList candidates={candidates} selectedId={selectedId} onSelect={pick} />
       {showAiText && candidates.length === 0 ? <Small>{t.noCandidates}</Small> : null}
 
