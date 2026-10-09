@@ -91,7 +91,7 @@ export default function OnboardScreen() {
             <>
               <PlacePicker
                 heading={t.onboardDestination}
-                missingPrompt={t.destinationMissing}
+                missingPrompt={t.chooseOne}
                 aiText={null}
                 showAiText={false}
                 candidates={[]}

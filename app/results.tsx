@@ -15,7 +15,11 @@ export default function ResultsScreen() {
   const { result, request, via } = session;
   const planning = session.pending?.kind === "route";
 
-  const edit = () => router.push({ pathname: "/confirm", params: { edit: "1", ...(via === "manual" ? { manual: "1" } : {}) } });
+  // An onboard trip is edited in the onboard flow so its OnboardContext is never silently dropped.
+  const edit = () =>
+    request?.onboard
+      ? router.push("/onboard")
+      : router.push({ pathname: "/confirm", params: { edit: "1", ...(via === "manual" ? { manual: "1" } : {}) } });
   const retry = () => {
     if (request && via) void planRoute({ ...request, queryId: newQueryId() }, via);
   };

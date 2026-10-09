@@ -205,7 +205,7 @@ const en = {
 
   // Journey detail
   journeyTitle: "Journey steps",
-  stepsHeading: "Mga hakbang sa biyahe / Journey steps",
+  stepsHeading: "Journey steps",
   followSteps: "Follow the numbered steps.",
   stepN: (n: number) => `Step ${n}`,
   walkStep: (m: string) => `Walk ${m}`,
@@ -247,6 +247,7 @@ const en = {
   onboardUnsureBody:
     "Do not get off just to check. Ask the driver or conductor. When you are at a known safe stop, plan a new trip from there.",
   planFromKnownStop: "Plan from a known stop",
+  onboardCheckSign: "Check the signboard direction.",
   onboardWrongDirection:
     "If the signboard does not match, the vehicle may be going the other way. Stay on until a safe, legal stop, then plan from there.",
   onboardPlan: "Plan from my vehicle",
@@ -519,6 +520,7 @@ const fil: Strings = {
   onboardUnsureBody:
     "Huwag bumaba para lang tumingin. Magtanong sa driver o konduktor. Kapag nasa kilala at ligtas na hintuan ka na, magplano ng bagong biyahe mula roon.",
   planFromKnownStop: "Magplano mula sa kilalang hintuan",
+  onboardCheckSign: "Tingnan ang direksyon sa karatula.",
   onboardWrongDirection:
     "Kung hindi tugma ang karatula, baka pabalik ang sasakyan. Manatiling nakasakay hanggang sa ligtas at legal na hintuan, saka magplano mula roon.",
   onboardPlan: "Magplano mula sa sinasakyan ko",

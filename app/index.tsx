@@ -114,7 +114,8 @@ export default function HomeScreen() {
       <AppButton label={t.chooseManually} variant={aiReady ? "secondary" : "primary"} onPress={onManual} />
       <AppButton label={t.alreadyRiding} variant="secondary" onPress={() => router.push("/onboard")} />
 
-      {session.request && session.via ? (
+      {/* An onboard trip is never repeated: its confirmed next stop is stale once the vehicle moves. */}
+      {session.request && session.via && !session.request.onboard ? (
         <AppButton
           label={`${t.repeatLast}: ${session.request.origin.label} → ${session.request.destination.label}`}
           variant="secondary"

@@ -59,7 +59,7 @@ export function OnboardForm({
               onPress={() => onChange({ ...value, direction: d, nextStop: null, confirmed: false })}
             />
           ))}
-          <Notice tone="warning" title={t.checkDirection}>
+          <Notice tone="warning" title={t.onboardCheckSign}>
             <Body>{t.onboardWrongDirection}</Body>
           </Notice>
         </Card>
