@@ -3,14 +3,16 @@ import { View } from "react-native";
 import type { FareQuote, JourneyOption } from "../contracts";
 import { AppButton, Body, Card, Heading, LabeledStatus, LegBadge, Notice, Row, Small, StatusPill } from "./components/primitives";
 import { formatCentavosRange, formatMeters } from "./format";
-import { fareText, firstRide, legSequence } from "./journey-presenter";
+import { fareText, firstRide, firstRideLine, legSequence } from "./journey-presenter";
 import { useUi } from "./services";
 
-/** Option-level fare: a partial subtotal is always labeled as not the full total. */
-export function FareSummary({ fare }: { fare: JourneyOption["fare"] }) {
+/** Option-level fare: a total says verified or estimated; a partial subtotal is never a total. */
+export function FareSummary({ option }: { option: JourneyOption }) {
   const { t } = useUi();
-  const text = fareText(fare, t);
-  if (text.kind === "complete") return <LabeledStatus label={text.label} tone="success" value={text.value} />;
+  const text = fareText(option, t);
+  if (text.kind === "complete") {
+    return <LabeledStatus label={text.label} tone={text.reliability === "verified" ? "success" : "info"} value={text.value} />;
+  }
   return (
     <Notice tone="warning" title={text.title}>
       {text.lines.map((line) => (
@@ -71,13 +73,14 @@ export function JourneyCard({
 }) {
   const { t } = useUi();
   const ride = firstRide(option);
+  const rideLine = firstRideLine(option, t);
   return (
     <Card>
       <Heading level={2}>{t.optionLabel(index + 1)}</Heading>
       <LegSequence option={option} />
       {ride ? (
         <>
-          <Body style={{ fontWeight: "700" }}>{t.boardFirst(ride.boardLabel)}</Body>
+          <Body style={{ fontWeight: "700" }}>{rideLine}</Body>
           <Small>
             {t.directionSign}: {ride.headsign}
           </Small>
@@ -87,7 +90,7 @@ export function JourneyCard({
         <StatusPill tone="neutral" label={t.transfers(option.transfers)} />
         <StatusPill tone="neutral" label={t.walkTotal(formatMeters(option.walkMeters))} />
       </Row>
-      <FareSummary fare={option.fare} />
+      <FareSummary option={option} />
       <Small>
         {t.whyThisOption}: {option.rankReason}
       </Small>

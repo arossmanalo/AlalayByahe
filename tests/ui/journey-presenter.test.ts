@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { describe, it } from "node:test";
-import type { JourneyOption, RouteRequest } from "../../src/contracts";
+import type { JourneyOption, RideLeg, RouteRequest } from "../../src/contracts";
 import { DEFAULT_PREFERENCES } from "../../src/ui/form-logic";
 import { strings } from "../../src/ui/i18n";
 import {
@@ -8,10 +8,12 @@ import {
   coverageSummary,
   fareDisplay,
   fareText,
+  firstRideLine,
   journeySteps,
   legSequence,
   optionIssues,
   partitionOptions,
+  totalReliability,
 } from "../../src/ui/journey-presenter";
 import { createDevFixtureServices } from "./fixtures/dev-services";
 
@@ -47,12 +49,35 @@ describe("fareDisplay", () => {
   });
 });
 
+function ride(status: RideLeg["fare"]["status"], overrides: Partial<RideLeg> = {}): RideLeg {
+  const known = status !== "unknown";
+  return {
+    kind: "ride", serviceId: "service_test", directionId: "direction_test", mode: "lrt", serviceName: "TEST ONLY Line",
+    headsign: "TEST ONLY North", boardStopId: "stop_test_a", alightStopId: "stop_test_b", boardLabel: "TEST ONLY A",
+    alightLabel: "TEST ONLY B", alreadyOnboard: false,
+    fare: { status, minCentavos: known ? 1300 : null, maxCentavos: known ? 1300 : null, sourceIds: [], basis: "TEST ONLY" },
+    evidence: { sourceIds: [], checkedAt: "2026-10-10", reliability: "verified" },
+    ...overrides,
+  };
+}
+
+const fare = (status: JourneyOption["fare"]["status"], min: number, max: number, unknownRideLegs: number) =>
+  ({ status, knownMinCentavos: min, knownMaxCentavos: max, unknownRideLegs, sourceIds: [] });
+
+describe("totalReliability", () => {
+  it("calls a total verified only when every ride fare is verified", () => {
+    assert.equal(totalReliability([ride("verified"), ride("verified")]), "verified");
+    assert.equal(totalReliability([ride("verified"), ride("estimated")]), "estimated");
+    assert.equal(totalReliability([]), "estimated");
+  });
+});
+
 describe("fareText (EC-051, EC-057)", () => {
   for (const lang of ["en", "fil"] as const) {
     const t = strings[lang];
     it(`${lang}: never calls a partial subtotal a total`, () => {
       for (const unknownRideLegs of [0, 1, 2]) {
-        const text = fareText({ status: "partial", knownMinCentavos: 1300, knownMaxCentavos: 1300, unknownRideLegs, sourceIds: [] }, t);
+        const text = fareText({ fare: fare("partial", 1300, 1300, unknownRideLegs), legs: [ride("verified"), ride("unknown")] }, t);
         assert.equal(text.kind, "partial");
         assert.equal(text.title, `${t.fareLabel}: ${t.fareNotTotal}`);
         for (const line of text.lines) assert.ok(!line.includes(t.fareComplete("₱13.00")), line);
@@ -60,14 +85,30 @@ describe("fareText (EC-051, EC-057)", () => {
       }
     });
     it(`${lang}: shows an unknown fare with no amount and asks to confirm it`, () => {
-      const text = fareText({ status: "unknown", knownMinCentavos: 0, knownMaxCentavos: 0, unknownRideLegs: 2, sourceIds: [] }, t);
+      const text = fareText({ fare: fare("unknown", 0, 0, 2), legs: [ride("unknown"), ride("unknown")] }, t);
       assert.equal(text.kind, "unknown");
       assert.ok(!text.lines.join(" ").includes("₱"));
       assert.deepEqual(text.lines, [t.fareUnknownLegs(2), t.fareConfirmWithOperator]);
     });
-    it(`${lang}: calls only a complete fare a total`, () => {
-      const text = fareText({ status: "complete", knownMinCentavos: 1300, knownMaxCentavos: 1500, unknownRideLegs: 0, sourceIds: [] }, t);
-      assert.deepEqual(text, { kind: "complete", label: t.fareLabel, value: t.fareCompleteRange("₱13.00–₱15.00") });
+    it(`${lang}: calls only a complete fare a total, and says whether it is verified`, () => {
+      const text = fareText({ fare: fare("complete", 1300, 1500, 0), legs: [ride("verified")] }, t);
+      assert.deepEqual(text, {
+        kind: "complete", label: t.fareLabel, reliability: "verified",
+        value: `${t.fareCompleteRange("₱13.00–₱15.00")} (${t.fareReliability.verified})`,
+      });
+    });
+    it(`${lang}: marks a total with an estimated ride fare as an estimate`, () => {
+      const text = fareText({ fare: fare("complete", 1900, 1900, 0), legs: [ride("estimated")] }, t);
+      assert.equal(text.kind, "complete");
+      assert.equal(text.reliability, "estimated");
+      assert.ok(text.value.endsWith(`(${t.fareReliability.estimated})`));
+      assert.ok(!text.value.includes(t.fareReliability.verified));
+    });
+    it(`${lang}: never presents a ride the user is already on as a boarding point`, () => {
+      const onboard = { legs: [ride("unknown", { alreadyOnboard: true, boardLabel: "Currently onboard; next stop: TEST ONLY A" })] } as JourneyOption;
+      assert.equal(firstRideLine(onboard, t), t.stayOnboard);
+      assert.equal(firstRideLine({ legs: [ride("verified")] } as JourneyOption, t), t.boardFirst("TEST ONLY A"));
+      assert.equal(firstRideLine({ legs: [] } as unknown as JourneyOption, t), null);
     });
   }
 });

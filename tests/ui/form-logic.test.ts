@@ -9,6 +9,7 @@ import {
   formToPreferences,
   initialCandidate,
   MAX_QUERY_CHARS,
+  needsCoverageHint,
   newQueryId,
   preferencesToForm,
 } from "../../src/ui/form-logic";
@@ -94,6 +95,19 @@ describe("explicitFields", () => {
       directOnly: true,
     });
     assert.deepEqual([...fields].sort(), ["allowedModes", "budgetCentavos", "directOnly", "priority"]);
+  });
+});
+
+describe("needsCoverageHint (EC-011)", () => {
+  it("states coverage when the user's words or a search match no stored place", () => {
+    assert.equal(needsCoverageHint("Lipa", 0, null), true);
+    assert.equal(needsCoverageHint(null, 0, 0), true);
+  });
+  it("stays quiet when there is a match, nothing was typed, or no search has run", () => {
+    assert.equal(needsCoverageHint("Vito Cruz", 1, null), false);
+    assert.equal(needsCoverageHint(null, 0, null), false);
+    assert.equal(needsCoverageHint("  ", 0, null), false);
+    assert.equal(needsCoverageHint(null, 0, 2), false);
   });
 });
 

@@ -147,6 +147,15 @@ export function placeDisplayName(place: Place): string {
     : `${place.name}, ${place.locality}`;
 }
 
+/**
+ * EC-011: when the user's words or a search match no stored place, the picker states the supported
+ * coverage instead of only "no match", so an unsupported corridor is explained, never routed.
+ */
+export function needsCoverageHint(aiText: string | null, aiCandidateCount: number, searchCandidateCount: number | null): boolean {
+  const aiMissed = aiText !== null && aiText.trim() !== "" && aiCandidateCount === 0;
+  return aiMissed || searchCandidateCount === 0;
+}
+
 let counter = 0;
 
 /** Stable-format, collision-resistant ID per submission (lower_snake_case, `query_` prefix). */
