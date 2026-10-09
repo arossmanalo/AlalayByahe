@@ -1,6 +1,6 @@
 # Route audit (ROUTE-006)
 
-Date: 2026-10-09. Auditor: Member 2 (assistant-assisted). **This is a self-audit, not the independent teammate review the plan requires.** Status: **ROUTE-006 is not complete.**
+Date: 2026-10-09. Auditor: Member 2 (assistant-assisted). **This is a self-audit, not the independent teammate review the plan requires.** Status: **ROUTE-006 is not complete** (no end-to-end run in the integrated app yet; the LRT-1 transcription has had an independent review).
 
 ## Verdict per corridor
 
@@ -10,7 +10,7 @@ Date: 2026-10-09. Auditor: Member 2 (assistant-assisted). **This is a self-audit
 | Lipa to San Pablo, Laguna | **Unsupported. Do not advertise.** | Only an unlabelled van line on a commercial site (sources.md S-15). No operator, boarding point or fare. |
 | Candelaria to Vito Cruz / Taft | **Unsupported. Do not advertise.** | Only the final LRT-1 leg has an operator source. The road leg, the drop-off, the walk to a station, and the reverse have none. |
 
-The only data with an operator source is **LRT-1 station-to-station travel, 25 stations, stored value fares**, held in an unreviewed candidate (`data/candidates/lrt1-candidate.json`). It is not a release pack and is not shipped.
+The only data with an operator source is **LRT-1 station-to-station travel, 25 stations, stored value fares**, held in `assets/data/release.json` (reviewed by Aryl Manalo on 2026-10-10; not yet bundled into the app).
 
 ## What was audited, and how
 
@@ -22,7 +22,8 @@ The only data with an operator source is **LRT-1 station-to-station travel, 25 s
 | Station order | Row order of the official matrix; cross-checked with Wikipedia's station list and with increasing latitude | Consistent |
 | Coordinates | Wikipedia vs OpenStreetMap, within about 10 to 200 m where both exist; Baclaran corrected; Balintawak, Fernando Poe Jr., Central, MIA Road, Redemptorist-Aseana single-source | Approximate, `estimated` |
 | Engine against the transcription | Every one of the 600 ordered station pairs planned on a verified-in-memory copy; ride, fare and zero transfers match the matrix | Pass |
-| Release gate | Candidate refused by both validators: 78 "must be verified" errors, nothing else | Correct, intended |
+| Release gate | `data:validate --release` 0 errors, 0 warnings; Member 4's validator accepts it; an unreviewed copy is still refused (test) | Pass |
+| Independent review | Aryl Manalo, 2026-10-10: station order, full Vito Cruz and EDSA rows, 24 sampled pairs incl. corners, 5 coordinates, 2 headsigns | All matched |
 | Forward/reverse | Reverse trips use the separate northbound/southbound records; both give the same documented fare | Pass |
 
 ## Worked traces compared with the source image
@@ -69,9 +70,9 @@ The only data with an operator source is **LRT-1 station-to-station travel, 25 s
 
 ## Required before ROUTE-006 can be called done
 
-1. A second registered teammate checks the LRT-1 transcription against the LRMC image, the station order against the LRMC map, and a sample of coordinates. Then the evidence is raised to `verified`, the pack is regenerated, passes `data:validate -- --release`, and is copied to `assets/data/release.json`.
+1. ~~Independent review of the LRT-1 transcription~~ Done 2026-10-10; pack at `assets/data/release.json` passes the release gate.
 2. Real road-service evidence for at least one target corridor (LTFRB Region IV-A route list and fares, plus dated teammate observations), transcribed with walking links and reviewed.
 3. The integrated app (INT-003) runs those journeys end to end, and a teammate reads the rendered instructions against the sources.
 4. Member 4 locks the pack version before regression and the demo.
 
-Until all four are done, the app must say what it covers: **LRT-1 stations only, and only if (1) is complete**.
+Until the rest is done, the app must say what it covers: **LRT-1 stations only**. No target corridor is supported.

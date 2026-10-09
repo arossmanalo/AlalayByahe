@@ -18,6 +18,17 @@ export interface AiManager extends AiPort {
   cancelActive(): Promise<void>;
   /** Cancels an in-flight ensureModel() download or verification. */
   cancelModelSetup(): void;
+  /**
+   * Development diagnostics only (AI-005): raw native results of completions that
+   * finished on their own. Held in memory by the caller; never persisted here.
+   */
+  observeCompletions(listener: (event: CompletionEvent) => void): () => void;
+}
+
+export interface CompletionEvent {
+  queryId: string;
+  outcome: CompletionOutcome;
+  elapsedMs: number;
 }
 
 export interface Timers {
@@ -61,6 +72,7 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
 
   let state: ModelState = ABSENT;
   const listeners = new Set<(s: ModelState) => void>();
+  const completionObservers = new Set<(event: CompletionEvent) => void>();
   let session: LlamaSession | null = null;
   let warm = false;
   let lifecycleEpoch = 0;
@@ -336,6 +348,14 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
     }
     if (winner.kind !== "done") return fail("CANCELLED", AI_MESSAGES.cancelled, true);
     warm = true;
+    const elapsedMs = Math.max(0, Math.round(timers.now() - startedAt));
+    for (const observer of completionObservers) {
+      try {
+        observer({ queryId: input.queryId, outcome: winner.outcome, elapsedMs });
+      } catch {
+        // Diagnostics must never affect extraction.
+      }
+    }
 
     const intent = interpretCompletion(winner.outcome, input, settings.maxOutputTokens);
     if (!intent.ok) return intent;
@@ -347,7 +367,7 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
         modelRevision: manifest.revision,
         runtime: runtime.info.label,
       },
-      elapsedMs: Math.max(0, Math.round(timers.now() - startedAt)),
+      elapsedMs,
     });
   }
 
@@ -388,5 +408,23 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
     };
   }
 
-  return { getState, ensureModel, initialize, extract, cancel, release, subscribe, cancelActive, cancelModelSetup };
+  function observeCompletions(listener: (event: CompletionEvent) => void): () => void {
+    completionObservers.add(listener);
+    return () => {
+      completionObservers.delete(listener);
+    };
+  }
+
+  return {
+    getState,
+    ensureModel,
+    initialize,
+    extract,
+    cancel,
+    release,
+    subscribe,
+    cancelActive,
+    cancelModelSetup,
+    observeCompletions,
+  };
 }

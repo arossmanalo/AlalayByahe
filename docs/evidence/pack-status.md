@@ -1,25 +1,32 @@
 # Transit pack status (ROUTE-002)
 
-Last updated: 2026-10-09 (Member 2). Everything below was checked against the working tree on this date.
+Last updated: 2026-10-10 (Member 2). Checked against the working tree on this date.
 
 ## Release pack
 
-**There is no release pack.** `assets/data/release.json` does not exist, on purpose.
+`assets/data/release.json` **exists**: pack `pack_lrt1`, version `lrt1_2026_10_10_1`, content SHA-256 (canonical JSON) `f2499c546a0b8e495ab41062595c55fc21f3c293410744a640147a3cb44c2931`.
 
-There is an **unreviewed candidate**: `data/candidates/lrt1-candidate.json`, LRT-1 Dr. Santos to Fernando Poe Jr. (all 25 stations, ride legs and stored value fares only). Its evidence is `estimated` because no second teammate has checked it, so `npm run data:validate -- data/candidates/lrt1-candidate.json` reports 78 release-gate errors, all of them "must be verified". That refusal is intended.
+| Field | Value |
+|---|---|
+| Coverage | **LRT-1 stations only**: all 25 stations, Dr. Santos to Fernando Poe Jr., ride legs in both directions and stored value fares between every pair |
+| Fare source | LRMC "New LRT-1 Stored Value Fare Matrix", effective April 2, 2025 (the lrmc.ph file names are swapped; the image at the file name containing SJT is the stored value table) |
+| Not included | Single journey fares, walking links, entrances, operating hours, any road service (jeepney, van, bus, tricycle) |
+| Review | Independently checked by Aryl Manalo on 2026-10-10 against the LRMC image: station order, the full Vito Cruz and EDSA rows, 24 sampled pairs including the corners, five map coordinates and the two headsigns. All matched. The remaining pairs agree across mirrored readings (the build refuses to write otherwise). |
+| Evidence level | Stops, services, directions, route stops and fares are `verified`. Station coordinates stay `estimated` (approximate, from Wikipedia and OpenStreetMap; five were checked on a map). |
+| Validation | `npm run data:validate -- assets/data/release.json --release`: 0 errors, 0 warnings. Member 4's `validateTransitPack` also accepts it. |
+| Rebuild | `npx tsx scripts/build-lrt1-pack.ts` (needs a new review if any transcription changes) |
 
-ROUTE-001 (the corridor evidence and source register) has not been executed: `docs/evidence/sources.md` and
-`docs/evidence/corridor-status.md` do not exist. No ride, stop, boarding permission, walking path or fare has been
-sourced, so there is nothing true to put in a release pack. A placeholder file would be fabricated data.
+It is **not yet connected to the app**: `src/application/bundled-pack.ts` still exports `null`. Member 4 imports `assets/data/release.json` there and rebuilds; a pack change invalidates the recorded native artifact.
+
+### What this does and does not support
 
 | Target corridor | Verified stop-level coverage |
 |---|---|
 | Lipa to Candelaria, Quezon | None. Target only. |
 | Lipa to San Pablo, Laguna | None. Target only. |
-| Candelaria to Vito Cruz/Taft | None. Target only. |
+| Candelaria to Vito Cruz/Taft | Only the LRT-1 leg between stations. No road leg, no drop-off, no walking path to a station, no reverse. **Not supported end to end.** |
 
-The app must not advertise any of these corridors as supported until ROUTE-001 evidence is packaged, validated in
-release mode and audited by ROUTE-006.
+Because the pack has no walking links, journeys can only start and end at LRT-1 stations. The app must not advertise any target corridor as supported.
 
 ## What ROUTE-002 delivered
 
@@ -31,7 +38,7 @@ release mode and audited by ROUTE-006.
 | Alias normalization shared with storage | `src/data/normalize.ts` | Implemented, tested |
 | Canonical JSON for pack fingerprints | `src/data/canonicalJson.ts` | Implemented, tested |
 | CLI: `npm run data:validate` | `scripts/validate-data.ts` | Implemented, run |
-| Release `TransitPack` | `assets/data/release.json` | **Not created. Blocked on ROUTE-001.** |
+| Release `TransitPack` (LRT-1 stations only) | `assets/data/release.json` | Created, reviewed, validates for release; **not yet bundled in the app** |
 
 ## Validation rules worth knowing
 

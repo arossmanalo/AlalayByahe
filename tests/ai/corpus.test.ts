@@ -11,7 +11,9 @@ import { createAiManager } from "../../src/ai/manager";
 import { createModelStore } from "../../src/ai/modelStore";
 import { FakeRuntime, fakeManifest, fakeModelBytes, MemoryFiles, nodeSha256, outcome } from "./fakes";
 
-const corpus = JSON.parse(readFileSync(join(__dirname, "corpus.json"), "utf8")) as { cases: CorpusCase[] };
+const corpus = JSON.parse(readFileSync(join(__dirname, "..", "..", "src", "ai", "corpus.json"), "utf8")) as {
+  cases: CorpusCase[];
+};
 const cases = corpus.cases;
 
 function asIntent(c: CorpusCase): RawIntent {
@@ -72,12 +74,15 @@ describe("scoring", () => {
     assert.equal(percentile([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 95), 10);
     assert.equal(percentile([], 95), null);
     const summary = summarize([
-      { id: "a", ok: true, errorCode: null, elapsedMs: 100, score: scoreCase(c02, asIntent(c02)), intent: null },
-      { id: "b", ok: false, errorCode: "AI_TIMEOUT", elapsedMs: null, score: null, intent: null },
+      { id: "a", ok: true, errorCode: null, elapsedMs: 9000, score: scoreCase(c02, asIntent(c02)), intent: null, cold: true, queryId: "q_a" },
+      { id: "c", ok: true, errorCode: null, elapsedMs: 100, score: scoreCase(c02, asIntent(c02)), intent: null, cold: false, queryId: "q_c" },
+      { id: "b", ok: false, errorCode: "AI_TIMEOUT", elapsedMs: null, score: null, intent: null, cold: false, queryId: "q_b" },
     ]);
-    assert.equal(summary.exactRate, 0.5);
+    assert.equal(summary.exactRate, 2 / 3);
     assert.deepEqual(summary.errors, { AI_TIMEOUT: 1 });
     assert.deepEqual(summary.misses, ["b"]);
+    assert.deepEqual(summary.coldElapsedMs, [9000], "cold start reported separately");
+    assert.deepEqual(summary.elapsedMs, { samples: 1, median: 100, p95: 100 }, "warm stats exclude the cold run");
   });
 
   it("runCorpus drives the real AiPort manager (DEV FIXTURE runtime echoing labels)", async () => {
@@ -90,9 +95,14 @@ describe("scoring", () => {
     for (const c of subset) runtime.replies.push({ delayMs: 1, result: outcome(JSON.stringify(asIntent(c))) });
     const ai = createAiManager({ store, runtime, expectedLlamaCppBuild: runtime.info.llamaCppBuild });
     await ai.initialize();
-    const summary = summarize(await runCorpus(ai, subset, "test_run"));
+    const seen: number[] = [];
+    const records = await runCorpus(ai, subset, "test_run", { firstIsCold: true, onRecord: (_r, i) => seen.push(i) });
+    const summary = summarize(records);
     assert.equal(summary.cases, 3);
     assert.equal(summary.exact, 3);
-    assert.equal(summary.elapsedMs.samples, 3);
+    assert.equal(summary.elapsedMs.samples, 2);
+    assert.equal(summary.coldElapsedMs.length, 1);
+    assert.deepEqual(seen, [0, 1, 2]);
+    assert.equal(records[0]?.queryId, "test_run_c01");
   });
 });
