@@ -51,3 +51,14 @@ Keep the two artifacts separate in `docs/evidence/native-artifacts.json` and `bu
 ## What it is not
 
 It is not real transit data and does not change the frozen release pack. Do not demonstrate the demo build as verified coverage, and do not record it as release evidence.
+
+## Re-check after the 2026-10-10 merges
+
+After PRs #10 to #13 were merged into this branch, the cleared-cache Hermes export failed on this workstation with "LLVM ERROR: out of memory" inside `hermesc`. The commit that exported fine earlier the same day (`d04549d`) failed the same way, so the cause was the machine's memory state, not the code. The same check was repeated on a plain JavaScript export (`expo export --clear --no-bytecode`), which skips `hermesc`:
+
+| Build | Release pack | Demo pack id | "Baguio City terminal" | `alalaybyahe-demo.db` |
+|---|---|---|---|---|
+| Flag off (release) | present | **absent** | **absent** | **absent** |
+| `EXPO_PUBLIC_DEMO_BUILD=1` | present | present | present | present |
+
+The Hermes export and APK build still need to be run by Member 4 on a machine with enough memory.
