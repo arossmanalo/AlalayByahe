@@ -4,7 +4,13 @@
 import { useState } from "react";
 import { Text } from "react-native";
 import { HELD_OUT_CORPUS } from "../src/ai/corpus";
-import { runBenchmark, runLifecycleChecks, runProbeStep, type DiagnosticsDeps } from "../src/ai/diagnostics";
+import {
+  APP_QUERY_LOCALE,
+  runBenchmark,
+  runLifecycleChecks,
+  runProbeStep,
+  type DiagnosticsDeps,
+} from "../src/ai/diagnostics";
 import type { AiManager } from "../src/ai/manager";
 import { createPhoneModelStore, createPhoneRuntime } from "../src/ai/phone";
 import { useApplication } from "../src/application/react-context";
@@ -100,8 +106,9 @@ export default function DevAiScreen() {
       <Card>
         <Heading level={2}>AI-005 corpus benchmark</Heading>
         <Small>
-          {HELD_OUT_CORPUS.cases.length} held-out cases (corpus v{HELD_OUT_CORPUS.version}). Cold-loads the model first; keep
-          the screen on and the phone unplugged from power if measuring thermals.
+          {HELD_OUT_CORPUS.cases.length} held-out cases (corpus v{HELD_OUT_CORPUS.version}), sent with the app's locale
+          ("{APP_QUERY_LOCALE}") like real queries. Cold-loads the model first; keep the screen on and note whether the phone
+          is charging.
         </Small>
         <AppButton
           label="Run corpus benchmark"
@@ -109,7 +116,19 @@ export default function DevAiScreen() {
           disabled={busy !== null}
           onPress={() =>
             void run("bench", () =>
-              runBenchmark(deps(), HELD_OUT_CORPUS, (done, total) => setProgress(`${done}/${total} cases`)),
+              runBenchmark(deps(), HELD_OUT_CORPUS, (done, total) => setProgress(`${done}/${total} cases`), "app"),
+            )
+          }
+        />
+        <AppButton
+          label="Compare: per-case locale"
+          variant="secondary"
+          busy={busy === "bench_locale"}
+          disabled={busy !== null}
+          hint="Sends each case with its own en/fil/taglish value, for the locale decision only."
+          onPress={() =>
+            void run("bench_locale", () =>
+              runBenchmark(deps(), HELD_OUT_CORPUS, (done, total) => setProgress(`${done}/${total} cases`), "per_case"),
             )
           }
         />
