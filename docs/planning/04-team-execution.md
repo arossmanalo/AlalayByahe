@@ -95,11 +95,11 @@ All statuses currently **Not Started**. At a 9:30 PM implementation start, four 
 | ROUTE-005 | Member 2 | Add manual onboard downstream transfer planning | P0 | ROUTE-003, ROUTE-004; frozen OnboardContext; UI can develop in parallel. | Ready for Integration on `feat/routes/route-003` (198 pure routing/data tests pass; synthetic data only; see `docs/evidence/routing-notes.md`) | 60 min | M3 |
 | ROUTE-006 | Member 2 | Audit real routes and integration correctness | P0 | ROUTE-002–ROUTE-005; INT-003; sources complete for supported subset. | Not Started | 60–90 min | M4 |
 | ROUTE-101 | Member 2 | Expand verified dataset after core freeze only by approval | P1 | ROUTE-006 and user-approved time available before freeze. | Not Started | Variable, 60–120 min per bounded addition | Optional |
-| UI-001 | Member 3 | Build native shell and accessible visual system | P0 | INT-001; contract frozen. | Not Started | 45–60 min | M1 |
-| UI-002 | Member 3 | Build text/manual entry and confirmation | P0 | UI-001; contract; mock repository/controller permitted until INT-003. | Not Started | 60–75 min | M2 |
-| UI-003 | Member 3 | Render grounded options and step instructions | P0 | UI-001; contract; ROUTE-003/004 later integration. | Not Started | 75–90 min | M3 |
-| UI-004 | Member 3 | Implement setup, offline and recovery states | P0 | UI-001; AI-002; INT-002/003. | Not Started | 45–60 min | M3 |
-| UI-005 | Member 3 | Build manual onboard replan flow | P0 | UI-002/003; ROUTE-005. | Not Started | 45–60 min | M3 |
+| UI-001 | Member 3 | Build native shell and accessible visual system | P0 | INT-001; contract frozen. | Ready for Integration | 45–60 min | M1 |
+| UI-002 | Member 3 | Build text/manual entry and confirmation | P0 | UI-001; contract; mock repository/controller permitted until INT-003. | Ready for Integration | 60–75 min | M2 |
+| UI-003 | Member 3 | Render grounded options and step instructions | P0 | UI-001; contract; ROUTE-003/004 later integration. | Ready for Integration | 75–90 min | M3 |
+| UI-004 | Member 3 | Implement setup, offline and recovery states | P0 | UI-001; AI-002; INT-002/003. | Ready for Integration | 45–60 min | M3 |
+| UI-005 | Member 3 | Build manual onboard replan flow | P0 | UI-002/003; ROUTE-005. | Ready for Integration | 45–60 min | M3 |
 | UI-006 | Member 3 | Verify native UX and integrate real adapters | P0 | UI-002–UI-005; INT-003/005; AI-006; ROUTE-006. | Not Started | 60–90 min | M4 |
 | UI-101 | Member 3 | Add optional map/scanner screens after core | P1 | All UI P0; AI-101 real OCR; Member 4 approval before freeze. | Not Started | 90–180 min; outside baseline | Optional |
 | INT-001 | Member 4 (user) | Bootstrap repo, contracts and native toolchains | P0 | Plan implementation approval; repo availability/credentials required for remote. | Not Started | 75–120 min; first gate | M1 |
