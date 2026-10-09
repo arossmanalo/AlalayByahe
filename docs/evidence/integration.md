@@ -100,3 +100,19 @@ Decision by the user: iPhone/iOS is out of scope because of limited resources. A
 - The Apple Personal Team, seven-day signing and Mac build steps no longer apply.
 - **Code not changed by this documentation update:** `src/application/release-gate.ts` still requires matching iOS physical evidence, so `npm run release:check` will keep reporting the iOS blocker. The `ios` block in `app.config.ts` and the iOS libraries in dependencies are unused but still present. Changing the gate to Android-only is a separate code change (with tests) and needs your decision; it was not made here.
 - Remaining `release:check` blockers after the Android rebuild: Android physical evidence and the iOS requirement above.
+
+## Pack freeze (recorded 2026-10-10)
+
+The user froze `assets/data/release.json` (pack `pack_lrt1`, version `lrt1_2026_10_10_1`, SHA-256 `f2499c54…22c2931`) at 02:38 PHT, earlier than the 03:00 proposal above. It is not to change. A correction means a new pack version, a new review, a rebuild and repeated device tests.
+
+## Bundle check (2026-10-10, about 03:20 PHT)
+
+`scripts/check-bundle-clean.ts` reads an APK (or a Hermes bundle) and reports whether the frozen pack and the demo-only data are present. Run on this Mac against cleared-cache Hermes exports of `main` at `69536ea`:
+
+| Export | Check | Result |
+|---|---|---|
+| Android, no flags | `--expect release` | PASS: frozen pack present; demo pack, "Baguio City terminal" and `alalaybyahe-demo.db` absent (3,306,820 B) |
+| Android, `EXPO_PUBLIC_DEMO_BUILD=1` | `--expect demo` | PASS: all present (3,368,379 B) |
+| Each export checked as the opposite kind | | Fails as it must |
+
+A JavaScript export does not prove an APK builds or that an installed APK is clean; the same check must be run on each built APK (`docs/evidence/android-build-runbook.md`). No APK has been built yet for this commit.
