@@ -1,11 +1,12 @@
 {
   "schemaVersion": "1.0",
   "packId": "pack_test_demo_luzon_roads",
-  "version": "test_fixture_demo_2026_10_10_2",
+  "version": "test_fixture_demo_2026_10_10_3",
   "kind": "test_fixture",
   "createdAt": "2026-10-10T03:00:00+08:00",
   "coverageLabels": [
-    "Demonstration network: only the 25 LRT-1 stations and their official LRMC fares are verified. Other routes are samples, not real transport information."
+    "Demonstration network: only the 25 LRT-1 stations and their official LRMC fares are verified. Other routes are samples, not real transport information.",
+    "Demo connectors (invented) join every demo place so any pair has a sample journey. They are not real services."
   ],
   "places": [
     {
@@ -3225,6 +3226,120 @@
         "checkedAt": "2026-10-10T03:00:00+08:00",
         "reliability": "estimated"
       }
+    },
+    {
+      "id": "stop_test_demo_link_10_a",
+      "placeId": "place_lipa_mcdo_la_salle",
+      "label": "McDonald's near De La Salle Lipa (DEMO connector 10)",
+      "point": {
+        "latitude": 13.94134,
+        "longitude": 121.149253
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "stop_test_demo_link_10_b",
+      "placeId": "place_lipa_van_terminal",
+      "label": "Lipa van terminal (vans to San Pablo) (DEMO connector 10)",
+      "point": {
+        "latitude": 13.942662,
+        "longitude": 121.153493
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "stop_test_demo_link_11_a",
+      "placeId": "place_lipa_van_terminal",
+      "label": "Lipa van terminal (vans to San Pablo) (DEMO connector 11)",
+      "point": {
+        "latitude": 13.942662,
+        "longitude": 121.153493
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "stop_test_demo_link_11_b",
+      "placeId": "place_test_lipa_palengke",
+      "label": "Lipa public market (DEMO connector 11)",
+      "point": {
+        "latitude": 13.9397,
+        "longitude": 121.1616
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "stop_test_demo_link_12_a",
+      "placeId": "place_san_pablo_puregold",
+      "label": "Puregold San Pablo (DEMO connector 12)",
+      "point": {
+        "latitude": 14.0730005,
+        "longitude": 121.3161194
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "stop_test_demo_link_12_b",
+      "placeId": "place_test_san_pablo_market",
+      "label": "San Pablo public market (DEMO connector 12)",
+      "point": {
+        "latitude": 14.0692,
+        "longitude": 121.3249
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
     }
   ],
   "services": [
@@ -3788,6 +3903,48 @@
         ],
         "checkedAt": "2026-10-10T03:00:00+08:00",
         "reliability": "estimated"
+      }
+    },
+    {
+      "id": "service_test_demo_link_10",
+      "name": "DEMO connector (invented): McDonald's near De La Salle Lipa - Lipa van terminal (vans to San Pablo)",
+      "mode": "jeepney",
+      "signboardAliases": [],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "service_test_demo_link_11",
+      "name": "DEMO connector (invented): Lipa van terminal (vans to San Pablo) - Lipa public market",
+      "mode": "jeepney",
+      "signboardAliases": [],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "service_test_demo_link_12",
+      "name": "DEMO connector (invented): Puregold San Pablo - San Pablo public market",
+      "mode": "jeepney",
+      "signboardAliases": [],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
       }
     }
   ],
@@ -4854,6 +5011,96 @@
         ],
         "checkedAt": "2026-10-10T03:00:00+08:00",
         "reliability": "estimated"
+      }
+    },
+    {
+      "id": "dir_test_demo_link_10_ab",
+      "serviceId": "service_test_demo_link_10",
+      "headsign": "Lipa van terminal (vans to San Pablo)",
+      "availability": "documented",
+      "availabilityNote": "DEMO connector, invented. Not real transport information.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "dir_test_demo_link_10_ba",
+      "serviceId": "service_test_demo_link_10",
+      "headsign": "McDonald's near De La Salle Lipa",
+      "availability": "documented",
+      "availabilityNote": "DEMO connector, invented. Not real transport information.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "dir_test_demo_link_11_ab",
+      "serviceId": "service_test_demo_link_11",
+      "headsign": "Lipa public market",
+      "availability": "documented",
+      "availabilityNote": "DEMO connector, invented. Not real transport information.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "dir_test_demo_link_11_ba",
+      "serviceId": "service_test_demo_link_11",
+      "headsign": "Lipa van terminal (vans to San Pablo)",
+      "availability": "documented",
+      "availabilityNote": "DEMO connector, invented. Not real transport information.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "dir_test_demo_link_12_ab",
+      "serviceId": "service_test_demo_link_12",
+      "headsign": "San Pablo public market",
+      "availability": "documented",
+      "availabilityNote": "DEMO connector, invented. Not real transport information.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "dir_test_demo_link_12_ba",
+      "serviceId": "service_test_demo_link_12",
+      "headsign": "Puregold San Pablo",
+      "availability": "documented",
+      "availabilityNote": "DEMO connector, invented. Not real transport information.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
       }
     }
   ],
@@ -8539,6 +8786,186 @@
         "checkedAt": "2026-10-10T03:00:00+08:00",
         "reliability": "estimated"
       }
+    },
+    {
+      "directionId": "dir_test_demo_link_10_ab",
+      "sequence": 1,
+      "stopId": "stop_test_demo_link_10_a",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_10_ab",
+      "sequence": 2,
+      "stopId": "stop_test_demo_link_10_b",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_10_ba",
+      "sequence": 1,
+      "stopId": "stop_test_demo_link_10_b",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_10_ba",
+      "sequence": 2,
+      "stopId": "stop_test_demo_link_10_a",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_11_ab",
+      "sequence": 1,
+      "stopId": "stop_test_demo_link_11_a",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_11_ab",
+      "sequence": 2,
+      "stopId": "stop_test_demo_link_11_b",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_11_ba",
+      "sequence": 1,
+      "stopId": "stop_test_demo_link_11_b",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_11_ba",
+      "sequence": 2,
+      "stopId": "stop_test_demo_link_11_a",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_12_ab",
+      "sequence": 1,
+      "stopId": "stop_test_demo_link_12_a",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_12_ab",
+      "sequence": 2,
+      "stopId": "stop_test_demo_link_12_b",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_12_ba",
+      "sequence": 1,
+      "stopId": "stop_test_demo_link_12_b",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "directionId": "dir_test_demo_link_12_ba",
+      "sequence": 2,
+      "stopId": "stop_test_demo_link_12_a",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
     }
   ],
   "walkLinks": [
@@ -8861,6 +9288,295 @@
         ],
         "checkedAt": "2026-10-10T03:00:00+08:00",
         "reliability": "estimated"
+      }
+    },
+    {
+      "id": "walk_test_demo_link_01_ab",
+      "fromPlaceId": "place_lrt1_monumento",
+      "toPlaceId": "place_test_monumento",
+      "meters": 12,
+      "steps": [
+        "DEMO connector (invented): walk about 12 m to Monumento terminal."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_01_ba",
+      "fromPlaceId": "place_test_monumento",
+      "toPlaceId": "place_lrt1_monumento",
+      "meters": 12,
+      "steps": [
+        "DEMO connector (invented): walk about 12 m to Monumento Station."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_02_ab",
+      "fromPlaceId": "place_lipa_town_proper",
+      "toPlaceId": "place_test_lipa_palengke",
+      "meters": 17,
+      "steps": [
+        "DEMO connector (invented): walk about 17 m to Lipa public market."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_02_ba",
+      "fromPlaceId": "place_test_lipa_palengke",
+      "toPlaceId": "place_lipa_town_proper",
+      "meters": 17,
+      "steps": [
+        "DEMO connector (invented): walk about 17 m to Lipa town proper (jeep drop)."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_03_ab",
+      "fromPlaceId": "place_tiaong_intersection",
+      "toPlaceId": "place_test_tiaong",
+      "meters": 19,
+      "steps": [
+        "DEMO connector (invented): walk about 19 m to Tiaong terminal."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_03_ba",
+      "fromPlaceId": "place_test_tiaong",
+      "toPlaceId": "place_tiaong_intersection",
+      "meters": 19,
+      "steps": [
+        "DEMO connector (invented): walk about 19 m to Tiaong intersection."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_04_ab",
+      "fromPlaceId": "place_candelaria_town_proper",
+      "toPlaceId": "place_test_candelaria",
+      "meters": 25,
+      "steps": [
+        "DEMO connector (invented): walk about 25 m to Candelaria terminal."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_04_ba",
+      "fromPlaceId": "place_test_candelaria",
+      "toPlaceId": "place_candelaria_town_proper",
+      "meters": 25,
+      "steps": [
+        "DEMO connector (invented): walk about 25 m to Candelaria town proper (Mang Inasal stop)."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_05_ab",
+      "fromPlaceId": "place_pitx_terminal",
+      "toPlaceId": "place_test_pitx",
+      "meters": 124,
+      "steps": [
+        "DEMO connector (invented): walk about 124 m to PITX Parañaque terminal."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_05_ba",
+      "fromPlaceId": "place_test_pitx",
+      "toPlaceId": "place_pitx_terminal",
+      "meters": 124,
+      "steps": [
+        "DEMO connector (invented): walk about 124 m to PITX terminal."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_06_ab",
+      "fromPlaceId": "place_lipa_tiaong_terminal",
+      "toPlaceId": "place_test_lipa_terminal",
+      "meters": 135,
+      "steps": [
+        "DEMO connector (invented): walk about 135 m to Lipa City terminal."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_06_ba",
+      "fromPlaceId": "place_test_lipa_terminal",
+      "toPlaceId": "place_lipa_tiaong_terminal",
+      "meters": 135,
+      "steps": [
+        "DEMO connector (invented): walk about 135 m to Lipa terminal of the Tiaong jeep."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_07_ab",
+      "fromPlaceId": "place_lrt1_gil_puyat",
+      "toPlaceId": "place_pasay_mixue_gil_puyat",
+      "meters": 167,
+      "steps": [
+        "DEMO connector (invented): walk about 167 m to Mixue Gil Puyat (bus drop)."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_08_ab",
+      "fromPlaceId": "place_candelaria_town_proper",
+      "toPlaceId": "place_candelaria_hacienda_inn",
+      "meters": 167,
+      "steps": [
+        "DEMO connector (invented): walk about 167 m to Bus stop in front of Hacienda Inn."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_08_ba",
+      "fromPlaceId": "place_candelaria_hacienda_inn",
+      "toPlaceId": "place_candelaria_town_proper",
+      "meters": 167,
+      "steps": [
+        "DEMO connector (invented): walk about 167 m to Candelaria town proper (Mang Inasal stop)."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_09_ab",
+      "fromPlaceId": "place_manila_taft_dlsu",
+      "toPlaceId": "place_test_vito_cruz",
+      "meters": 278,
+      "steps": [
+        "DEMO connector (invented): walk about 278 m to Vito Cruz jeepney stop."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "walk_test_demo_link_09_ba",
+      "fromPlaceId": "place_test_vito_cruz",
+      "toPlaceId": "place_manila_taft_dlsu",
+      "meters": 278,
+      "steps": [
+        "DEMO connector (invented): walk about 278 m to Taft Avenue near DLSU (bus drop)."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
       }
     }
   ],
@@ -13300,6 +14016,48 @@
           "centavos": 2600
         }
       ]
+    },
+    {
+      "id": "fare_test_demo_link_10",
+      "serviceId": "service_test_demo_link_10",
+      "kind": "flat",
+      "flatCentavos": 1500,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "fare_test_demo_link_11",
+      "serviceId": "service_test_demo_link_11",
+      "kind": "flat",
+      "flatCentavos": 1500,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
+    },
+    {
+      "id": "fare_test_demo_link_12",
+      "serviceId": "service_test_demo_link_12",
+      "kind": "flat",
+      "flatCentavos": 1500,
+      "evidence": {
+        "sourceIds": [
+          "source_test_luzon_demo"
+        ],
+        "checkedAt": "2026-10-10T03:00:00+08:00",
+        "reliability": "estimated",
+        "note": "DEMO connector, invented to join the demo islands. Not real transport information."
+      }
     }
   ],
   "sources": [

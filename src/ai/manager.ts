@@ -3,7 +3,8 @@ import { AI_MESSAGES, fail, ok } from "./errors";
 import { buildCompletionRequest, interpretCompletion, validateExtractInput } from "./extract";
 import { EXPECTED_RUNTIME, INFERENCE_SETTINGS, type InferenceSettings } from "./modelManifest";
 import type { ModelStore } from "./modelStore";
-import type { CompletionOutcome, LlamaRuntime, LlamaSession } from "./runtime";
+import type { CompletionOutcome, CompletionRequest, LlamaRuntime, LlamaSession } from "./runtime";
+import { buildSummaryRequest, checkSummary, templateSummary, tripFacts, type TripSummary, type TripSummaryInput } from "./summary";
 
 /**
  * ModelState has no "installed but not loaded" phase in contract v1.0. Until a
@@ -23,6 +24,12 @@ export interface AiManager extends AiPort {
    * finished on their own. Held in memory by the caller; never persisted here.
    */
   observeCompletions(listener: (event: CompletionEvent) => void): () => void;
+  /**
+   * AI trip summary of one verified journey option (user-approved, 2026-10-10). Always resolves with a
+   * summary: the model's text only if it passes checkSummary, otherwise the deterministic template.
+   * Shares the single active completion, so it is cancelled by cancel(queryId) and by a newer query.
+   */
+  summarize(input: TripSummaryInput): Promise<Result<TripSummary>>;
 }
 
 export interface CompletionEvent {
@@ -267,21 +274,21 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
     return initPromise;
   }
 
-  async function extract(rawInput: ExtractInput): Promise<Result<Extraction>> {
-    const checked = validateExtractInput(rawInput, settings);
-    if (!checked.ok) return checked;
-    const input = checked.value;
-
+  /** One active completion with queryId correlation, cancel, timeout and awaited native stop. */
+  async function runCompletion(
+    queryId: string,
+    request: CompletionRequest,
+  ): Promise<Result<{ outcome: CompletionOutcome; elapsedMs: number }>> {
     const seq = ++requestSeq;
-    pendingQueryIds.add(input.queryId);
+    pendingQueryIds.add(queryId);
     try {
       // One active completion: a newer query stops the older one and waits for
       // native generation to settle before starting.
       while (active) await abortJob(active, "superseded");
       if (seq !== requestSeq) return fail("CANCELLED", "A newer query replaced this one.", true);
-      if (cancelledPending.delete(input.queryId)) return fail("CANCELLED", AI_MESSAGES.cancelled, true);
+      if (cancelledPending.delete(queryId)) return fail("CANCELLED", AI_MESSAGES.cancelled, true);
     } finally {
-      pendingQueryIds.delete(input.queryId);
+      pendingQueryIds.delete(queryId);
     }
 
     const current = session;
@@ -294,12 +301,12 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
     const startedAt = timers.now();
     let native: Promise<CompletionOutcome>;
     try {
-      native = current.complete(buildCompletionRequest(input, settings));
+      native = current.complete(request);
     } catch (e) {
       native = Promise.reject(e);
     }
     const job: Job = {
-      queryId: input.queryId,
+      queryId: queryId,
       session: current,
       abortReason: null,
       signalAbort,
@@ -349,15 +356,26 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
     if (winner.kind !== "done") return fail("CANCELLED", AI_MESSAGES.cancelled, true);
     warm = true;
     const elapsedMs = Math.max(0, Math.round(timers.now() - startedAt));
+    return ok({ outcome: winner.outcome, elapsedMs });
+  }
+
+  async function extract(rawInput: ExtractInput): Promise<Result<Extraction>> {
+    const checked = validateExtractInput(rawInput, settings);
+    if (!checked.ok) return checked;
+    const input = checked.value;
+
+    const completed = await runCompletion(input.queryId, buildCompletionRequest(input, settings));
+    if (!completed.ok) return completed;
+    const { outcome, elapsedMs } = completed.value;
     for (const observer of completionObservers) {
       try {
-        observer({ queryId: input.queryId, outcome: winner.outcome, elapsedMs });
+        observer({ queryId: input.queryId, outcome: outcome, elapsedMs });
       } catch {
         // Diagnostics must never affect extraction.
       }
     }
 
-    const intent = interpretCompletion(winner.outcome, input, settings.maxOutputTokens);
+    const intent = interpretCompletion(outcome, input, settings.maxOutputTokens);
     if (!intent.ok) return intent;
     return ok({
       intent: intent.value,
@@ -368,6 +386,26 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
         runtime: runtime.info.label,
       },
       elapsedMs,
+    });
+  }
+
+  async function summarize(input: TripSummaryInput): Promise<Result<TripSummary>> {
+    const facts = tripFacts(input.option, input.request);
+    const fallback = (reason: NonNullable<TripSummary["fallbackReason"]>): Result<TripSummary> =>
+      ok({ text: templateSummary(facts, input.language), source: "template", fallbackReason: reason });
+    if (state.phase !== "ready" || !session) return fallback("ai_not_ready");
+    const completed = await runCompletion(input.queryId, buildSummaryRequest(facts, input.language));
+    if (!completed.ok) {
+      if (completed.error.code === "CANCELLED") return completed;
+      return fallback(completed.error.code === "AI_NOT_READY" ? "ai_not_ready" : "ai_failed");
+    }
+    const text = checkSummary(completed.value.outcome, facts);
+    if (text === null) return fallback("check_failed");
+    return ok({
+      text,
+      source: "phone_ai",
+      engine: { modelId: manifest.id, modelRevision: manifest.revision, runtime: runtime.info.label },
+      elapsedMs: completed.value.elapsedMs,
     });
   }
 
@@ -420,6 +458,7 @@ export function createAiManager(deps: AiManagerDeps): AiManager {
     ensureModel,
     initialize,
     extract,
+    summarize,
     cancel,
     release,
     subscribe,

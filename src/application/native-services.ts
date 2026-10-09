@@ -3,6 +3,7 @@ import { SqlTransitRepository } from "../storage/transit-repository";
 import { createRoutePort } from "../routing/routePort";
 import { createPhoneAi } from "../ai/phone";
 import { BUNDLED_TRANSIT_PACK } from "./bundled-pack";
+import { APP_LIMITS } from "./config";
 import { createApplicationServices, type ApplicationServices } from "./services";
 
 // Only real adapters enter the native composition root. No test pack or canned
@@ -16,7 +17,7 @@ export function createNativeApplication(): ApplicationServices {
     const { DEMO_TRANSIT_PACK } = require("./demo-pack") as typeof import("./demo-pack");
     return createApplicationServices({
       repository: new SqlTransitRepository(() => openNativeSqlDriver("alalaybyahe-demo.db"), { allowTestFixtures: true }),
-      routes: createRoutePort(),
+      routes: createRoutePort({ labelLimit: APP_LIMITS.demoRoutingLabelLimit }),
       ai: createPhoneAi(),
       bundledPack: DEMO_TRANSIT_PACK,
       allowTestFixtures: true,
@@ -24,7 +25,7 @@ export function createNativeApplication(): ApplicationServices {
   }
   return createApplicationServices({
     repository: new SqlTransitRepository(openNativeSqlDriver),
-    routes: createRoutePort(),
+    routes: createRoutePort({ labelLimit: APP_LIMITS.routingLabelLimit }),
     ai: createPhoneAi(),
     bundledPack: BUNDLED_TRANSIT_PACK,
   });

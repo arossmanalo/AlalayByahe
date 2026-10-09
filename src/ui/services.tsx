@@ -25,6 +25,8 @@ import type {
 } from "../contracts";
 import { supersededError } from "./error-logic";
 import { MAX_QUERY_CHARS, newQueryId } from "./form-logic";
+import type { TripSummary, TripSummaryInput } from "../ai/summary";
+import { selectPlaceHints } from "./place-hints";
 import { strings, type Strings, type UiLanguage } from "./i18n";
 import type { DropoffWatcherFactory, LocationWatchPort } from "./dropoff-alert";
 
@@ -42,6 +44,8 @@ export interface UiServices {
   onlineHelpersEnabled: boolean;
   /** Optional native setup control supplied by Member 4; canonical AiPort is unchanged. */
   cancelModelSetup?: () => void;
+  /** AI trip summary of a verified option, same for chat and manual trips (src/ai/summary.ts). */
+  summarizeTrip?: (input: TripSummaryInput) => Promise<Result<TripSummary>>;
   /** ALERT-003: foreground phone location for the near-stop alert (wired by Member 4). */
   location?: LocationWatchPort;
   /** ALERT-003: Member 2's createDropoffWatcher (wired by Member 4 once ALERT-001 merges). */
@@ -178,15 +182,9 @@ export function UiProvider({
     setSession((s) => ({ ...s, queryText }));
   }, []);
 
-  const knownPlaceLabels = useMemo(() => {
-    if (pack.status !== "loaded" || !pack.result.ok) return [];
-    const labels: string[] = [];
-    for (const place of pack.result.value.places) {
-      if (!labels.includes(place.name)) labels.push(place.name);
-      if (labels.length === KNOWN_PLACE_LABEL_LIMIT) break;
-    }
-    return labels;
-  }, [pack]);
+  // Spelling hints for the model: the stored places this request's words mention, so every stored place
+  // is treated alike (src/ui/place-hints.ts). The first-30-in-pack-order list biased the model.
+  const storedPlaces = useMemo(() => (pack.status === "loaded" && pack.result.ok ? pack.result.value.places : []), [pack]);
 
   const interpret = useCallback(
     async (text: string): Promise<Result<JourneyDraft>> => {
@@ -201,7 +199,7 @@ export function UiProvider({
         queryId,
         text,
         locale: "taglish",
-        knownPlaceLabels,
+        knownPlaceLabels: selectPlaceHints(text, storedPlaces, KNOWN_PLACE_LABEL_LIMIT),
       });
       if (activeQueryId.current !== queryId) return supersededError();
       activeQueryId.current = null;
@@ -213,7 +211,7 @@ export function UiProvider({
       }));
       return result;
     },
-    [services, knownPlaceLabels],
+    [services, storedPlaces],
   );
 
   const startManual = useCallback(() => {

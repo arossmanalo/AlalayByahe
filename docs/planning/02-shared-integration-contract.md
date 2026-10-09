@@ -426,6 +426,10 @@ Canonical RawIntent JSON Schema (use the same object for grammar and validation)
 
 llama.rn0.12.9 invocation uses `response_format: { type: "json_schema", json_schema: { schema: extractionSchema } }`. Completion returns string fields, not parsed RawIntent. JSON.parse, structural validation, truncation/context/interruption checks, then semantic validation. Schema grammar can enforce syntax, **not correct place roles or understanding**. Do not display model-generated travel instructions or peso amounts.
 
+**Amendment (approved by the user, Member 4, 2026-10-10): AI trip summary.** One exception is allowed. For a journey option the deterministic engine has already produced, the on-device model may write a short summary (`AiManager.summarize`, `src/ai/summary.ts`). It receives only that option's facts; its text is shown only if it passes `checkSummary` (no number, fare, time, speed or "live" claim that is not in the facts; the first boarding stop and the final stop named in order) and is otherwise replaced by a deterministic template, labelled as such. It is labelled "Written by AI on this phone … from the verified route below", it never replaces the numbered steps, and the same option gives the same request (temperature 0, fixed seed) whether the trip was typed or picked manually. The canonical `AiPort` and all v1.0 types are unchanged; the capability is an optional `AiManager`/`UiServices` extension.
+
+**Place hints (2026-10-10).** `knownPlaceLabels` is chosen from the stored places the request text mentions (`src/ui/place-hints.ts`), at most 30, empty when none match; never the first 30 places in pack order.
+
 Example desired extraction (illustration, not an executed inference):
 ```json
 {

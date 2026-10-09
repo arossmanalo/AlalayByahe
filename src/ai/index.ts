@@ -6,5 +6,6 @@ export { extractionSchema } from "./extractionSchema";
 export { checkIntentAgainstQuery, validateRawIntent } from "./validateIntent";
 export { EXPECTED_RUNTIME, INFERENCE_SETTINGS, PRIMARY_MODEL, UPGRADE_CANDIDATE_MODEL } from "./modelManifest";
 export { runCorpus, scoreCase, summarize, type CorpusCase } from "./evaluation";
+export { buildSummaryRequest, checkSummary, templateSummary, tripFacts, type TripSummary, type TripSummaryInput } from "./summary";
 export { runNativeProbe, type NativeProbeReport } from "./nativeProbe";
 export type { LlamaRuntime, LlamaSession } from "./runtime";

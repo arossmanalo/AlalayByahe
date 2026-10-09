@@ -21,6 +21,7 @@ export function NativeUiBridge({ children }: PropsWithChildren) {
     repository: services.repository, modelManifest: MODEL_MANIFEST,
     onlineHelpersEnabled: APP_LIMITS.enableOnlineHelpers,
     cancelModelSetup: services.cancelModelSetup,
+    summarizeTrip: services.summarizeTrip,
     // ALERT-003: foreground-only near-stop alert (docs/evidence/dropoff-alert-ui.md).
     location: createExpoLocationWatch(),
     createDropoffWatcher,

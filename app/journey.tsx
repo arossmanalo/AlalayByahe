@@ -8,6 +8,7 @@ import { FareSummary, LegSequence } from "../src/ui/journey-card";
 import { optionIssues } from "../src/ui/journey-presenter";
 import { JourneySteps, RouteDiagram } from "../src/ui/journey-steps";
 import { useJourneySession, useUi } from "../src/ui/services";
+import { TripSummaryCard } from "../src/ui/trip-summary";
 
 export default function JourneyScreen() {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function JourneyScreen() {
       ) : null}
       <LegSequence option={option} />
       <FareSummary option={option} />
+      <TripSummaryCard option={option} request={session.request} />
 
       <Notice tone="warning" title={t.checkDirection}>
         <Body>{t.confirmServiceFare}</Body>

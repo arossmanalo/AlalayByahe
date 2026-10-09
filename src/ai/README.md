@@ -139,3 +139,8 @@ Before INT-001 these were run from tooling installed outside the repo, so no rep
 - expo `DownloadTask` behavior with Hugging Face's redirecting `resolve` URL, HTTP error statuses and backgrounding.
 - @noble/hashes speed on Hermes for 491 MB (hash time is recorded in the probe report).
 - Accuracy and latency of the 26-case corpus on real phones (AI-005); offline cold-launch proof (AI-006).
+
+## Trip summary and place hints (2026-10-10, Member 4 integration change)
+
+- `summary.ts` + `AiManager.summarize`: user-approved exception to "no model-written travel text" (contract §4 amendment). The model writes a short summary of one verified option from its facts only; `checkSummary` rejects any number, fare, time, speed or "live" claim not in the facts, or stops out of order, and the deterministic `templateSummary` is shown instead. It shares the single active completion (cancel, timeout, supersede) through the new internal `runCompletion`, which `extract` also uses; extraction behaviour is unchanged (all lifecycle tests pass). Tests: `tests/ai/summary.test.ts` (fake runtime). Phone quality and speed: Not Run.
+- Place hints are no longer the first 30 places of the pack: `src/ui/place-hints.ts` sends the stored places the request mentions (typo-tolerant), so every demo place is treated alike.

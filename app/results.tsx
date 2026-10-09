@@ -10,6 +10,7 @@ import { JourneyCard } from "../src/ui/journey-card";
 import { coverageSummary, partitionOptions } from "../src/ui/journey-presenter";
 import { CoverageList } from "../src/ui/readiness";
 import { useJourneySession, useReadiness, useUi } from "../src/ui/services";
+import { TripSummaryCard } from "../src/ui/trip-summary";
 
 export default function ResultsScreen() {
   const router = useRouter();
@@ -71,14 +72,17 @@ export default function ResultsScreen() {
             actions={<AppButton label={t.editJourney} onPress={edit} />}
           />
         ) : (
-          shown.map((option, i) => (
+          <>
+            <TripSummaryCard option={shown[0]!} request={request} />
+            {shown.map((option, i) => (
             <JourneyCard
               key={option.id}
               option={option}
               index={i}
               onOpen={() => router.push({ pathname: "/journey", params: { optionId: option.id } })}
             />
-          ))
+            ))}
+          </>
         )}
         {shown.length > 0 && hiddenIncomplete > 0 ? (
           <Notice tone="warning" title={t.incompleteHidden(hiddenIncomplete)} />

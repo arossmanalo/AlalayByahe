@@ -7,5 +7,8 @@ export const APP_LIMITS = Object.freeze({
   inferenceTimeoutMs: INFERENCE_SETTINGS.warmTimeoutMs,
   controllerTimeoutMs: INFERENCE_SETTINGS.coldTimeoutMs + INFERENCE_SETTINGS.stopSettleTimeoutMs,
   routingLabelLimit: 10_000,
+  // DEMO BUILD ONLY: the joined demo network needs a larger computation guard so every pair of demo
+  // places finishes (measured: 50,000 labels, slowest pair about 21 ms on a laptop). Release keeps 10,000.
+  demoRoutingLabelLimit: 50_000,
   enableOnlineHelpers: false,
 });

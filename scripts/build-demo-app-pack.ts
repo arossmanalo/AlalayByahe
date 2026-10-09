@@ -2,6 +2,7 @@ import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 import { dirname } from "node:path";
 import type { TransitPack } from "../src/contracts/index";
 import { normalizeAlias } from "../src/data/normalize";
+import { connectIslands, unreachablePairs } from "./demo-connectors";
 
 /**
  * Builds assets/demo/demo-pack.json, the pack loaded by a DEMO BUILD only
@@ -64,11 +65,12 @@ for (const key of ["places", "stops", "services", "directions", "walkLinks", "fa
 const pack: TransitPack = {
   schemaVersion: "1.0",
   packId: "pack_test_demo_luzon_roads",
-  version: "test_fixture_demo_2026_10_10_2",
+  version: "test_fixture_demo_2026_10_10_3",
   kind: "test_fixture",
   createdAt: luzon.createdAt,
   coverageLabels: [
     "Demonstration network: only the 25 LRT-1 stations and their official LRMC fares are verified. Other routes are samples, not real transport information.",
+    "Demo connectors (invented) join every demo place so any pair has a sample journey. They are not real services.",
   ],
   places: [...roadPlaces, ...luzonPlaces],
   stops: [...roads.stops, ...luzon.stops],
@@ -80,6 +82,11 @@ const pack: TransitPack = {
   sources: [...roads.sources, ...luzon.sources],
 };
 
+// Join the islands so every pair of demo places has a sample journey, then prove it before writing.
+const connected = connectIslands(pack, luzon.sources[0]!.id);
+const missing = unreachablePairs(connected);
+if (missing.length) throw new Error(`${missing.length} demo place pairs still have no journey, e.g. ${missing.slice(0, 5).join("; ")}`);
+
 mkdirSync(dirname("assets/demo/demo-pack.json"), { recursive: true });
-writeFileSync("assets/demo/demo-pack.json", JSON.stringify(pack, null, 2) + "\n");
-console.log(`Wrote assets/demo/demo-pack.json: ${pack.places.length} places, ${pack.services.length} services, ${pack.walkLinks.length} walks.`);
+writeFileSync("assets/demo/demo-pack.json", JSON.stringify(connected, null, 2) + "\n");
+console.log(`Wrote assets/demo/demo-pack.json: ${connected.places.length} places, ${connected.services.length} services, ${connected.walkLinks.length} walks; all ${connected.places.length * (connected.places.length - 1)} ordered place pairs plan.`);

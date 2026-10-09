@@ -76,6 +76,17 @@ const en = {
   modelInitializing: "Starting the model on this phone…",
   modelReady: (id: string) => `Ready (${id}).`,
   engineLabel: { phone_local: "Read by AI on this phone", laptop_local: "Read by AI on a laptop, not on this phone" } as Record<"phone_local" | "laptop_local", string>,
+
+  // Trip summary (AI written from the verified route, or the route data when AI is not used)
+  summaryHeading: "Trip summary",
+  summaryWriting: "Writing a summary on this phone…",
+  summaryByAi: (model: string) => `Written by AI on this phone (${model}) from the verified route below. Check the steps before you travel.`,
+  summaryFromData: "Summary from the route data. The AI was not used for this text.",
+  summaryFallback: {
+    ai_not_ready: "Local AI is not ready.",
+    ai_failed: "The AI could not write a summary.",
+    check_failed: "The AI's text did not match the verified route, so it is not shown.",
+  } as Record<"ai_not_ready" | "ai_failed" | "check_failed", string>,
   modelDetails: (id: string, revision: string, license: string) =>
     `Model ${id}, revision ${revision.slice(0, 12)}, license ${license}`,
   dataSection: "Transit data",
@@ -415,6 +426,16 @@ const fil: Strings = {
   modelInitializing: "Sinisimulan ang model sa phone na ito…",
   modelReady: (id) => `Handa na (${id}).`,
   engineLabel: { phone_local: "Binasa ng AI sa phone na ito", laptop_local: "Binasa ng AI sa laptop, hindi sa phone na ito" },
+
+  summaryHeading: "Buod ng biyahe",
+  summaryWriting: "Isinusulat ang buod sa phone na ito…",
+  summaryByAi: (model) => `Isinulat ng AI sa phone na ito (${model}) mula sa beripikadong ruta sa ibaba. Suriin ang mga hakbang bago bumiyahe.`,
+  summaryFromData: "Buod mula sa datos ng ruta. Hindi ginamit ang AI sa tekstong ito.",
+  summaryFallback: {
+    ai_not_ready: "Hindi pa handa ang local AI.",
+    ai_failed: "Hindi nakasulat ng buod ang AI.",
+    check_failed: "Hindi tugma sa beripikadong ruta ang teksto ng AI, kaya hindi ito ipinakita.",
+  },
   modelDetails: (id, revision, license) =>
     `Model ${id}, revision ${revision.slice(0, 12)}, lisensya ${license}`,
   dataSection: "Transit data",

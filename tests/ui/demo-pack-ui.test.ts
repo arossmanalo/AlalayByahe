@@ -89,8 +89,9 @@ describe("demo pack through the UI presenters (UI-006 demo build)", () => {
 
   it("About and Supported coverage state that only LRT-1 is verified and the rest is a demonstration network", () => {
     const coverage = coverageSummary(pack.coverageLabels, []);
-    assert.equal(coverage.labels.length, 1);
+    assert.equal(coverage.labels.length, 2);
     assert.match(coverage.labels[0]!, /^Demonstration network: only the 25 LRT-1 stations and their official LRMC fares are verified\. Other routes are samples, not real transport information\.$/);
+    assert.match(coverage.labels[1]!, /^Demo connectors \(invented\) join every demo place/);
   });
 
   it("search finds Baguio, Legazpi and Laoag, each as one stored demo place", async () => {
@@ -113,7 +114,8 @@ describe("demo pack through the UI presenters (UI-006 demo build)", () => {
 
   it("the three-jeepney Lipa to Candelaria road draft: reached by De La Salle and Mang Inasal, estimated total", async () => {
     const { shown } = await plan("De La Salle", "Mang Inasal");
-    assert.equal(shown.length, 1);
+    // The road draft is still the first option; invented demo connectors may add sample alternatives after it.
+    assert.ok(shown.length >= 1);
     const option = shown[0]!;
     assert.deepEqual(legSequence(option), ["jeepney", "walk", "jeepney", "jeepney"]);
     assert.equal(option.transfers, 2);

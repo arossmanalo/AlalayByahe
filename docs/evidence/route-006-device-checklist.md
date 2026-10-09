@@ -37,7 +37,7 @@ Every screen must show the banner "This transit data is a test fixture, not real
 | B-06 | Laoag to Legazpi | Three buses (Laoag to Cubao, Cubao to PITX, PITX to Legazpi), 2 transfers, **₱1,662.00** | Not Run |
 | B-07 | Lipa to Baguio | Bus to PITX, EDSA Carousel to Cubao, bus to Baguio, 2 transfers, **₱639.00** | Not Run |
 | B-08 | Candelaria to Vito Cruz hub (demo place) | A partial total: "Known subtotal ... not the full total" with one unknown ride fare | Not Run |
-| B-09 | A reverse of a road draft, for example Candelaria town proper back to the McDonald's stop | "No verified complete journey available" (return trips are not in the data) | Not Run |
+| B-09 | A reverse of a road draft, for example Candelaria town proper back to the McDonald's stop | A journey is shown (since demo pack `_3`, invented "DEMO connector" links make every demo pair plannable); the connector legs are named "DEMO connector (invented)" and their fares are estimated samples | Not Run |
 
 B-06 to B-08 use the invented Luzon network and its invented fares.
 

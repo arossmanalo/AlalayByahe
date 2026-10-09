@@ -2,6 +2,7 @@ import type { AiPort, GeoPort, Result, RoutePort, TransitRepository } from "../c
 import { createJourneyController, type ManagedJourneyController } from "./controller";
 import { disabledGeo, unavailableAi, unavailableRoutes } from "./unavailable-ports";
 import { validateTransitPack } from "../contracts/validators";
+import type { TripSummary, TripSummaryInput } from "../ai/summary";
 
 export interface ApplicationServices {
   ai: AiPort;
@@ -11,6 +12,8 @@ export interface ApplicationServices {
   initialize(): Promise<{ data: Result<void>; ai: Result<void> }>;
   close(): Promise<void>;
   cancelModelSetup?: () => void;
+  /** AI trip summary of a verified option (AiManager extension; canonical AiPort unchanged). */
+  summarizeTrip?: (input: TripSummaryInput) => Promise<Result<TripSummary>>;
 }
 export function createApplicationServices(input: {
   repository: TransitRepository; ai?: AiPort; routes?: RoutePort; geo?: GeoPort; bundledPack?: unknown;
@@ -18,7 +21,10 @@ export function createApplicationServices(input: {
   allowTestFixtures?: boolean;
 }): ApplicationServices {
   const ai = input.ai ?? unavailableAi();
-  const setupControl = ai as AiPort & { cancelModelSetup?: () => void };
+  const setupControl = ai as AiPort & {
+    cancelModelSetup?: () => void;
+    summarize?: (input: TripSummaryInput) => Promise<Result<TripSummary>>;
+  };
   const routes = input.routes ?? unavailableRoutes();
   const controller = createJourneyController({ ai, routes, repository: input.repository },
     { allowTestFixtures: input.allowTestFixtures ?? false });
@@ -31,6 +37,7 @@ export function createApplicationServices(input: {
   return {
     ai, repository: input.repository, controller, geo: input.geo ?? disabledGeo(),
     cancelModelSetup: setupControl.cancelModelSetup ? () => setupControl.cancelModelSetup!() : undefined,
+    summarizeTrip: setupControl.summarize ? (summaryInput) => setupControl.summarize!(summaryInput) : undefined,
     initialize: () => sequence(async () => {
       const data = await input.repository.initialize();
       let pack = data.ok ? await input.repository.getPack() : data;

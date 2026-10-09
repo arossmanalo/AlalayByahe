@@ -92,3 +92,11 @@ Showcase trips on the demo pack (default preferences; fares are estimated sample
 | EDSA Station | Vito Cruz Station | LRT-1; P20.00 (real, verified) |
 
 Regenerate in order: `npx tsx scripts/build-road-draft.ts`, `npx tsx scripts/build-luzon-demo.ts`, `npx tsx scripts/build-demo-app-pack.ts`. The release APK and the frozen pack are unchanged; `check-bundle-clean.ts --expect release` still looks for `pack_test_demo_luzon_roads`, "Baguio City terminal" and `alalaybyahe-demo.db`.
+
+## Demo connectors: every pair of demo places has a journey (2026-10-10)
+
+Request from the user: any combination of demo places must work. Measured before the change: 81 places, 6,480 ordered pairs, only **2,694** planned; the rest were `NO_VERIFIED_JOURNEY` because the pack was three islands that never touched (real LRT-1, the one-way road drafts, the invented Luzon network).
+
+`scripts/demo-connectors.ts` (called by `scripts/build-demo-app-pack.ts`) finds the islands and joins them, nearest pair of places first, with a two-way link: a walk when the gap is at most 350 m (so it fits the default 500 m transfer limit), otherwise a two-stop connector line. Of the 12 joins, 9 are walks between places that are in practice the same spot (for example Monumento LRT-1 and the Luzon Monumento stop, the two Candelaria stops, PITX) and 3 are connector lines. Every connector is named "DEMO connector (invented)", has estimated evidence and a sample flat fare, and is only in the demo pack. The demo pack is now version `test_fixture_demo_2026_10_10_3` with a second coverage label saying the connectors are invented.
+
+The joined network needs a larger computation guard for some long trips, so the demo build uses `APP_LIMITS.demoRoutingLabelLimit` = 50,000 labels (the release build keeps 10,000). With it, **all 6,480 ordered pairs plan**; the build script refuses to write the pack otherwise. The slowest pair took about 21 ms on a laptop; phone timing is Not Run. `tests/routing/demo-connectivity.test.ts` re-checks a spread of pairs and the pairs that used to fail. A road draft that already worked is still the first option (for example De La Salle Lipa to Mang Inasal: three jeepneys, PHP 104.00); connectors only add alternatives where none existed.
