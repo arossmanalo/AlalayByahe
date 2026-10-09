@@ -1,0 +1,1133 @@
+{
+  "schemaVersion": "1.0",
+  "packId": "pack_test_fixture",
+  "version": "test_fixture_1",
+  "kind": "test_fixture",
+  "createdAt": "2026-10-09T21:00:00+08:00",
+  "coverageLabels": [
+    "TEST ONLY synthetic graph; no real coverage"
+  ],
+  "sources": [
+    {
+      "id": "source_test_fixture",
+      "title": "TEST ONLY synthetic fixture",
+      "publisher": "AlalayByahe unit tests",
+      "retrievedAt": "2026-10-09T21:00:00+08:00",
+      "usageBasis": "Synthetic unit-test data. Not transport evidence. Release-prohibited.",
+      "factsSupported": [
+        "Graph shape for automated tests only"
+      ],
+      "checkedBy": "Member 2 test author"
+    }
+  ],
+  "places": [
+    {
+      "id": "place_test_a",
+      "name": "TEST ONLY Origin A",
+      "aliases": [
+        "test origin"
+      ],
+      "kind": "landmark",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_board",
+      "name": "TEST ONLY Board Point",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.0009
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_mid",
+      "name": "TEST ONLY Midway",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.01
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_alight",
+      "name": "TEST ONLY Alight Point",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.02
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_b",
+      "name": "TEST ONLY Destination B",
+      "aliases": [
+        "test destination"
+      ],
+      "kind": "landmark",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.0209
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_xfer",
+      "name": "TEST ONLY Transfer Point",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.02
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_dest_stop",
+      "name": "TEST ONLY Second Ride Drop",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.04
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_c",
+      "name": "TEST ONLY Destination C",
+      "aliases": [],
+      "kind": "landmark",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.0409
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_trike_stand",
+      "name": "TEST ONLY Tricycle Stand",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.0209
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_trike_drop",
+      "name": "TEST ONLY Tricycle Drop",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.023
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_lrt_1",
+      "name": "TEST ONLY LRT One",
+      "aliases": [],
+      "kind": "station",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.05
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_lrt_2",
+      "name": "TEST ONLY LRT Two",
+      "aliases": [],
+      "kind": "station",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.06
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "place_test_lrt_3",
+      "name": "TEST ONLY LRT Three",
+      "aliases": [],
+      "kind": "station",
+      "locality": "TEST ONLY Locality",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.07
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    }
+  ],
+  "stops": [
+    {
+      "id": "stop_test_board",
+      "placeId": "place_test_board",
+      "label": "TEST ONLY Board",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.0009
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_mid",
+      "placeId": "place_test_mid",
+      "label": "TEST ONLY Midway",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.01
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_alight",
+      "placeId": "place_test_alight",
+      "label": "TEST ONLY Alight",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.02
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_xfer",
+      "placeId": "place_test_xfer",
+      "label": "TEST ONLY Transfer",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.02
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_dest_drop",
+      "placeId": "place_test_dest_stop",
+      "label": "TEST ONLY Second Ride Drop",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.04
+      },
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_trike_stand",
+      "placeId": "place_test_trike_stand",
+      "label": "TEST ONLY Tricycle Stand",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.0209
+      },
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_trike_drop",
+      "placeId": "place_test_trike_drop",
+      "label": "TEST ONLY Tricycle Drop",
+      "point": {
+        "latitude": 0.0009,
+        "longitude": 0.023
+      },
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_lrt_1",
+      "placeId": "place_test_lrt_1",
+      "label": "TEST ONLY LRT One",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.05
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_lrt_2",
+      "placeId": "place_test_lrt_2",
+      "label": "TEST ONLY LRT Two",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.06
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "stop_test_lrt_3",
+      "placeId": "place_test_lrt_3",
+      "label": "TEST ONLY LRT Three",
+      "point": {
+        "latitude": 0,
+        "longitude": 0.07
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    }
+  ],
+  "services": [
+    {
+      "id": "service_test_001",
+      "name": "TEST ONLY Bus 001",
+      "mode": "bus",
+      "signboardAliases": [
+        "TEST 001"
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "service_test_002",
+      "name": "TEST ONLY Jeepney 002",
+      "mode": "jeepney",
+      "signboardAliases": [
+        "TEST 002"
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "service_test_003",
+      "name": "TEST ONLY Tricycle 003",
+      "mode": "tricycle",
+      "signboardAliases": [],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "service_test_004",
+      "name": "TEST ONLY LRT 004",
+      "mode": "lrt",
+      "signboardAliases": [],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "service_test_005",
+      "name": "TEST ONLY Van 005",
+      "mode": "van",
+      "signboardAliases": [
+        "TEST 005"
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    }
+  ],
+  "directions": [
+    {
+      "id": "dir_test_001",
+      "serviceId": "service_test_001",
+      "headsign": "TEST ONLY Eastbound",
+      "availability": "documented",
+      "availabilityNote": "TEST ONLY documented in synthetic fixture; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "dir_test_002",
+      "serviceId": "service_test_001",
+      "headsign": "TEST ONLY Westbound",
+      "availability": "documented",
+      "availabilityNote": "TEST ONLY documented in synthetic fixture; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "dir_test_003",
+      "serviceId": "service_test_002",
+      "headsign": "TEST ONLY Second Ride Eastbound",
+      "availability": "documented",
+      "availabilityNote": "TEST ONLY documented in synthetic fixture; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "dir_test_004",
+      "serviceId": "service_test_003",
+      "headsign": "TEST ONLY Stand to Drop",
+      "availability": "documented",
+      "availabilityNote": "TEST ONLY documented in synthetic fixture; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "dir_test_005",
+      "serviceId": "service_test_004",
+      "headsign": "TEST ONLY LRT Eastbound",
+      "availability": "documented",
+      "availabilityNote": "TEST ONLY documented in synthetic fixture; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "dir_test_006",
+      "serviceId": "service_test_005",
+      "headsign": "TEST ONLY Van Eastbound",
+      "availability": "documented",
+      "availabilityNote": "TEST ONLY documented in synthetic fixture; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "dir_test_007",
+      "serviceId": "service_test_005",
+      "headsign": "TEST ONLY Van Westbound",
+      "availability": "suspended",
+      "availabilityNote": "TEST ONLY suspended in synthetic fixture.",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    }
+  ],
+  "routeStops": [
+    {
+      "directionId": "dir_test_001",
+      "sequence": 1,
+      "stopId": "stop_test_board",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_001",
+      "sequence": 2,
+      "stopId": "stop_test_mid",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_001",
+      "sequence": 3,
+      "stopId": "stop_test_alight",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_002",
+      "sequence": 1,
+      "stopId": "stop_test_alight",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_002",
+      "sequence": 2,
+      "stopId": "stop_test_mid",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_002",
+      "sequence": 3,
+      "stopId": "stop_test_board",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_003",
+      "sequence": 1,
+      "stopId": "stop_test_xfer",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_003",
+      "sequence": 2,
+      "stopId": "stop_test_dest_drop",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_004",
+      "sequence": 1,
+      "stopId": "stop_test_trike_stand",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_004",
+      "sequence": 2,
+      "stopId": "stop_test_trike_drop",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_005",
+      "sequence": 1,
+      "stopId": "stop_test_lrt_1",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_005",
+      "sequence": 2,
+      "stopId": "stop_test_lrt_2",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_005",
+      "sequence": 3,
+      "stopId": "stop_test_lrt_3",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_006",
+      "sequence": 1,
+      "stopId": "stop_test_board",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_006",
+      "sequence": 2,
+      "stopId": "stop_test_alight",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_007",
+      "sequence": 1,
+      "stopId": "stop_test_alight",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "directionId": "dir_test_007",
+      "sequence": 2,
+      "stopId": "stop_test_board",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    }
+  ],
+  "walkLinks": [
+    {
+      "id": "walk_test_access",
+      "fromPlaceId": "place_test_a",
+      "toPlaceId": "place_test_board",
+      "meters": 100,
+      "steps": [
+        "TEST ONLY Walk east to the board point."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "walk_test_egress",
+      "fromPlaceId": "place_test_alight",
+      "toPlaceId": "place_test_b",
+      "meters": 100,
+      "steps": [
+        "TEST ONLY Walk east to destination B."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "walk_test_transfer",
+      "fromPlaceId": "place_test_alight",
+      "toPlaceId": "place_test_xfer",
+      "meters": 150,
+      "steps": [
+        "TEST ONLY Walk north to the transfer point."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "walk_test_egress2",
+      "fromPlaceId": "place_test_dest_stop",
+      "toPlaceId": "place_test_c",
+      "meters": 100,
+      "steps": [
+        "TEST ONLY Walk east to destination C."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "walk_test_to_trike",
+      "fromPlaceId": "place_test_b",
+      "toPlaceId": "place_test_trike_stand",
+      "meters": 120,
+      "steps": [
+        "TEST ONLY Walk north to the tricycle stand."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "walk_test_to_lrt",
+      "fromPlaceId": "place_test_c",
+      "toPlaceId": "place_test_lrt_1",
+      "meters": 1200,
+      "steps": [
+        "TEST ONLY Walk southeast to the LRT entrance."
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    }
+  ],
+  "fares": [
+    {
+      "id": "fare_test_001",
+      "serviceId": "service_test_001",
+      "kind": "unknown",
+      "evidence": {
+        "sourceIds": [],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "unknown",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      }
+    },
+    {
+      "id": "fare_test_002",
+      "serviceId": "service_test_002",
+      "kind": "distance",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      },
+      "validFrom": "2026-01-01",
+      "validTo": "2026-12-31",
+      "distanceRule": {
+        "baseCentavos": 1300,
+        "includedMeters": 4000,
+        "incrementMeters": 1000,
+        "incrementCentavos": 180,
+        "verifiedSegmentMeters": [
+          {
+            "directionId": "dir_test_003",
+            "fromStopId": "stop_test_xfer",
+            "toStopId": "stop_test_dest_drop",
+            "meters": 2200
+          }
+        ]
+      },
+      "discountRules": [
+        {
+          "passenger": "student",
+          "numerator": 4,
+          "denominator": 5,
+          "rounding": "nearest",
+          "evidence": {
+            "sourceIds": [
+              "source_test_fixture"
+            ],
+            "checkedAt": "2026-10-09T21:00:00+08:00",
+            "reliability": "verified",
+            "note": "Synthetic unit-test evidence only; prohibited in release."
+          }
+        }
+      ]
+    },
+    {
+      "id": "fare_test_003",
+      "serviceId": "service_test_003",
+      "kind": "flat",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      },
+      "flatRange": {
+        "minCentavos": 1500,
+        "maxCentavos": 2500
+      }
+    },
+    {
+      "id": "fare_test_004",
+      "serviceId": "service_test_004",
+      "kind": "matrix",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "verified",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      },
+      "matrix": [
+        {
+          "fromStopId": "stop_test_lrt_1",
+          "toStopId": "stop_test_lrt_2",
+          "centavos": 1300
+        },
+        {
+          "fromStopId": "stop_test_lrt_1",
+          "toStopId": "stop_test_lrt_3",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_test_lrt_2",
+          "toStopId": "stop_test_lrt_3",
+          "centavos": 1300
+        }
+      ]
+    },
+    {
+      "id": "fare_test_005",
+      "serviceId": "service_test_005",
+      "kind": "flat",
+      "evidence": {
+        "sourceIds": [
+          "source_test_fixture"
+        ],
+        "checkedAt": "2026-10-09T21:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Synthetic unit-test evidence only; prohibited in release."
+      },
+      "flatCentavos": 6000
+    }
+  ]
+}

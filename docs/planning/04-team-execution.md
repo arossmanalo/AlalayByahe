@@ -89,7 +89,7 @@ All statuses currently **Not Started**. At a 9:30 PM implementation start, four 
 | AI-006 | Member 1 | Prove offline AI and hand off | P0 | AI-004, INT-003, INT-005, ROUTE-006. | Not Started | 45–60 min | M4 |
 | AI-101 | Member 1 | Prototype local signboard OCR only after P0 | P1 | All P0 integrated and tested; Member 4 approval before feature freeze. | Not Started | 2–4h; outside baseline, likely cut | Optional |
 | ROUTE-001 | Member 2 | Establish corridor evidence and source register | P0 | None; start parallel with native gate. | Not Started | 120 min first pass; continue only useful verification | M1 |
-| ROUTE-002 | Member 2 | Build and validate separate release/test packs | P0 | ROUTE-001 for release evidence; INT-001 schema; INT-002 import collaboration. | Not Started | 60–90 min plus verification gaps | M2 |
+| ROUTE-002 | Member 2 | Build and validate separate release/test packs | P0 | ROUTE-001 for release evidence; INT-001 schema; INT-002 import collaboration. | In Progress: validator, release gate and synthetic fixture pack Ready for Integration on `feat/routes/route-002` (117 pure tests pass); release pack Blocked on ROUTE-001, see `docs/evidence/pack-status.md` | 60–90 min plus verification gaps | M2 |
 | ROUTE-003 | Member 2 | Implement directed multimodal journey search | P0 | ROUTE-002 test pack; INT-001 interfaces. | Not Started | 90–120 min | M2 |
 | ROUTE-004 | Member 2 | Implement fare calculation and honest ranking | P0 | ROUTE-002, ROUTE-003. | Not Started | 45–60 min | M3 |
 | ROUTE-005 | Member 2 | Add manual onboard downstream transfer planning | P0 | ROUTE-003, ROUTE-004; frozen OnboardContext; UI can develop in parallel. | Not Started | 60 min | M3 |
