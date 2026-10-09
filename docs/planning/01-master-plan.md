@@ -1,4 +1,6 @@
 # AlalayByahe — Implementation Planning Package
+
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
 **Revision 1.0 · 9 October 2026 · implementation approved**
 
 The grilling decisions and implementation are approved. The repository is connected, and Member 4 has integrated the native scaffold, contracts, storage, controller and three members' implementations. Current evidence is in docs/evidence/integration.md. Physical inference, verified corridor coverage and iOS native signing remain unproven. The workspace was empty and unconnected when this plan was originally written.

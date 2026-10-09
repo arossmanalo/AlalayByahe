@@ -1,5 +1,5 @@
 # AlalayByahe
-A native Android/iPhone commute assistant for Filipino, English and Taglish requests. Local Qwen extracts journey fields; users confirm them; deterministic routing uses documented services, pedestrian links and fare evidence. Scanner/maps are deferred.
+A native Android commute assistant (iOS is out of scope as of 2026-10-10) for Filipino, English and Taglish requests. Local Qwen extracts journey fields; users confirm them; deterministic routing uses documented services, pedestrian links and fare evidence. Scanner/maps are deferred.
 
 **Development status:** real AI, routing and UI adapters are integrated. The bundled transit pack is **LRT-1 stations only** (25 stations, stored value fares, no walking links, no road services). The Android test APK recorded in `docs/evidence/native-artifacts.json` predates it and is stale; rebuild before any device test. Phone inference, offline operation and iOS signing are not yet verified. The three requested corridors remain targets and none is supported end to end: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
 
@@ -18,7 +18,7 @@ npm run data:validate
 npm run release:check
 ```
 
-`release:check` intentionally fails until a reviewed pack is bundled and matching Android/iOS physical evidence exists. A passing fixture validation or build cannot make a release ready.
+`release:check` intentionally fails until a reviewed pack is bundled and matching Android physical evidence exists. (The release gate in `src/application/release-gate.ts` still also requires iOS evidence; it has not been changed, so `release:check` keeps reporting the iOS blocker until the team decides how to handle it.) A passing fixture validation or build cannot make a release ready.
 
 Build identities belong in `docs/evidence/native-artifacts.json`; completed acceptance reports belong in `docs/evidence/physical-release.json` using the example template. Reports must match the actual APK/IPA hash, build source commit, pack and model. Runtime changes invalidate old artifacts; documentation-only changes do not.
 
@@ -44,11 +44,11 @@ The generated APK is `android/app/build/outputs/apk/release/app-release.apk`. It
 
 For development only: `npm start` starts a dev client. The intended installed demo must run without Expo Go or Metro.
 
-## iPhone build on the Mac
+## iPhone / iOS: out of scope
 
-Use the same branch/lockfile on the Mac with Xcode. Run `npm ci`, `npx expo prebuild --platform ios`, then open `ios/AlalayByahe.xcworkspace`. Select the actual Personal Team and connected iPhone, enable the required device trust/developer settings, and build the **Release** configuration. The paid Apple Developer Program is not required for the planned local device test; verify the Personal Team's current limits in Xcode. Windows cannot generate/build this iOS native project.
+The team excluded iOS on 2026-10-10 because of limited resources. Android is the only supported and tested platform. The iOS project settings in `app.config.ts` and the iOS libraries pulled in by dependencies remain in the repository but are unused and unverified.
 
-No iPhone native build, signing, install or inference has been verified in this chat. Record it separately from the successful iOS Hermes export.
+No iOS native build, signing, install or inference has been done. Earlier iOS Hermes bundle exports compile JavaScript only and say nothing about iPhone support.
 
 ## Connect verified data
 

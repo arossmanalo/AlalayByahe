@@ -1,5 +1,7 @@
 # Detailed Team Backlogs
 
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
+
 All tasks are Not Started. Estimates exclude build/download waiting and unresolved data verification. P1 is outside the baseline; cut it if P0 slips. Each task lists all 17 required handoff fields. Paths are future implementation files, not existing production code.
 
 ## Member 1 — Local AI

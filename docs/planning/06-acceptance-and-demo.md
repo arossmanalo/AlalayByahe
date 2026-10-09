@@ -1,11 +1,13 @@
 # Integration, Acceptance, Evidence and Demo
 
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
+
 All checks below are **planned / not run**. Passing pure fixture tests cannot establish a real service. Passing the real-data audit cannot establish physical local inference. Both are needed.
 
 ## Release acceptance checklist
 - [ ] Plan approved for implementation; one baseline/contract version and lockfile.
 - [ ] Actual briefing obtained/reviewed or missing requirements clearly flagged.
-- [ ] Signed native installed app works on Android and iPhone without ExpoGo/Metro/USB.
+- [ ] Signed native installed app works on Android without ExpoGo/Metro/USB. (iPhone descoped 2026-10-10.)
 - [ ] Phone-local Qwen inference performs a fresh query on both platforms.
 - [ ] Model integrity/version/license verified; no weights/secrets in Git.
 - [ ] AI output parsed/schema checked/semantically checked; every extracted journey field shown for confirmation.
@@ -58,7 +60,7 @@ All checks below are **planned / not run**. Passing pure fixture tests cannot es
 | T-INT-01 | Real vertical slice | Actual extraction→draftconfirm→real complete journey→UI with versions |
 | T-INT-02 | Failure distinction | AI error vs data error vs no journey vs permission/networklimit preserve recovery |
 | T-INT-03 | Repeat and lifecycle | Rapid submit/edit/cancel/background/resume has correct queryId |
-| T-OFF-01 | Phone-local cold proof | Forcequit, airplane, all radios off, Metro stopped, USB removed, new query on both OS |
+| T-OFF-01 | Phone-local cold proof | Forcequit, airplane, all radios off, Metro stopped, USB removed, new query on Android (iOS descoped) |
 | T-OFF-02 | Device restart | Reboot primary phone, offline relaunch, persisted resources + new query |
 | T-OFF-03 | First-use boundary | No model => explicit setup/manual; no false offline-ready claim |
 | T-OFF-04 | Optional helper outage | Offline stored workflow still works; new address/path asks connectivity |
@@ -98,7 +100,7 @@ Build routes: local Expo prebuild/Android Gradle and Mac Xcode Release. Member 4
 7. Show grounded boarding/dropoff/transfer and one fare-source/unknown detail.
 8. Cancel/repeat/edit once; repeat offline after app restart. Reboot at least one phone.
 9. Record no helper-network requirement. Screenshots alone of previously rendered result do not prove fresh inference.
-10. Repeat on Android and iPhone; disclose failures. Optional network profiler/packet evidence helps but must not be invented.
+10. Repeat on additional Android phones if available; disclose failures. (iPhone descoped.) Optional network profiler/packet evidence helps but must not be invented.
 
 ## Benchmark record template
 | Device/OS | App commit | Runtime/model/hash | Pack | Cold init ms | n warm cases | Median/p95 ms | Timeouts/errors | Peak memory/tool | Thermal observations |
@@ -128,14 +130,14 @@ Prepare an approximately 60-second video: 10 s problem, 10 s local/offline bound
 | How prevent hallucination? | Strict output shape, semantic/user confirmation, no route/fare fields in extraction, evidence-backed graph. Syntax grammar alone is not correctness. |
 | Is this nationwide/live? | No. State actual supported subset; no live arrival/traffic, confirm current operator service. |
 | Where are fares/routes from? | Exact published source/audit and date; show unknowns, no guessed totals. |
-| Does iPhone need paid membership? | Local Personal Team test installation, seven-day expiry; no TestFlight/App Store distribution claimed. |
+| Is there an iPhone version? | No. iOS was excluded on 2026-10-10 because of limited resources; the app is Android only and iOS is untested. |
 | What if model/device fails? | Manual local routing is useful but not AI proof; tested second phone/disclosed laptop local fallback. |
 | Is it private? | Queries/inference local; optional online geocoding sends selected address/coordinates to named provider; no blanket privacy claim. |
 | What was measured? | Show actual n, devices, versions, cold/warm, errors and unavailable metrics; never expected results as measurements. |
 | Built during event? | Git timestamps/tasks plus disclosure of pretrained model/libraries/AI coding tools; follow actual briefing. |
 
 ## Backup demonstration
-Keep last tested APK/iOS install, model+pack, charged primary/secondary devices and local copy of real recorded video. No live network needed for main demo. Laptop-local fallback must perform real inference/route locally and display “AI runs on this laptop”; a phone-LAN client requires network and cannot pass phone airplane proof. Pre-recorded video is labeled backup recording. No static fake result or mock presented as runtime.
+Keep last tested APK, model+pack, charged primary/secondary devices and local copy of real recorded video. No live network needed for main demo. Laptop-local fallback must perform real inference/route locally and display “AI runs on this laptop”; a phone-LAN client requires network and cannot pass phone airplane proof. Pre-recorded video is labeled backup recording. No static fake result or mock presented as runtime.
 
 ## Submission/compliance checklist
 - [ ] User checks actual briefing/portal deadline, code freeze, public repo, post format/hashtag and pitching limits.

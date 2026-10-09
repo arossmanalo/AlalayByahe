@@ -50,7 +50,7 @@ Test doubles occur only in tests. Native composition imports no test pack, fake 
 
 1. Member 2: source-backed legal boarding/dropoff/walk/service/fare evidence and an actual release pack. All three corridors currently remain unverified.
 2. Android physical phone: install/cold launch, real model download/hash/restart, fresh inference, cancellation/background recovery and offline commute once data is present. ADB reported no devices.
-3. Mac/iPhone: same-commit native Release build, Personal Team signing/install, model setup/inference and offline checks.
+3. ~~Mac/iPhone native build~~ **Descoped 2026-10-10** (iOS excluded; limited resources).
 4. Member 1: measured Taglish corpus accuracy, load/completion latency and peak memory. Member 3: actual native usability/accessibility.
 5. Actual participant briefing and final video/submission receipt.
 
@@ -89,3 +89,14 @@ llama.rn's postinstall fetches its prebuilt native libraries. After `npm ci` on 
 ### Build host status
 
 This Mac has Xcode 26.6 but no signing identity (Personal Team not configured) and no connected iPhone. It has no Android SDK, `adb` or Android device. Android release and benchmark APKs have not been rebuilt for the current commit.
+
+## Scope change 2026-10-10: iOS excluded
+
+Decision by the user: iPhone/iOS is out of scope because of limited resources. Android is the only target platform. Consequences, recorded so no document or claim contradicts it:
+
+- No iOS prebuild, Xcode build, signing, install, inference or offline test will be done. Earlier iOS Hermes exports compiled JavaScript only and prove nothing about iPhone.
+- iPhone 14 Pro rows in `native-gate.md`, `offline-ai.md`, `ai-benchmarks.md` and `tests/ui/manual.md` are marked **Out of scope**, not Pass and not Not Run.
+- Submission and README wording is Android only. No iOS support is claimed or implied.
+- The Apple Personal Team, seven-day signing and Mac build steps no longer apply.
+- **Code not changed by this documentation update:** `src/application/release-gate.ts` still requires matching iOS physical evidence, so `npm run release:check` will keep reporting the iOS blocker. The `ios` block in `app.config.ts` and the iOS libraries in dependencies are unused but still present. Changing the gate to Android-only is a separate code change (with tests) and needs your decision; it was not made here.
+- Remaining `release:check` blockers after the Android rebuild: Android physical evidence and the iOS requirement above.

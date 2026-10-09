@@ -19,7 +19,7 @@ Exact critical slots ≥ 90% on ≥ 20 cases per primary phone; silent role swap
 | Device (anonymized) | OS | Run | Cases | Exact | Exact rate | Silent swaps | Clarification misses | Errors | Init ms | Cold ms | Warm median ms | Warm p95 ms | Result |
 |---|---|---|---|---|---|---|---|---|---|---|---|---|---|
 | Android primary | — | 1 | 42 | — | — | — | — | — | — | — | — | — | **Not Run** |
-| iPhone 14 Pro | — | 1 | 42 | — | — | — | — | — | — | — | — | — | **Not Run** |
+| iPhone 14 Pro | — | 1 | 42 | — | — | — | — | — | — | — | — | — | **Out of scope** (iOS descoped 2026-10-10) |
 
 Publish every miss with its raw output, failed slots and device.
 
@@ -31,12 +31,12 @@ Measure only if actually profiled. On Android, run this during a benchmark:
 adb shell dumpsys meminfo ph.alalaybyahe.app
 ```
 
-Record TOTAL PSS / RSS before load, after load and during a completion. On iPhone, use the Xcode memory gauge or Instruments.
+Record TOTAL PSS / RSS before load, after load and during a completion. (iOS is out of scope.)
 
 | Device | Before load | After load | During completion | Tool | Result |
 |---|---|---|---|---|---|
 | Android primary | — | — | — | — | **Not Run** |
-| iPhone 14 Pro | — | — | — | — | **Not Run** |
+| iPhone 14 Pro | — | — | — | — | **Out of scope** (iOS descoped 2026-10-10) |
 
 ## Model decision
 

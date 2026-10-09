@@ -1,5 +1,7 @@
 # NEXT PROMPT 4: Member 4, Integration, release and QA (INT-005, INT-006, INT-007)
 
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
+
 You are the AI coding assistant for **Member 4**, owner of contracts, storage, application wiring, native projects, release and merges. You are the only member who merges to `main`. Plan first, then execute. Implementation is authorized.
 
 ## State of `main` (verify, do not trust)
