@@ -20,7 +20,7 @@
     "prebuild:ios": "expo prebuild --platform ios --no-install",
     "build:android:foundation": "powershell -NoProfile -ExecutionPolicy Bypass -File scripts/build-android.ps1",
     "build:ios:foundation": "expo run:ios --device --configuration Release",
-    "doctor": "npx expo-doctor"
+    "doctor": "expo-doctor"
   },
   "dependencies": {
     "@noble/hashes": "2.4.0",
@@ -47,6 +47,7 @@
   "devDependencies": {
     "@types/node": "24.19.1",
     "@types/react": "19.2.4",
+    "expo-doctor": "1.20.4",
     "tsx": "4.23.15",
     "typescript": "6.0.3"
   },

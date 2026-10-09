@@ -7,11 +7,14 @@ Owner: Member 1. Gate M1. **Status: Blocked / Not Run.** No phone has run llama.
 | Blocker | Evidence | Next owner / action |
 |---|---|---|
 | No app scaffold (INT-001) | `main` holds only `README.md`, `AGENTS.md`, `docs/planning/`; no `package.json`, `app.config.ts` or native folders | Member 4: scaffold Expo 57 app, install the pins, add the llama.rn plugin, then rebase this branch |
-| No Android toolchain on Member 1's Windows laptop | `adb` not on PATH; `%LOCALAPPDATA%\Android` does not exist | Build Android on a machine with Android SDK + NDK ≥ 24, or install them here |
+| ~~No Android toolchain on Member 1's Windows laptop~~ **Resolved 2026-10-09 ~23:10** | Installed in `%LOCALAPPDATA%\Android\Sdk` (ANDROID_HOME set): cmdline-tools 23.0, platform-tools 37.0.1 (adb 1.0.41), platforms;android-36 r2, build-tools 36.0.0, ndk 27.1.12297006, cmake 3.22.1 — the versions RN 0.86.3 `libs.versions.toml` expects. JDK 21.0.7 present. Only the toolchain is verified; no Gradle build has run | — |
+| No Android phone connected | `adb devices` lists none | Member 1: enable Developer options + USB debugging on the Android phone, connect it and accept the RSA prompt |
 | iOS needs a Mac | Windows host cannot run Xcode | Member with the Mac (Xcode 26.6, Personal Team) builds and installs on iPhone 14 Pro |
 | Model file not yet on a phone | The 491,400,032-byte GGUF has not been downloaded in this session | Download on the phone via `ai.ensureModel` (AI-002), or preload the pinned file into the app's `Documents/models/` folder; `initialize()` will rehash it |
 
 ## What is ready for the gate
+
+Member 4 integration update: scaffold/lockfile and real native ports now exist on feat/integration/int-001-foundation. The Member 4 Windows host has Android SDK/NDK/CMake; its actual native build attempts are in [builds.md](builds.md). The earlier blocker table describes Member 1's original host/checkpoint. Physical inference on either platform remains Not Run.
 
 - `src/ai/llamaRnRuntime.ts` — adapter written against the **installed** llama.rn 0.12.9 typings (`initLlama`, `LlamaContext.completion` with `response_format: { type: "json_schema", json_schema: { strict: true, schema } }`, `stopCompletion`, `release`, `BuildInfo.number`). It typechecks under TypeScript 6.0.3 strict mode.
 - `src/ai/nativeProbe.ts` — `runNativeProbe({ runtime, store, platformLabel, text })` verifies the model (marker or full SHA256), loads it, runs one fresh schema-constrained completion, parses and validates it, and releases. It returns raw text, completion flags, load/completion/verification times and the runtime/model labels.

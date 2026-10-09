@@ -1,4 +1,4 @@
-import { createContext, useContext, useEffect, useRef, useState, type PropsWithChildren } from "react";
+import { createContext, useContext, useEffect, useState, type PropsWithChildren } from "react";
 import { AppState } from "react-native";
 import type { ApplicationServices } from "./services";
 import { createNativeApplication } from "./native-services";
@@ -8,15 +8,14 @@ interface ApplicationContextValue {
   status: { data: string; ai: string; initializing: boolean };
 }
 const ApplicationContext = createContext<ApplicationContextValue | null>(null);
+// One app-owned manager/repository, constructed outside React render. Native
+// database initialization and model loading still run only from the effect.
+const application = createNativeApplication();
 
 export function ApplicationProvider({ children }: PropsWithChildren) {
-  const services = useRef<ApplicationServices | null>(null);
   const [status, setStatus] = useState({
     data: "Checking stored transit data…", ai: "Checking local AI…", initializing: true,
   });
-  // Construct only pure objects during render. Native database/model work occurs in effect.
-  services.current ??= createNativeApplication();
-  const application = services.current;
   useEffect(() => {
     let alive = true;
     void application.initialize().then(result => {
@@ -43,4 +42,3 @@ export function useApplication(): ApplicationContextValue {
   if (!context) throw new Error("ApplicationProvider is missing.");
   return context;
 }
-

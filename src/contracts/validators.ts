@@ -175,7 +175,11 @@ export function validateRouteRequest(value: unknown, pack?: TransitPack): Result
         const known = pack.places.find(p => p.id === e.placeId);
         if (!known) bad(key + " outside coverage");
         const coord = e.point as Point;
-        if (coord.latitude !== known.point.latitude || coord.longitude !== known.point.longitude) bad(key + " coordinate mismatch");
+        const nextStopId = key === "origin" && r.onboard && typeof r.onboard === "object"
+          ? (r.onboard as Obj).confirmedNextStopId : null;
+        const confirmed = pack.stops.find(s => s.id === nextStopId && s.placeId === known.id);
+        const matches = (p: Point) => coord.latitude === p.latitude && coord.longitude === p.longitude;
+        if (!matches(known.point) && !(confirmed && matches(confirmed.point))) bad(key + " coordinate mismatch");
       }
     }
     if (r.onboard !== undefined) {

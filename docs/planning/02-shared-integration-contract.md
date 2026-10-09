@@ -1,6 +1,6 @@
-# Shared Integration Contract v1.0 — proposed for approval
+# Shared Integration Contract v1.0 — installed baseline
 
-Status: architecture selected; implementation not started. Once approved, Member 4 (the user) owns changes. This is a plan, not executable source already delivered.
+Status: implementation approved October 9; Member 4 owns the installed baseline and shared configuration. Real AI, routing and UI ports are connected on feat/integration/int-001-foundation. See docs/evidence/integration.md for actual checks and remaining physical/data gates.
 
 ## 1. Stack and model
 | Component | Planning pin | Purpose |
@@ -13,11 +13,11 @@ Status: architecture selected; implementation not started. Once approved, Member
 | expo-build-properties | 57.0.22 | Native build configuration |
 | expo-dev-client | 57.0.19 | Development only; demo uses installed release build |
 | llama.rn | 0.12.9 | Native llama.cpp inference |
-| TypeScript / @types/react | 6.0.3 / 19.2.2 | Expo template aligned type checks |
+| TypeScript / @types/react | 6.0.3 / 19.2.4 | Installed Expo-compatible type checks |
 | tsx | 4.23.15 | Pure TypeScript tests with Node node:test |
 | @noble/hashes | 2.4.0 | Bounded incremental SHA256, MIT |
 
-These are proposed exact starting versions from official SDK57 mappings and tagged releases, not an installed lockfile. Member 4 installs once, resolves Expo-required navigation dependencies with expo install, checks expo-doctor, and commits the lockfile. No member independently upgrades dependencies. Expo 57 with llama.rn0.12.9 is **unverified as a combination**; the llama example uses RN0.82.0. Both native builds and real inference must pass the first gate. If it fails, Member 4 and Member 1 select a documented compatible Expo/RN pair, update contract v1.1 and every branch before continuing. Never assume wildcard peer dependencies prove compatibility.
+Member 4 installed the proposed core versions and committed package-lock.json. Expo-required peers are pinned: safe-area-context 5.7.0, screens 4.26.0, reanimated 4.5.1, worklets 0.10.1, linking 57.0.12, constants 57.0.21, font 57.0.4 and system-ui 57.0.4. React types were aligned to 19.2.4 during the initial compatibility check; interfaces and TransitPack schema remain 1.0. Use npm ci. Expo Doctor passes 21/21; Android and iOS Hermes bundles compile. These checks do not establish phone inference or iOS native compatibility. Both physical inference gates remain required. If the core Expo/RN pair changes, update contract v1.1 before dependent work.
 
 Sources: [Expo SDK57](https://docs.expo.dev/versions/latest/), [official native package mapping](https://raw.githubusercontent.com/expo/expo/sdk-57/packages/expo/bundledNativeModules.json), [template](https://raw.githubusercontent.com/expo/expo/sdk-57/templates/expo-template-default/package.json), [llama.rn tagged release](https://github.com/mybigday/llama.rn/releases/tag/v0.12.9), [tsx release](https://github.com/privatenumber/tsx/releases/tag/v4.23.15).
 
@@ -284,7 +284,7 @@ Defaults: all five modes, nearest_useful ranking, access/egress 1000 m, transfer
 
 ## 4. Runtime validation and extraction schema
 
-All external JSON, including model text and downloaded packs, is untrusted. Implement validators once in src/contracts/validators.ts. Return typed Result errors, not exceptions across module boundaries. The raw extraction JSON Schema is object, additionalProperties false, all RawIntent keys required; nullable strings/numbers are explicit null; modes/priority/kind are enums; nonnegative integer centavos and meters; ambiguities array of strings. App limits: text 600 characters, place labels max 30, output 256 tokens initially. If output truncates at that limit, reject it; adjust measured token budget centrally rather than accept partial JSON.
+All external JSON, including model text and downloaded packs, is untrusted. Shared validators live in src/contracts/validators.ts; pack validation delegates to Member 2's src/data/validatePack.ts. Return typed Result errors, not exceptions across module boundaries. The raw extraction JSON Schema is object, additionalProperties false, all RawIntent keys required; nullable strings/numbers are explicit null; modes/priority/kind are enums; nonnegative integer centavos and meters; ambiguities array of strings. App limits: text 600 characters, place labels max 30, output 256 tokens initially. If output truncates at that limit, reject it; adjust measured token budget centrally rather than accept partial JSON.
 
 Canonical RawIntent JSON Schema (use the same object for grammar and validation):
 
@@ -454,7 +454,7 @@ Use nonnegative multicriteria label-setting search: state includes stop/place an
 
 Apply strict modes, budget and walking limits before accepting an option. A budget cannot be certified with unknown fares. DirectOnly allows one service (or continuation of current service); never silently relax. If no matching option, CONSTRAINT_UNSATISFIED when a verified unconstrained journey exists; otherwise NO_VERIFIED_JOURNEY. Explain and offer editable preferences.
 
-Validate flat policies: exactly one of flatCentavos or flatRange; range min≤max. Distance increments and denominators must be positive. Fare matrix lookup uses board/alight pair; flat once per boarding; distance only with documented service distance and increments/rounding, never aerial distance. Unknown has null min/max; never zero. Positive ranges remain ranges. Conflicting or expired policies are unknown pending verification. Partial totals expose known subtotal and unknownRideLegs; UI must never call a partial subtotal the total. Discount needs documented applicability and rounding. No inferred live wait/traffic/travel times.
+Validate flat policies: exactly one of flatCentavos or flatRange; range min≤max. Distance increments and denominators must be positive. Fare matrix lookup uses board/alight pair; flat once per boarding; distance only with documented service distance and increments/rounding, never aerial distance. Unknown has null min/max; never zero. Positive ranges remain ranges. Conflicting or expired policies are unknown pending verification. Partial totals expose known subtotal and unknownRideLegs; UI must never call a partial subtotal the total. Discount numerator/denominator is the payable share (4/5 means pay 80%), with documented applicability and rounding. No inferred live wait/traffic/travel times.
 
 Onboard search begins at confirmed next legal alighting point in the selected direction; it may continue along the current service until a useful alighting point. Evaluate whole journey and downstream transfer; do not instruct immediate alighting based on compass direction or line intersections. If service/location/direction cannot be confirmed, ask for details and offer a pre-trip plan from a known safe stop.
 
@@ -489,6 +489,8 @@ initialize validates model+runtime versions. ensureModel handles download only; 
 ## 8. Optional online contract, configuration and privacy
 
 Core configuration (public, committed): contractVersion, modelManifest, packVersion, maxInputCharacters, inferenceTimeoutMs, routingLabelLimit, enableOnlineHelpers false by default until verified, public GEO_PROXY_URL. Secrets: ORS_API_KEY only in Worker secrets; never EXPO_PUBLIC_* or native bundle. No cloud AI endpoint.
+
+Integration semantics: submitConfirmed retains the current JourneyDraft queryId, including explicit edits. Manual/new natural-language queries create a new ID. Backgrounding cancels pending jobs while preserving a completed editable draft. Onboard origin uses the confirmed next stop's placeId and either the stored place point or that stop's documented point; repeated next-stop occurrences require clarification. Mode allow-lists govern future boardings, while continuing the vehicle already occupied is allowed.
 
 Optional GeoPort calls HTTPS helper only after explicit online action/consent. Proxy endpoints: POST /v1/geocode {query:string}; POST /v1/walk {from:Point,to:Point}; return Result with shared candidate/walk types and Evidence. Limit query length, coordinate bounds to pilot areas, body size, request rates and upstream quota. A client-embedded reusable token is not a private secret. Provider outage/quota => NETWORK_UNAVAILABLE/NETWORK_LIMIT; retain stored-place workflow.
 

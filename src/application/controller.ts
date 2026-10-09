@@ -97,7 +97,7 @@ export function createJourneyController(
       if (!result.ok) return result;
       const validated = validateRouteResult(result.value, scoped.value, validatedPack.value);
       // Keep the current draft for explicit edits/reconfirmation. New input,
-      // manual planning, cancellation, or backgrounding invalidates it.
+      // manual planning or explicit cancellation invalidates it.
       return validated;
     } catch {
       return job && !current(job) ? cancelled()
@@ -162,8 +162,8 @@ export function createJourneyController(
     },
     async cancelActive() {
       const queryId = active?.queryId;
-      drafts.clear();
       if (queryId) {
+        drafts.delete(queryId);
         generation++; active = null;
         await ports.ai.cancel(queryId);
       }

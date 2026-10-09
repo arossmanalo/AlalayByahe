@@ -20,6 +20,8 @@ test("interpretation creates an editable draft and never plans automatically", a
   const journey = value(await controller.submitConfirmed(request(pack())));
   assert.equal(journey.options[0]?.transfers, 1); assert.equal(journey.options[0]?.fare.status, "partial");
   assert.equal((await controller.submitConfirmed(request(pack()))).ok, true);
+  await controller.cancelActive(); // Backgrounding with no job keeps the editable draft.
+  assert.equal((await controller.submitConfirmed(request(pack()))).ok, true);
   await controller.cancel("query_test");
   assert.equal(errorCode(await controller.submitConfirmed(request(pack()))), "NEEDS_CLARIFICATION");
   await h.repo.close();

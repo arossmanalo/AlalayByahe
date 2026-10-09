@@ -1,0 +1,12 @@
+[
+  {
+    "platform": "android",
+    "artifactSha256": "9c34c0420ac7e8f7dc54c1231f05c368678131d87fd57b43e4bc8d550ac04b5f",
+    "sourceCommit": "34236a508544c5347285564937c07f3fcf4a6127",
+    "artifactFilename": "alalaybyahe-0.1.0-34236a5.apk",
+    "bytes": 208301781,
+    "builtAt": "2026-10-09T16:02:40.7537544Z",
+    "variant": "release",
+    "signing": "generated_debug_key_for_local_testing"
+  }
+]

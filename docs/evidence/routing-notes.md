@@ -82,7 +82,7 @@ bus is the second option, `complete` at 7,300. Both outcomes are asserted in `te
 
 | # | Decision | Why |
 |---|---|---|
-| 1 | Discount ratio `numerator/denominator` is the **payable share** (4/5 means pay 80%). | The contract does not say. Awaiting confirmation by the contract owner; I author the pack, so data and code agree. A rule that is missing for a passenger type yields the regular fare marked `estimated`, never a guessed discount. |
+| 1 | Discount ratio `numerator/denominator` is the **payable share** (4/5 means pay 80%). | Confirmed by Member 4 during integration; canonical contract and all four prompts now state this meaning. A rule that is missing for a passenger type yields the regular fare marked `estimated`, never a guessed discount. |
 | 2 | A distance fare with a partial increment is a **range** (round down to round up), status `estimated`. | The data format has no rounding rule for partial increments. |
 | 3 | Date-only `validFrom`/`validTo` are inclusive Philippine calendar days. | Fares are local and the contract only says ISO 8601. |
 | 4 | Two current policies for one service that give different amounts make the fare unknown. | "Fare sources disagree. Please confirm." |
