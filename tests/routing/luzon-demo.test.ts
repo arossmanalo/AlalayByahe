@@ -41,10 +41,11 @@ describe("Luzon demo pack is clearly synthetic and never releasable", () => {
     assert.ok(report.issues.some((i) => i.code === "release_gate" && /Fixture-namespace ID|Synthetic\/test wording/.test(i.message)));
   });
 
-  it("says DEMO everywhere a person could read a name, and states it is not real", () => {
-    assert.match(raw["coverageLabels"][0], /DEMO DATA, NOT REAL/);
-    for (const p of raw["places"]) assert.match(p.name, /\(DEMO\)$/);
-    for (const s of raw["services"]) assert.match(s.name, /\(DEMO\)$/);
+  it("reads like real place names but is stated as a demonstration network and stays in the test namespace", () => {
+    assert.match(raw["coverageLabels"][0], /Demonstration network.*not real transport information/);
+    for (const p of raw["places"]) assert.doesNotMatch(p.name, /DEMO|\bhub\b/i);
+    for (const s of raw["services"]) assert.doesNotMatch(s.name, /DEMO/i);
+    assert.equal(new Set(raw["places"].map((p: any) => p.name)).size, raw["places"].length, "place names are unique");
     assert.ok(raw["places"].every((p: any) => /^place_test_/.test(p.id)));
     assert.ok(raw["fares"].every((f: any) => /^fare_test_/.test(f.id)));
   });
@@ -82,7 +83,7 @@ describe("the engine on a Luzon-sized graph", () => {
     assert.equal(o.transfers, 2);
     // A ride's headsign is where that vehicle is headed, not where the passenger gets off:
     // the EDSA Carousel from PITX toward Cubao is signed for its terminus, Monumento.
-    assert.deepEqual(heads(o), ["PITX terminal", "Monumento terminal", "Baguio City terminal"]);
+    assert.deepEqual(heads(o), ["PITX Parañaque terminal", "Monumento terminal", "Baguio City terminal"]);
   });
 
   it("Laoag to Legazpi crosses the whole island in three rides", () => {
@@ -91,7 +92,7 @@ describe("the engine on a Luzon-sized graph", () => {
     if (!r.ok) return;
     const o = r.value.options[0]!;
     assert.equal(o.transfers, 2);
-    assert.deepEqual(heads(o), ["Cubao terminal", "PITX terminal", "Legazpi terminal"]);
+    assert.deepEqual(heads(o), ["Cubao terminal", "PITX Parañaque terminal", "Legazpi terminal"]);
     assert.equal(o.fare.status, "complete");
   });
 
@@ -129,7 +130,7 @@ describe("the engine on a Luzon-sized graph", () => {
     assert.equal(r.ok, true);
     if (!r.ok) return;
     const o = r.value.options[0]!;
-    assert.deepEqual(rides(o).map((x) => x.serviceName), ["LRT-1 (DEMO)", "MRT-3 (DEMO)", "LRT-2 (DEMO)"]);
+    assert.deepEqual(rides(o).map((x) => x.serviceName), ["LRT-1", "MRT-3", "LRT-2"]);
     assert.equal(o.transfers, 2);
     assert.equal(o.walkMeters, 0);
   });

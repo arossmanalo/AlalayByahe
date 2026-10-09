@@ -31,6 +31,8 @@ import type { DropoffWatcherFactory, LocationWatchPort } from "./dropoff-alert";
 export interface UiServices {
   /** "dev_fixture" shows a DEV FIXTURE banner on every screen. Release wiring must pass "real". */
   kind: "real" | "dev_fixture";
+  /** Demo build only: hides the per-screen test-pack banner (the About screen still states the data is a sample). */
+  hideTestPackBanner?: boolean;
   controller: JourneyController;
   ai: Pick<AiPort, "getState" | "ensureModel" | "initialize">;
   repository: Pick<TransitRepository, "getPack" | "resolvePlace">;

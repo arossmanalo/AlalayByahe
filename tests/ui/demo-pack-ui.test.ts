@@ -71,6 +71,9 @@ describe("demo pack through the UI presenters (UI-006 demo build)", () => {
   it("every screen carries the test-pack banner with the exact warning, and a release pack carries none", () => {
     assert.equal(pack.kind, "test_fixture");
     assert.equal(testDataBanner("real", pack.kind), "test_pack");
+    // The demo build wiring hides the per-screen banner; fixture services never can.
+    assert.equal(testDataBanner("real", pack.kind, true), null);
+    assert.equal(testDataBanner("dev_fixture", pack.kind, true), "dev_fixture");
     assert.equal(t.testPackWarning, "This transit data is a test fixture, not real transport information.");
     assert.equal(testDataBanner("real", (BUNDLED_TRANSIT_PACK as TransitPack).kind), null);
     assert.equal(testDataBanner("real", null), null, "nothing loaded yet is not called test data");
@@ -84,29 +87,28 @@ describe("demo pack through the UI presenters (UI-006 demo build)", () => {
     }
   });
 
-  it("About and Supported coverage say first that the routes are invented and unverified", () => {
+  it("About and Supported coverage state that only LRT-1 is verified and the rest is a demonstration network", () => {
     const coverage = coverageSummary(pack.coverageLabels, []);
-    assert.match(coverage.labels[0]!, /^DEMO BUILD: this pack contains INVENTED routes .* Do not rely on it to travel\.$/);
-    assert.match(coverage.labels[1]!, /^Real and verified inside this demo: LRT-1 stations/);
+    assert.equal(coverage.labels.length, 1);
+    assert.match(coverage.labels[0]!, /^Demonstration network: only the 25 LRT-1 stations and their official LRMC fares are verified\. Other routes are samples, not real transport information\.$/);
   });
 
   it("search finds Baguio, Legazpi and Laoag, each as one stored demo place", async () => {
-    assert.deepEqual(await search("Baguio"), ["Baguio City terminal (DEMO) [alias]"]);
-    assert.deepEqual(await search("Legazpi"), ["Legazpi terminal (DEMO) [alias]"]);
-    assert.deepEqual(await search("Laoag"), ["Laoag terminal (DEMO) [alias]"]);
+    assert.deepEqual(await search("Baguio"), ["Baguio City terminal [alias]"]);
+    assert.deepEqual(await search("Legazpi"), ["Legazpi terminal [alias]"]);
+    assert.deepEqual(await search("Laoag"), ["Laoag terminal [alias]"]);
   });
 
-  it("Laoag to Legazpi: three buses at an estimated total, and a four-bus option that is not a full total", async () => {
+  it("Laoag to Legazpi: three buses at a complete estimated total (the sample fares are all filled in)", async () => {
     const { shown, warnings } = await plan("Laoag", "Legazpi");
-    assert.equal(shown.length, 2);
-    const [first, second] = shown as [JourneyOption, JourneyOption];
+    assert.equal(shown.length, 1);
+    const [first] = shown as [JourneyOption];
     assert.deepEqual(legSequence(first), ["bus", "bus", "bus"]);
     assert.equal(first.transfers, 2);
-    assert.equal(firstRideLine(first, t), "First ride from Laoag terminal (DEMO)");
+    assert.equal(firstRideLine(first, t), "First ride from Laoag terminal");
     assert.equal(fareLine(first), "₱1,662.00 total (estimated)");
-    assert.deepEqual(legSequence(second), ["bus", "bus", "bus", "bus"]);
-    assert.equal(fareLine(second), "Fare: This is not the full total. / Known subtotal ₱1,469.00 plus 1 ride with unknown fare / Confirm the fare with the driver or operator.");
-    assert.ok(coverageSummary(pack.coverageLabels, warnings).labels[0]!.startsWith("DEMO BUILD"));
+    assert.equal(first.fare.status, "complete");
+    assert.ok(coverageSummary(pack.coverageLabels, warnings).labels[0]!.startsWith("Demonstration network"));
   });
 
   it("the three-jeepney Lipa to Candelaria road draft: reached by De La Salle and Mang Inasal, estimated total", async () => {
@@ -121,11 +123,11 @@ describe("demo pack through the UI presenters (UI-006 demo build)", () => {
     assert.ok(option.legs.every((leg) => leg.evidence.reliability === "estimated"), "road drafts are never shown as verified");
   });
 
-  it("typing Lipa and Candelaria lists only the invented DEMO terminals, not the road-draft stops", async () => {
+  it("typing Lipa or Candelaria lists the road-draft stop and the sample terminal", async () => {
     // Recorded so the device tester searches the terms above. The draft stops have no aliases, and
     // stored-place search drops substring matches when an alias matches (src/storage/place-search.ts).
-    assert.deepEqual(await search("Lipa"), ["Lipa City terminal (DEMO) [alias]"]);
-    assert.deepEqual(await search("Candelaria"), ["Candelaria terminal (DEMO) [alias]"]);
+    assert.deepEqual(await search("Lipa"), ["McDonald's near De La Salle Lipa [alias]", "Lipa City terminal [alias]"]);
+    assert.deepEqual((await search("Candelaria")).sort(), ["Candelaria terminal [alias]", "Candelaria town proper (Mang Inasal stop) [alias]"]);
   });
 
   it("the real LRT-1 inside the demo keeps its verified fare", async () => {

@@ -249,7 +249,7 @@ const en = {
   alertPaused: "Alerts paused: app in background.",
   alertPausedBody: "Location is not used while the app is in the background. Resume when you are back in the app.",
   alertNoTargetUnverified:
-    "Alerts are only offered for drop-offs with a verified location. This drop-off is unverified (demo data).",
+    "Alerts are only offered for drop-offs with a verified location. This drop-off is not verified.",
   alertNoTargetCoordinate: "Alerts are not available: this drop-off has no recorded location.",
   alertNoTargetRide: "Alerts are not available for this journey.",
   alertNotInBuild: "Alerts near your stop are not available in this version of the app.",
@@ -574,7 +574,7 @@ const fil: Strings = {
   alertPaused: "Naka-pause ang alerto: nasa background ang app.",
   alertPausedBody: "Hindi ginagamit ang lokasyon habang nasa background ang app. Ituloy kapag bumalik ka sa app.",
   alertNoTargetUnverified:
-    "May alerto lang para sa babaan na may beripikadong lokasyon. Hindi beripikado ang babaang ito (demo data).",
+    "May alerto lang para sa babaan na may beripikadong lokasyon. Hindi beripikado ang babaang ito.",
   alertNoTargetCoordinate: "Walang alerto: walang nakatalang lokasyon ang babaang ito.",
   alertNoTargetRide: "Walang alerto para sa biyaheng ito.",
   alertNotInBuild: "Wala pa ang alerto malapit sa babaan sa bersyong ito ng app.",

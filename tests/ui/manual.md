@@ -163,6 +163,10 @@ Needs a build with Member 2's `createDropoffWatcher` and the location port wired
   - **Demo data (Member 2) or place search (Member 4).** In the demo build, typing "Lipa" lists only "Lipa City terminal (DEMO)" and "Candelaria" only "Candelaria terminal (DEMO)". The road-draft stops have no aliases, and `resolveStoredPlaces` returns substring matches only when nothing matches exactly or by alias. A tester who types the town names gets the invented network, not the three-jeepney road draft. Workaround: search "De La Salle" and "Mang Inasal" (DB-04). Fix options: give the draft stops aliases, or list substring matches beside alias matches. Both need the owner's decision.
   - **Keyboard on Android (device check, M-22 and A-06).** The screen's keyboard props act on iOS only. With edge-to-edge on target SDK 36, whether the window still resizes for the keyboard has to be seen on a phone. No change was made without that evidence.
 
+## Demo build after the clean-names update (2026-10-10). Software only
+
+The demo build no longer shows the per-screen banner or "(DEMO)" names, and typing "Lipa" or "Candelaria" lists the road stops. DB-01 to DB-06 above describe the earlier wording; re-run them on the new demo APK with these changes in mind (no banner on screens; About and the coverage line still state it is a demonstration network; Laoag to Legazpi is now one three-bus option at a complete estimated total). Showcase trips: `docs/evidence/demo-build.md`. Device column: **Not Run**.
+
 ## Fixture triggers
 
 With `createDevFixtureServices()`:

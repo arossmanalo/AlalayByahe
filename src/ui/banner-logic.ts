@@ -8,7 +8,12 @@ export type TestDataBanner = "dev_fixture" | "test_pack";
  * test_fixture, which is how the demo build (EXPO_PUBLIC_DEMO_BUILD=1) marks its invented and
  * unverified routes. A release pack, or no loaded pack, shows none.
  */
-export function testDataBanner(servicesKind: "real" | "dev_fixture", loadedPackKind: TransitPack["kind"] | null): TestDataBanner | null {
+export function testDataBanner(
+  servicesKind: "real" | "dev_fixture",
+  loadedPackKind: TransitPack["kind"] | null,
+  hideTestPackBanner = false,
+): TestDataBanner | null {
   if (servicesKind === "dev_fixture") return "dev_fixture";
-  return loadedPackKind === "test_fixture" ? "test_pack" : null;
+  // Only the demo build may hide the test-pack banner; fixture services always show theirs.
+  return loadedPackKind === "test_fixture" && !hideTestPackBanner ? "test_pack" : null;
 }
