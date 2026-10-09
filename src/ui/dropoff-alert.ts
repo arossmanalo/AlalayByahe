@@ -1,7 +1,7 @@
 // Member 3 (ALERT-003): near-drop-off alert, pure logic. A convenience alert from the
 // phone's own location while the app is open; it never tracks a vehicle, never
 // predicts an arrival time and runs in the foreground only. No React or native code.
-import type { JourneyOption, Point, RideLeg, TransitPack } from "../contracts";
+import type { JourneyOption, Point, Result, RideLeg, TransitPack } from "../contracts";
 import type { Strings } from "./i18n";
 import type { Tone } from "./theme";
 
@@ -24,9 +24,14 @@ export interface LocationWatchPort {
 
 export type WatcherState = "far" | "approaching" | "arrived";
 
-/** Mirrors Member 2's planned ALERT-001 `createDropoffWatcher` (src/routing/dropoffProximity.ts). */
+/** Structural match for Member 2's `createDropoffWatcher` (src/routing/dropoffProximity.ts, ALERT-001). */
 export interface DropoffWatcher {
-  update(fix: LocationFix): { state: WatcherState; distanceMeters: number; event?: "approaching" | "arrived" };
+  update(fix: LocationFix): {
+    state: WatcherState;
+    /** null when the fix was ignored before any accepted fix. */
+    distanceMeters: number | null;
+    event?: "approaching" | "arrived";
+  };
 }
 
 export type DropoffWatcherFactory = (options: {
@@ -35,7 +40,7 @@ export type DropoffWatcherFactory = (options: {
   warnMeters?: number;
   minAccuracyMeters?: number;
   debounceFixes?: number;
-}) => DropoffWatcher;
+}) => Result<DropoffWatcher>;
 
 // ---- Alert target: the final drop-off stop ----
 
@@ -86,7 +91,7 @@ export type AlertEvent =
   | { type: "start" }
   | { type: "permission"; outcome: PermissionOutcome }
   | { type: "watch_failed" }
-  | { type: "reading"; state: WatcherState; distanceMeters: number }
+  | { type: "reading"; state: WatcherState; distanceMeters: number | null }
   | { type: "background" }
   | { type: "stop" };
 
@@ -101,7 +106,7 @@ export function nextAlertStatus(status: AlertStatus, event: AlertEvent): AlertSt
       return status.phase === "off" ? status : { phase: "unavailable" };
     case "reading":
       // A fix the watcher ignored (poor accuracy, stale) has no usable distance: keep the last status.
-      if (!isWatching(status) || !Number.isFinite(event.distanceMeters)) return status;
+      if (!isWatching(status) || event.distanceMeters === null || !Number.isFinite(event.distanceMeters)) return status;
       return { phase: event.state, distanceMeters: Math.max(0, Math.round(event.distanceMeters)) };
     case "background":
       return isWatching(status) || status.phase === "asking" ? { phase: "paused" } : status;

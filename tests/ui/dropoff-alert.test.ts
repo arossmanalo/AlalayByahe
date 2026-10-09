@@ -14,7 +14,9 @@ import {
   presentNoTarget,
   vibrationFor,
   type AlertStatus,
+  type DropoffWatcher,
   type DropoffWatcherFactory,
+  type LocationFix,
 } from "../../src/ui/dropoff-alert";
 import { strings, type UiLanguage } from "../../src/ui/i18n";
 
@@ -40,11 +42,12 @@ function optionWith(legs: JourneyOption["legs"]): JourneyOption {
 }
 
 /** Local stub of the planned ALERT-001 watcher: distance-only, for presenter/state tests. */
-const stubWatcher: DropoffWatcherFactory = () => {
+const stubWatcher: DropoffWatcherFactory = () => ({ ok: true, value: stubWatcherValue() });
+function stubWatcherValue(): DropoffWatcher {
   let warned = false;
   let arrived = false;
   return {
-    update(fix) {
+    update(fix: LocationFix) {
       const d = fix.latitude; // the stub reads "distance" from latitude to keep tests readable
       if (d <= 400) {
         const event = arrived ? undefined : ("arrived" as const);
@@ -56,10 +59,10 @@ const stubWatcher: DropoffWatcherFactory = () => {
         warned = true;
         return { state: "approaching", distanceMeters: d, event };
       }
-      return { state: "far", distanceMeters: d };
+      return { state: "far" as const, distanceMeters: d };
     },
   };
-};
+}
 
 describe("alert target (final drop-off)", () => {
   it("uses the final ride's alight stop when the reviewed release pack has its coordinates", () => {
@@ -106,6 +109,8 @@ describe("alert status machine", () => {
   it("ignores readings without a usable distance and readings when not watching", () => {
     const waiting = run([{ type: "start" }, { type: "permission", outcome: "granted" }]);
     assert.deepEqual(nextAlertStatus(waiting, { type: "reading", state: "far", distanceMeters: Number.NaN }), waiting);
+    // Member 2's watcher reports null for a fix ignored before the first accepted one.
+    assert.deepEqual(nextAlertStatus(waiting, { type: "reading", state: "far", distanceMeters: null }), waiting);
     assert.deepEqual(nextAlertStatus({ phase: "off" }, { type: "reading", state: "arrived", distanceMeters: 10 }), { phase: "off" });
     assert.deepEqual(nextAlertStatus({ phase: "denied" }, { type: "reading", state: "arrived", distanceMeters: 10 }), { phase: "denied" });
   });
@@ -124,7 +129,9 @@ describe("alert status machine", () => {
   });
 
   it("vibrates only on the watcher's one-time events, longer for arrival", () => {
-    const w = stubWatcher({ target: { latitude: 0, longitude: 0 } });
+    const created = stubWatcher({ target: { latitude: 0, longitude: 0 } });
+    assert.ok(created.ok);
+    const w = created.value;
     const events = [5000, 700, 650, 300, 250].map((d) => w.update({ latitude: d, longitude: 0, accuracyMeters: 10, timestampMs: d }).event);
     assert.deepEqual(events, [undefined, "approaching", undefined, "arrived", undefined]);
     assert.equal(vibrationFor(undefined), null);
@@ -204,5 +211,27 @@ describe("alert copy audit (ALERT-003)", () => {
     assert.equal(strings.en.alertDenied, "Alerts are off: location not allowed.");
     assert.equal(strings.en.alertPaused, "Alerts paused: app in background.");
     assert.equal(strings.en.alertStart, "Notify me near my stop");
+  });
+});
+
+describe("wiring with Member 2's real watcher (ALERT-001)", () => {
+  it("createDropoffWatcher satisfies the UI port and drives the alert states", async () => {
+    const { createDropoffWatcher } = await import("../../src/routing/dropoffProximity");
+    const factory: DropoffWatcherFactory = createDropoffWatcher; // compile-time contract check
+    const vitoCruz = { latitude: 14.563475, longitude: 120.99468 };
+    const created = factory({ target: vitoCruz });
+    assert.ok(created.ok);
+    const w = created.value;
+    let status: AlertStatus = { phase: "waiting_fix" };
+    const fix = (dLat: number, ts: number) => ({ latitude: vitoCruz.latitude + dLat, longitude: vitoCruz.longitude, accuracyMeters: 15, timestampMs: ts });
+    const events: (string | undefined)[] = [];
+    // ~2.2 km north, ~650 m, then twice ~100 m (debounce needs two fixes inside the radius).
+    for (const [dLat, ts] of [[0.02, 1000], [0.006, 2000], [0.001, 3000], [0.0009, 4000]] as const) {
+      const r = w.update(fix(dLat, ts));
+      events.push(r.event);
+      status = nextAlertStatus(status, { type: "reading", state: r.state, distanceMeters: r.distanceMeters });
+    }
+    assert.deepEqual(events, [undefined, "approaching", undefined, "arrived"]);
+    assert.equal(status.phase, "arrived");
   });
 });

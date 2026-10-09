@@ -1,4 +1,6 @@
 import { useEffect, useMemo, type PropsWithChildren } from "react";
+import { createDropoffWatcher } from "../routing/dropoffProximity";
+import { createExpoLocationWatch } from "../ui/expo-location-watch";
 import { UiProvider, useReadiness, type UiServices } from "../ui/services";
 import { APP_LIMITS, MODEL_MANIFEST } from "./config";
 import { useApplication } from "./react-context";
@@ -18,6 +20,9 @@ export function NativeUiBridge({ children }: PropsWithChildren) {
     repository: services.repository, modelManifest: MODEL_MANIFEST,
     onlineHelpersEnabled: APP_LIMITS.enableOnlineHelpers,
     cancelModelSetup: services.cancelModelSetup,
+    // ALERT-003: foreground-only near-stop alert (docs/evidence/dropoff-alert-ui.md).
+    location: createExpoLocationWatch(),
+    createDropoffWatcher,
   }), [services]);
   return <UiProvider services={ui}>
     <SyncPackAfterBoot />

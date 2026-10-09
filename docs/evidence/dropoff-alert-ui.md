@@ -34,6 +34,8 @@ When Member 2's `tripPins` (ALERT-002) merges, `alertTargetFor` can use its fina
 
 ## Exact change for Member 4 (after Member 2's PR merges)
 
+**Applied 2026-10-10 ~05:10 PHT on `feat/integration/final-r3`.** Member 2's real API returns `Result<DropoffWatcher>` with `distanceMeters: number | null`; the UI port now matches it, and a test drives the alert states with the real watcher. The final release, benchmark and demo builds include this.
+
 No new dependency and **no `app.config.ts` change** are needed for the alert. `expo-location` (already installed, 57.0.20) declares `ACCESS_COARSE_LOCATION` and `ACCESS_FINE_LOCATION` in its own Android manifest, and runtime permission is requested from the card. In `src/application/ui-bridge.tsx`:
 
 ```ts
