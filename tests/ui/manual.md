@@ -115,6 +115,25 @@ For whoever holds the phone. Release first, and record it completely before inst
 6. Screenshots without personal data: `adb shell screencap -p /sdcard/ab.png`, then `adb pull /sdcard/ab.png`. Do not redirect `adb exec-out` in PowerShell; it corrupts the PNG.
 7. Keyboard (M-22, A-06): the screen's `automaticallyAdjustKeyboardInsets` and `contentInsetAdjustmentBehavior` act on iOS only. On Android, open the budget field on the manual form and check that the field and "Find verified routes" can still be scrolled above the keyboard.
 
+## ALERT-003 near-drop-off alert
+
+Needs a build with Member 2's `createDropoffWatcher` and the location port wired by Member 4 (`docs/evidence/dropoff-alert-ui.md`). Without them the card says alerts are not available in this version, and that is the expected result. **Alert distances are untested** until walked or ridden with a real phone. Use a verified LRT-1 journey (for example EDSA → Vito Cruz) and write down the build commit and APK SHA-256.
+
+| # | Case | Steps | Expected | Device result |
+|---|---|---|---|---|
+| A1 | Permission denied | Tap "Notify me near my stop", deny | "Alerts are off: location not allowed."; journey steps unchanged; Notify button available again | Not Run |
+| A2 | Granted, then revoked | Allow; open Android settings and revoke location; return | Alert becomes "Alerts are off" or paused; no crash; journey usable | Not Run |
+| A3 | Airplane mode | Airplane mode on, location services on | GPS may still fix; the card never claims data from the internet; journey works offline | Not Run |
+| A4 | Indoor or underground GPS | Start indoors | "Waiting for a location fix" with the GPS-may-be-weak note; no false approaching or arrived | Not Run |
+| A5 | Vibration disabled | Phone on silent with vibration off; approach the stop | Banner text still appears and TalkBack announces it; nothing is vibration-only | Not Run |
+| A6 | TalkBack | TalkBack on; start an alert, approach | "You are near …" and "You are at or very close to …" announced; buttons reachable | Not Run |
+| A7 | 200% text | System font 200% | Card text wraps; Stop alerts visible without horizontal clipping | Not Run |
+| A8 | Background and return | Start, press Home, return | "Alerts paused: app in background" with "Resume alerts"; location not used while in background | Not Run |
+| A9 | Stop alerts | Start, tap Stop alerts | Watch stops, vibration cancelled, card returns to the start state | Not Run |
+| A10 | Leave the screen | Start, go back or edit the trip | Watch stops; no later vibration | Not Run |
+| A11 | Mock-location walk | If a mock-location app is available: move from 2 km → 700 m → 300 m of the stop | far → approaching (one short vibration) → arrived (long vibration) once each | Not Run |
+| A12 | Demo build | Demo APK, a road-draft journey | "unverified (demo data)" explanation; no alert offered; demo banner present | Not Run |
+
 ## Run log
 
 - 2026-10-09, about 22:20–22:37 PHT, Member 3. Scratch harness outside the repo: Expo 57.0.27, expo-router 57.0.25, React Native 0.86.3, react-native-web 0.21, TypeScript 6.0.3, contract v1.0 types copied verbatim from the planning docs, `createDevFixtureServices()`. Rendered with `expo start --web` in a Chromium pane emulating 375×812. This is react-native-web, not a native build, simulator or phone. Native rendering, font scaling, keyboard and screen readers remain Not Run until Member 4's baseline (INT-001) builds.
