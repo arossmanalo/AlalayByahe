@@ -170,3 +170,12 @@ Coordinates below were read from the redirect of each Google Maps short link the
 ## Seventh message from the user, 2026-10-10: confirmation
 
 The user replied "yes its correct" to the Mang Inasal pin question. Recorded as: the Candelaria jeep's stop in the town proper is at **13.9287883, 121.4240524** (the pin that Google Maps names "Non-Stop Gas Station"), as confirmed by the user. The reply did not address PITX gate 9, so gate 9 remains an unconfirmed report with no pin.
+
+## Research outcome for the buses and PITX (2026-10-10)
+
+See sources.md S-21 to S-27. Summary of how the research changes the leads:
+
+- **Operator corroboration:** JAC Liner's own site lists Candelaria as a stop on its Lucena route and a Buendia terminal at Sen. Gil J. Puyat Ave. corner Donada St., Pasay. That supports a Candelaria to Buendia bus existing, and fits the reported drop near Mixue on Taft Avenue by Gil Puyat. It does not give a fare, an exact stop, or the operator of the bus the team rode.
+- **PITX Gate 9 is contradicted, not confirmed:** PITX's own page (9 Oct 2026) lists **no routes for Gate 9** and no gate for the Fairview city bus, and does not mention Route 7. The "Route 7, 4am to 10pm, Gate 9" text the user supplied could not be traced to a source. Gate 9 is therefore left out of the draft data; the Fairview bus is modelled as boarding at the PITX terminal (the building pin).
+- **Fairview bus on Taft Avenue:** a secondary source (Greenline Express) says a Fairview to PITX city bus runs via Taft Avenue and Quezon Avenue, which supports the reported drop near DLSU. It remains unconfirmed by the operator.
+- **Draft built:** the legs with complete pins and a computed walk are in `data/candidates/roads-draft.json` and are listed in `pack-status.md`. Review with `npx tsx scripts/road-draft-review-sheet.ts`.

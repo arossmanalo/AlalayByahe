@@ -42,3 +42,7 @@ Searches found no official list for jeepney, UV Express/van, bus or tricycle ser
 ## Teammate-reported routes (2026-10-10)
 
 The team reported a route and fares for each corridor (see `teammate-observations.md`). They are undated, unattributed, have no stop coordinates or walking paths, and one LRT fare conflicts with the operator matrix. They are **leads, not evidence**: all three corridors remain unsupported until each leg is recorded with the observation template and reviewed.
+
+## Draft road coverage (2026-10-10, not shipped)
+
+`data/candidates/roads-draft.json` models Lipa (McDonald's near De La Salle) to Candelaria and Candelaria to Vito Cruz (two ways), one direction each, unverified. The shipped pack is still LRT-1 only. See `pack-status.md`.
