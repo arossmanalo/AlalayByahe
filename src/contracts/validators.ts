@@ -209,7 +209,17 @@ function fareQuote(value: unknown, sources: Set<string>): FareQuote {
   }
   return f as unknown as FareQuote;
 }
-export function validateRouteResult(value: unknown, request: RouteRequest, pack: TransitPack): Result<RouteResult> {
+export interface RouteResultOptions {
+  /**
+   * DEMO BUILD ONLY (test_fixture packs). Also accept legs whose evidence is "estimated".
+   * "unknown" evidence is still refused. The release composition never sets this.
+   */
+  allowUnverified?: boolean;
+}
+export function validateRouteResult(
+  value: unknown, request: RouteRequest, pack: TransitPack, options: RouteResultOptions = {},
+): Result<RouteResult> {
+  const reliable = (r: string): boolean => r === "verified" || (options.allowUnverified === true && r === "estimated");
   return parse(() => {
     const r = object(value, "route result", ["queryId", "options", "coverageWarnings"]);
     if (r.queryId !== request.queryId) bad("result queryId");
@@ -231,7 +241,7 @@ export function validateRouteResult(value: unknown, request: RouteRequest, pack:
         if (leg.kind === "walk") {
           object(leg, "walk leg", ["kind", "linkId", "fromPlaceId", "toPlaceId", "meters", "instructions", "evidence"]);
           const link = pack.walkLinks.find(w => w.id === leg.linkId);
-          if (!link || link.evidence.reliability !== "verified" || location !== link.fromPlaceId
+          if (!link || !reliable(link.evidence.reliability) || location !== link.fromPlaceId
               || leg.fromPlaceId !== link.fromPlaceId || leg.toPlaceId !== link.toPlaceId
               || leg.meters !== link.meters) bad("unverified walk leg");
           evidence(leg.evidence, sources);
@@ -251,12 +261,12 @@ export function validateRouteResult(value: unknown, request: RouteRequest, pack:
           bool(leg.alreadyOnboard, "alreadyOnboard");
           const on = rides === 0 && request.onboard;
           if (leg.alreadyOnboard && (!on || on.directionId !== leg.directionId || on.confirmedNextStopId !== leg.boardStopId)) bad("onboard ride");
-          if (!direction || direction.availability !== "documented" || direction.evidence.reliability !== "verified"
-              || !service || service.evidence.reliability !== "verified" || !board || !alight || !from || !to
+          if (!direction || direction.availability !== "documented" || !reliable(direction.evidence.reliability)
+              || !service || !reliable(service.evidence.reliability) || !board || !alight || !from || !to
               || board.placeId !== location || from.sequence >= to.sequence
               || (!leg.alreadyOnboard && (!from.board || !board.board))
-              || !to.alight || !alight.alight || from.evidence.reliability !== "verified"
-              || to.evidence.reliability !== "verified") bad("illegal or unverified ride");
+              || !to.alight || !alight.alight || !reliable(from.evidence.reliability)
+              || !reliable(to.evidence.reliability)) bad("illegal or unverified ride");
           if (leg.mode !== service.mode || leg.serviceName !== service.name || leg.headsign !== direction.headsign
               || (leg.boardLabel !== board.label
                 && !(leg.alreadyOnboard && leg.boardLabel === "Currently onboard; next stop: " + board.label))

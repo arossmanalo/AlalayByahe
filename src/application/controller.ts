@@ -95,7 +95,8 @@ export function createJourneyController(
       const result = await ports.routes.plan(scoped.value, validatedPack.value);
       if (!current(job)) return cancelled();
       if (!result.ok) return result;
-      const validated = validateRouteResult(result.value, scoped.value, validatedPack.value);
+      const validated = validateRouteResult(result.value, scoped.value, validatedPack.value,
+        { allowUnverified: options.allowTestFixtures ?? false });
       // Keep the current draft for explicit edits/reconfirmation. New input,
       // manual planning or explicit cancellation invalidates it.
       return validated;

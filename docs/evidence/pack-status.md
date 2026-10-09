@@ -73,3 +73,40 @@ Loading with `target: "release"` also rejects any pack whose `kind` is not `rele
 - It proves a pack is well formed and internally consistent. It cannot prove a route exists in the real world; that is the source audit (ROUTE-006).
 - Fare validity dates are checked for order and format only. Expiry against today's date is a fare-calculation concern (ROUTE-004).
 - The release-shaped pack used in `tests/routing/data.test.ts` is built in memory from the fixture to exercise the accept path. It is never written to disk and does not represent any service.
+
+## Draft road routes (not shipped)
+
+`data/candidates/roads-draft.json` (built by `scripts/build-road-draft.ts`; version `lrt1_roads_draft_2026_10_10_1`) contains the verified LRT-1 pack plus draft road routes from teammate reports and the operator research. All road facts are `estimated`, so `data:validate --release` reports exactly 42 "must be verified" errors and nothing else. That refusal is intended; **this file is not bundled and `assets/data/release.json` is unchanged.**
+
+| In the draft | Detail |
+|---|---|
+| Lipa to Candelaria | McDonald's near De La Salle Lipa, jeep "Lipa Palengke" (P14), 150 m walk, jeep "Tiaong / Bantayan" (P60), jeep "Candelaria" (P30). Total P104, two transfers. |
+| Candelaria to Vito Cruz, via Buendia bus | Bus "Buendia" (P250) to Mixue Gil Puyat, a 790 m walk, LRT-1 Gil Puyat to Vito Cruz (P18). Needs the user to raise the 500 m transfer walk limit to 800 m. |
+| Candelaria to Vito Cruz, via PITX | Bus "PITX" (P210), city bus "SM Fairview" (P20) to Taft Avenue near DLSU, 234 m walk to Vito Cruz LRT. Total P230 plus the walk. Works under the default limits. |
+| Lipa to San Pablo (partial) | Van from the Lipa terminal pin (13.942662, 121.153493) to Puregold San Pablo (P130). Puregold's point is from OpenStreetMap and approximate. |
+| Not in the draft | The SM Lipa jeepney (its boarding dorm is not given), the Wawa jeepney (out of scope by the user's decision: the corridor ends at Puregold San Pablo), the Quiapo/UST/Gil Puyat jeeps (no boarding spot), every return trip, student fares (the reported amounts do not follow one discount ratio), and PITX Gate 9 (the PITX page does not list it). |
+
+To ship it: a teammate reviews each leg with `npx tsx scripts/road-draft-review-sheet.ts`, the evidence of the confirmed legs is raised to `verified`, unconfirmed legs are removed, the version is bumped, and the pack is validated with `--release` and copied to `assets/data/release.json`. Member 4 then rebuilds the native app.
+
+## Pack freeze
+
+**Frozen on 2026-10-10 02:38 +08:00** by the user's instruction ("ok freeze"), recorded by Member 2.
+
+| Field | Value |
+|---|---|
+| Frozen file | `assets/data/release.json` |
+| Pack | `pack_lrt1`, version `lrt1_2026_10_10_1` |
+| Content SHA-256 (canonical JSON) | `f2499c546a0b8e495ab41062595c55fc21f3c293410744a640147a3cb44c2931` |
+| Coverage | LRT-1 stations only (25 stations, stored value fares, no walking links, no road services) |
+| Validation | `data:validate --release`: 0 errors, 0 warnings |
+
+Assumed with the freeze (the user said "ok freeze" after these were stated): **no road route is in the shipped app**, and the Luzon demo pack stays a laptop and test tool, not a phone build.
+
+Not frozen and not shipped: `data/candidates/roads-draft.json` (unverified road routes), `tests/fixtures/luzon-demo-pack.json` (synthetic demo data), `tests/fixtures/transit-pack.json` (synthetic fixture).
+
+Rules while frozen: no change to `assets/data/release.json` or `src/application/bundled-pack.ts`'s import of it, unless a fact is found wrong. A correction means a new version number, a fresh review, a Member 4 rebuild, and repeating the physical tests that depended on the earlier build. Adding road routes later is a new pack version with the same consequences.
+
+### Update to the freeze (user decision, same day)
+
+The user then asked for the road routes and the Luzon demo data to ship too. Decision taken: they ship in a **separate demo build** (`EXPO_PUBLIC_DEMO_BUILD=1`), not in the release build. The frozen release pack above is **unchanged** and stays the only data in the release build. See `docs/evidence/demo-build.md`.
+

@@ -100,3 +100,7 @@ bus is the second option, `complete` at 7,300. Both outcomes are asserted in `te
 - Fare validity is evaluated at the injected clock; there is no per-trip date selection.
 - Search state grows with stops per direction (`boardIndex` is part of the onboard state). Packs of corridor size are far below the guard; a very large pack would hit `SEARCH_LIMIT_REACHED` rather than run long.
 - Member 4's `validateTransitPack` (in `src/contracts/validators.ts`) and my `validatePack` overlap. Mine is stricter on evidence, fares and walks; theirs additionally forbids a repeated stop within a direction. They should be reconciled before release (one source of truth).
+
+## Onboard requests and the origin endpoint (answer to Member 3, 2026-10-10)
+
+For a request that carries `onboard`, the engine **ignores `request.origin`** (`src/routing/onboard.ts`, `routePort.ts`). It starts from the confirmed direction and the confirmed next stop, and it does not require `origin.placeId` to exist in the pack. The UI sending the confirmed next stop's place (`stop.placeId`, `stop.label`, `stop.point`) as the origin is correct and harmless, and it keeps the request shape valid for the controller's own checks. What the engine does use: `onboard.directionId` (must be a documented direction), `onboard.confirmedNextStopId` (must be on that direction and appear once; a stop a loop passes twice needs clarification), `onboard.confirmedAt` (ISO 8601 with timezone) and the destination place.
