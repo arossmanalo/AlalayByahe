@@ -179,3 +179,7 @@ See sources.md S-21 to S-27. Summary of how the research changes the leads:
 - **PITX Gate 9 is contradicted, not confirmed:** PITX's own page (9 Oct 2026) lists **no routes for Gate 9** and no gate for the Fairview city bus, and does not mention Route 7. The "Route 7, 4am to 10pm, Gate 9" text the user supplied could not be traced to a source. Gate 9 is therefore left out of the draft data; the Fairview bus is modelled as boarding at the PITX terminal (the building pin).
 - **Fairview bus on Taft Avenue:** a secondary source (Greenline Express) says a Fairview to PITX city bus runs via Taft Avenue and Quezon Avenue, which supports the reported drop near DLSU. It remains unconfirmed by the operator.
 - **Draft built:** the legs with complete pins and a computed walk are in `data/candidates/roads-draft.json` and are listed in `pack-status.md`. Review with `npx tsx scripts/road-draft-review-sheet.ts`.
+
+## Eighth message from the user, 2026-10-10: scope decision for Lipa to San Pablo
+
+The user decided that the "Wawa" jeepney is **out of scope**: once the commuter is dropped at Puregold San Pablo, they have reached San Pablo City, which is the corridor's destination. The Lipa to San Pablo corridor therefore ends at **Puregold San Pablo**. What remains for this corridor: the "SM Lipa" jeepney from the dorm and its drop behind KFC near Big Ben (no pins yet), and the walk from that drop to the van terminal. Without those, a journey can start at the van terminal (13.942662, 121.153493) but not at the dorm.

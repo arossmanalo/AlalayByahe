@@ -49,6 +49,7 @@ for (const w of pack.walkLinks.filter((x) => !LRT.test(x.fromPlaceId) || !LRT.te
 console.log("\n## Known doubts\n");
 console.log("- [ ] The Fairview bus is reported to board at PITX Gate 9. The PITX page (9 Oct 2026) lists no routes for Gate 9, so the gate is not in the data. Does the Fairview bus really go along Taft Avenue past Vito Cruz?");
 console.log("- [ ] The Candelaria jeep's signboard is recorded as \"Candelaria\" (inferred). What does it actually say?");
+console.log("- [ ] Lipa to San Pablo ends at Puregold San Pablo (the Wawa jeepney is out of scope). The van starts at the Lipa terminal pin; the SM Lipa jeepney from the dorm is not in the data yet.");
 console.log("- [ ] Student fares are NOT in the data (the reported amounts do not follow one fixed discount).");
 console.log("- [ ] Only the reported direction is included. Return trips are not.");
 console.log("\nReviewer name: ____________   Date: ____________   Legs to remove: ____________");
