@@ -39,7 +39,7 @@ async function plan(from: string, to: string, over = {}) {
 
 const lines = (o: JourneyOption, lang: "en" | "fil" = "en"): string[] => {
   const t = strings[lang];
-  const f = fareText(o.fare, t);
+  const f = fareText(o, t);
   return f.kind === "complete" ? [f.label, f.value] : [f.title, ...f.lines];
 };
 
@@ -47,8 +47,9 @@ test("Vito Cruz to Baclaran prints one ride at P21 as a total, with no walk and 
   const { result, request } = await plan("vito_cruz", "baclaran");
   const option = result.options[0]!;
   assert.deepEqual(optionIssues(option), []);
-  assert.deepEqual(lines(option), ["Fare", "₱21.00 total"]);
-  assert.deepEqual(lines(option, "fil"), ["Pamasahe", "₱21.00 kabuuan"]);
+  assert.deepEqual(lines(option), ["Fare", "₱21.00 total (verified)"]);
+  assert.equal(lines(option, "fil")[0], "Pamasahe");
+  assert.match(lines(option, "fil")[1]!, /^₱21\.00 kabuuan \(/);
   const steps = journeySteps(option, request);
   assert.deepEqual(steps.map((s) => s.kind), ["ride"]);
   const ride = steps[0]!.kind === "ride" ? steps[0]!.leg : null;
@@ -61,8 +62,8 @@ test("Vito Cruz to Baclaran prints one ride at P21 as a total, with no walk and 
 test("the Taft alias plans both directions at P20 with the opposite headsigns", async () => {
   const there = (await plan("edsa", "vito_cruz")).result.options[0]!;
   const back = (await plan("vito_cruz", "edsa")).result.options[0]!;
-  assert.deepEqual(lines(there), ["Fare", "₱20.00 total"]);
-  assert.deepEqual(lines(back), ["Fare", "₱20.00 total"]);
+  assert.deepEqual(lines(there), ["Fare", "₱20.00 total (verified)"]);
+  assert.deepEqual(lines(back), ["Fare", "₱20.00 total (verified)"]);
   const head = (o: JourneyOption) => (o.legs[0]!.kind === "ride" ? o.legs[0]!.headsign : "");
   assert.equal(head(there), "Fernando Poe Jr.");
   assert.equal(head(back), "Dr. Santos");
@@ -71,7 +72,7 @@ test("the Taft alias plans both directions at P20 with the opposite headsigns", 
 test("the whole line is P52 and a single ride, both ways", async () => {
   for (const [a, b] of [["dr_santos", "fernando_poe_jr"], ["fernando_poe_jr", "dr_santos"]] as const) {
     const option = (await plan(a, b)).result.options[0]!;
-    assert.deepEqual(lines(option), ["Fare", "₱52.00 total"]);
+    assert.deepEqual(lines(option), ["Fare", "₱52.00 total (verified)"]);
     assert.equal(option.legs.length, 1);
     assert.equal(option.transfers, 0);
   }
@@ -87,9 +88,8 @@ test("a student sees the regular P19 fare with the estimate caveat in the ride b
     assert.match(ride.fare.basis, /No student discount is documented/);
   }
   assert.ok(option.warnings.some((w) => /estimates/.test(w)), "the option warnings say some fares are estimates");
-  // Presenter observation, recorded for Member 3: the headline still reads "total" because the
-  // engine status is complete; the estimate is explained in the ride basis and the warnings.
-  assert.deepEqual(lines(option), ["Fare", "₱19.00 total"]);
+  // Member 3's UI-006 fix: the headline now says the total is an estimate, not just the ride basis.
+  assert.deepEqual(lines(option), ["Fare", "₱19.00 total (estimated)"]);
 });
 
 test("every result carries the pack coverage label, and the summary states it once", async () => {

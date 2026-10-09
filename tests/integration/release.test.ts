@@ -6,7 +6,7 @@ import { pack } from "./helpers";
 
 test("foundation cannot pass a release gate without real adapters, data, and physical proof", () => {
   const blockers = releaseBlockers({ pack: null, ai: "unavailable", commuteUi: "foundation", model: MODEL_MANIFEST, physicalProof: null });
-  assert.equal(blockers.length, 5);
+  assert.equal(blockers.length, 4); // iOS is no longer required (descoped 2026-10-10)
 });
 test("a fixture and claimed proof cannot establish release readiness", () => {
   const proof = ["android", "ios"].map(platform => ({
@@ -17,7 +17,7 @@ test("a fixture and claimed proof cannot establish release readiness", () => {
     airplaneModeFreshQuery: true, cancellationAndRecovery: true,
   }));
   const blockers = releaseBlockers({ pack: pack(), ai: "integrated", commuteUi: "integrated", model: MODEL_MANIFEST, physicalProof: proof });
-  assert.equal(blockers.length, 3);
+  assert.equal(blockers.length, 2); // iOS is no longer required (descoped 2026-10-10)
 });
 
 const artifact = { platform: "android", artifactSha256: "a".repeat(64), sourceCommit: "b".repeat(40) };

@@ -18,7 +18,7 @@ npm run data:validate
 npm run release:check
 ```
 
-`release:check` intentionally fails until a reviewed pack is bundled and matching Android physical evidence exists. (The release gate in `src/application/release-gate.ts` still also requires iOS evidence; it has not been changed, so `release:check` keeps reporting the iOS blocker until the team decides how to handle it.) A passing fixture validation or build cannot make a release ready.
+`release:check` intentionally fails until a reviewed pack is bundled and matching Android physical evidence exists. (The release gate in `src/application/release-gate.ts` now requires Android evidence only, because iOS was excluded from production on 2026-10-10.) A passing fixture validation or build cannot make a release ready.
 
 Build identities belong in `docs/evidence/native-artifacts.json`; completed acceptance reports belong in `docs/evidence/physical-release.json` using the example template. Reports must match the actual APK/IPA hash, build source commit, pack and model. Runtime changes invalidate old artifacts; documentation-only changes do not.
 
