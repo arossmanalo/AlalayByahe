@@ -167,6 +167,11 @@ Optional "Notify me near my stop" card on the journey detail screen. It is a rem
 | AL-15 | Demo build, a road journey | Card shows "Unverified (demo data)"; the test-pack banner is still visible | Not Run |
 | AL-16 | Airplane mode with location on | GPS fixes can still arrive; the card works without internet; record what happened | Not Run |
 | AL-17 | Filipino language | Card text is translated and makes sense | Not Run |
+| AL-18 | Grant only "Approximate" location (Android 12+) | "Alerts need precise location" with the settings help; the alert does not start; Try again offered | Not Run |
+| AL-19 | Alert on, leave the screen idle for 2 minutes | Screen stays awake while listening; after Stop alerts or leaving the screen it can sleep again | Not Run |
+| AL-20 | Alert on, press the power button, unlock | Alerts pause, then resume to "Looking for your location" and continue | Not Run |
+| AL-21 | Weak GPS for about 30 s (indoors) | "Your phone's location is not precise enough yet" with help; later a usable fix clears it | Not Run |
+| AL-22 | Shortest LRT-1 ride (Abad Santos to R. Papa) | An alert is offered and does not fire at the boarding station | Not Run |
 
 ## Fixture triggers
 

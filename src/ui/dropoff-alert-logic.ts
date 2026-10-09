@@ -10,37 +10,60 @@ export type AlertPhase =
   | { kind: "asking" }
   | { kind: "denied"; canAskAgain: boolean }
   | { kind: "unavailable" }
-  | { kind: "waiting" }
-  | { kind: "watching"; state: ProximityState; distanceMeters: number }
+  | { kind: "approximate" }
+  | { kind: "tooShort" }
+  | { kind: "waiting"; weakFixes: number }
+  | { kind: "watching"; state: ProximityState; distanceMeters: number; weakFixes: number }
   | { kind: "paused" };
+
+/** About 30 s of consecutive fixes that are too imprecise (at the 5 s fix interval) counts as weak signal. */
+export const WEAK_SIGNAL_FIXES = 6;
+
+export const waitingPhase = (): AlertPhase => ({ kind: "waiting", weakFixes: 0 });
 
 export interface PermissionOutcome {
   granted: boolean;
   canAskAgain: boolean;
   servicesEnabled: boolean;
+  /** Android 12+: the user allowed only approximate location, which is too coarse for this alert. */
+  approximateOnly?: boolean;
 }
 
 /** After the system permission answer. Denied or unavailable location never blocks the journey itself. */
 export function phaseAfterPermission(outcome: PermissionOutcome): AlertPhase {
   if (!outcome.granted) return { kind: "denied", canAskAgain: outcome.canAskAgain };
   if (!outcome.servicesEnabled) return { kind: "unavailable" };
-  return { kind: "waiting" };
+  if (outcome.approximateOnly) return { kind: "approximate" };
+  return waitingPhase();
 }
 
-export function isListening(phase: AlertPhase): boolean {
+export function isListening(phase: AlertPhase): phase is Extract<AlertPhase, { kind: "waiting" | "watching" }> {
   return phase.kind === "waiting" || phase.kind === "watching";
+}
+
+/** The screen is held awake only while listening, because the alert pauses when the app is in the background. */
+export function needsScreenOn(phase: AlertPhase): boolean {
+  return isListening(phase);
 }
 
 /** Only a listening phase reacts to proximity updates; an ignored fix leaves the last good reading. */
 export function phaseAfterUpdate(prev: AlertPhase, update: ProximityUpdate): AlertPhase {
   if (!isListening(prev)) return prev;
-  if (update.distanceMeters === null) return { kind: "waiting" };
-  return { kind: "watching", state: update.state, distanceMeters: update.distanceMeters };
+  const weakFixes = prev.weakFixes;
+  if (update.ignored === "low_accuracy") {
+    // Keep the last reading, but count how long the signal has been too imprecise to use.
+    return prev.kind === "waiting"
+      ? { kind: "waiting", weakFixes: weakFixes + 1 }
+      : { ...prev, weakFixes: weakFixes + 1 };
+  }
+  if (update.ignored) return prev;
+  if (update.distanceMeters === null) return { kind: "waiting", weakFixes };
+  return { kind: "watching", state: update.state, distanceMeters: update.distanceMeters, weakFixes: 0 };
 }
 
 /** Background pauses a listening alert (no background location); returning resumes it from "waiting". */
 export function phaseOnAppState(prev: AlertPhase, appState: string): AlertPhase {
-  if (appState === "active") return prev.kind === "paused" ? { kind: "waiting" } : prev;
+  if (appState === "active") return prev.kind === "paused" ? waitingPhase() : prev;
   return isListening(prev) ? { kind: "paused" } : prev;
 }
 
@@ -75,15 +98,22 @@ export function alertText(phase: AlertPhase, place: string, t: Strings): AlertTe
       };
     case "unavailable":
       return { tone: "warning", title: t.alertUnavailable, lines: [], announce: false };
+    case "approximate":
+      return { tone: "warning", title: t.alertApproximate, lines: [t.alertApproximateHelp], announce: false };
+    case "tooShort":
+      return { tone: "info", title: t.alertTooShort, lines: [], announce: false };
     case "waiting":
-      return { tone: "info", title: t.alertWaiting, lines: [], announce: false };
+      return phase.weakFixes >= WEAK_SIGNAL_FIXES
+        ? { tone: "warning", title: t.alertWeakSignal, lines: [t.alertWeakSignalHelp], announce: false }
+        : { tone: "info", title: t.alertWaiting, lines: [], announce: false };
     case "paused":
       return { tone: "warning", title: t.alertPaused, lines: [], announce: false };
     case "watching": {
+      const weak = phase.weakFixes >= WEAK_SIGNAL_FIXES ? [t.alertWeakSignalShort] : [];
       const distance = t.alertDistance(phase.distanceMeters);
-      if (phase.state === "arrived") return { tone: "success", title: t.alertArrived(place), lines: [distance], announce: true };
-      if (phase.state === "approaching") return { tone: "warning", title: t.alertApproaching(place), lines: [distance], announce: true };
-      return { tone: "info", title: t.alertFar(place), lines: [distance], announce: false };
+      if (phase.state === "arrived") return { tone: "success", title: t.alertArrived(place), lines: [distance, ...weak], announce: true };
+      if (phase.state === "approaching") return { tone: "warning", title: t.alertApproaching(place), lines: [distance, ...weak], announce: true };
+      return { tone: "info", title: t.alertFar(place), lines: [distance, ...weak], announce: false };
     }
   }
 }

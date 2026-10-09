@@ -250,6 +250,14 @@ const en = {
   alertNoDropoff: "Stop alerts are not available for this journey because the drop-off location is not recorded.",
   alertLimits:
     "Works only while the app is open. GPS can be weak indoors, underground and between tall buildings. Vibration may be switched off on your phone.",
+  alertScreenOn:
+    "While alerts are on, this screen stays awake, which uses more battery. If you press the power button, alerts pause until you unlock the phone and return to the app.",
+  alertApproximate: "Alerts need precise location, but only approximate location is allowed.",
+  alertApproximateHelp: "Allow precise location for this app in your phone settings, then try again.",
+  alertWeakSignal: "Your phone's location is not precise enough yet.",
+  alertWeakSignalHelp: "Move near a window or outside, turn on precise location for this app, and keep the app open.",
+  alertWeakSignalShort: "GPS signal is weak, so this distance may be out of date.",
+  alertTooShort: "This ride is too short for a useful alert, so none is offered. Check the stop name yourself.",
   evidenceHeading: "Sources and checks",
   checkedOn: (date: string) => `Checked ${date}`,
   reliabilityLabel: (r: string) => `Reliability: ${r}`,
@@ -569,6 +577,14 @@ const fil: Strings = {
   alertNoDropoff: "Hindi available ang paalala para sa biyaheng ito dahil walang naitalang lokasyon ng bababaan.",
   alertLimits:
     "Gumagana lang habang bukas ang app. Maaaring mahina ang GPS sa loob ng gusali, sa ilalim ng lupa at sa pagitan ng matataas na gusali. Maaaring naka-off ang vibration sa phone mo.",
+  alertScreenOn:
+    "Habang naka-on ang paalala, nananatiling gising ang screen na ito, kaya mas malakas ang konsumo ng baterya. Kapag pinindot mo ang power button, magpa-pause ang paalala hanggang i-unlock mo ang phone at bumalik sa app.",
+  alertApproximate: "Kailangan ng paalala ang tumpak na lokasyon, pero tinatayang lokasyon lang ang pinapayagan.",
+  alertApproximateHelp: "Payagan ang tumpak na lokasyon para sa app na ito sa settings ng phone, saka subukan ulit.",
+  alertWeakSignal: "Hindi pa sapat ang katumpakan ng lokasyon ng phone mo.",
+  alertWeakSignalHelp: "Lumapit sa bintana o lumabas, i-on ang tumpak na lokasyon para sa app na ito, at panatilihing bukas ang app.",
+  alertWeakSignalShort: "Mahina ang GPS signal, kaya maaaring luma na ang layong ito.",
+  alertTooShort: "Masyadong maikli ang biyaheng ito para sa kapaki-pakinabang na paalala, kaya walang inaalok. Tingnan mo mismo ang pangalan ng hintuan.",
   evidenceHeading: "Mga source at pagsusuri",
   checkedOn: (date) => `Sinuri noong ${date}`,
   reliabilityLabel: (r) => `Katiyakan: ${r}`,

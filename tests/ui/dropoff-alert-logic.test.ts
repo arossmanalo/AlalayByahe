@@ -3,6 +3,8 @@ import { describe, it } from "node:test";
 import {
   alertText,
   isListening,
+  needsScreenOn,
+  WEAK_SIGNAL_FIXES,
   phaseAfterPermission,
   phaseAfterUpdate,
   phaseOnAppState,
@@ -17,7 +19,8 @@ import type { ProximityUpdate } from "../../src/routing/dropoffProximity";
 /** Software tests of the alert's pure logic and copy. Nothing here has run on a phone. */
 
 const LANGS: UiLanguage[] = ["en", "fil"];
-const watching = (state: "far" | "approaching" | "arrived", distanceMeters = 500): AlertPhase => ({ kind: "watching", state, distanceMeters });
+const watching = (state: "far" | "approaching" | "arrived", distanceMeters = 500, weakFixes = 0): AlertPhase => ({ kind: "watching", state, distanceMeters, weakFixes });
+const waiting = (weakFixes = 0): AlertPhase => ({ kind: "waiting", weakFixes });
 
 describe("permission outcomes", () => {
   it("denied location leaves alerts off and says whether the system can ask again", () => {
@@ -26,7 +29,7 @@ describe("permission outcomes", () => {
   });
   it("granted but location services off is unavailable; granted and on starts waiting for a fix", () => {
     assert.deepEqual(phaseAfterPermission({ granted: true, canAskAgain: true, servicesEnabled: false }), { kind: "unavailable" });
-    assert.deepEqual(phaseAfterPermission({ granted: true, canAskAgain: true, servicesEnabled: true }), { kind: "waiting" });
+    assert.deepEqual(phaseAfterPermission({ granted: true, canAskAgain: true, servicesEnabled: true }), waiting());
   });
 });
 
@@ -34,13 +37,23 @@ describe("phase after a proximity update", () => {
   const update = (over: Partial<ProximityUpdate>): ProximityUpdate => ({ state: "far", distanceMeters: 1200, ...over });
 
   it("moves from waiting to watching with the state and whole-meter distance", () => {
-    assert.deepEqual(phaseAfterUpdate({ kind: "waiting" }, update({})), watching("far", 1200));
+    assert.deepEqual(phaseAfterUpdate(waiting(), update({})), watching("far", 1200));
     assert.deepEqual(phaseAfterUpdate(watching("far"), update({ state: "approaching", distanceMeters: 700, event: "approaching" })), watching("approaching", 700));
     assert.deepEqual(phaseAfterUpdate(watching("approaching"), update({ state: "arrived", distanceMeters: 300, event: "arrived" })), watching("arrived", 300));
   });
   it("an ignored first fix keeps waiting; an ignored later fix keeps the last reading", () => {
-    assert.deepEqual(phaseAfterUpdate({ kind: "waiting" }, { state: "far", distanceMeters: null, ignored: "low_accuracy" }), { kind: "waiting" });
+    assert.deepEqual(phaseAfterUpdate(waiting(), { state: "far", distanceMeters: null, ignored: "invalid_fix" }), waiting());
     assert.deepEqual(phaseAfterUpdate(watching("approaching", 650), { state: "approaching", distanceMeters: 650, ignored: "stale_fix" }), watching("approaching", 650));
+  });
+  it("counts consecutive low-accuracy fixes and resets on the first usable one", () => {
+    const weak: ProximityUpdate = { state: "far", distanceMeters: null, ignored: "low_accuracy" };
+    let phase: AlertPhase = waiting();
+    for (let i = 0; i < WEAK_SIGNAL_FIXES; i += 1) phase = phaseAfterUpdate(phase, weak);
+    assert.deepEqual(phase, waiting(WEAK_SIGNAL_FIXES));
+    phase = phaseAfterUpdate(phase, { state: "far", distanceMeters: 1400 });
+    assert.deepEqual(phase, watching("far", 1400, 0));
+    const lost = phaseAfterUpdate(watching("approaching", 700), { state: "approaching", distanceMeters: 700, ignored: "low_accuracy" });
+    assert.deepEqual(lost, watching("approaching", 700, 1));
   });
   it("updates that arrive while off, denied, paused or unavailable change nothing", () => {
     for (const prev of [{ kind: "off" }, { kind: "asking" }, { kind: "paused" }, { kind: "unavailable" }, { kind: "denied", canAskAgain: true }] as AlertPhase[]) {
@@ -49,11 +62,26 @@ describe("phase after a proximity update", () => {
   });
 });
 
+describe("approximate location and screen", () => {
+  it("granted but approximate-only location is its own phase, with a way to fix it", () => {
+    assert.deepEqual(phaseAfterPermission({ granted: true, canAskAgain: true, servicesEnabled: true, approximateOnly: true }), { kind: "approximate" });
+    assert.deepEqual(phaseAfterPermission({ granted: true, canAskAgain: true, servicesEnabled: true, approximateOnly: false }), waiting());
+    assert.deepEqual(phaseAfterPermission({ granted: false, canAskAgain: true, servicesEnabled: true, approximateOnly: true }), { kind: "denied", canAskAgain: true });
+  });
+  it("holds the screen awake only while listening", () => {
+    assert.equal(needsScreenOn(waiting()), true);
+    assert.equal(needsScreenOn(watching("far")), true);
+    for (const p of [{ kind: "off" }, { kind: "asking" }, { kind: "paused" }, { kind: "approximate" }, { kind: "tooShort" }, { kind: "unavailable" }, { kind: "denied", canAskAgain: true }] as AlertPhase[]) {
+      assert.equal(needsScreenOn(p), false);
+    }
+  });
+});
+
 describe("app state", () => {
   it("pauses a listening alert in the background and resumes to waiting when the app returns", () => {
-    assert.deepEqual(phaseOnAppState({ kind: "waiting" }, "background"), { kind: "paused" });
+    assert.deepEqual(phaseOnAppState(waiting(), "background"), { kind: "paused" });
     assert.deepEqual(phaseOnAppState(watching("far"), "inactive"), { kind: "paused" });
-    assert.deepEqual(phaseOnAppState({ kind: "paused" }, "active"), { kind: "waiting" });
+    assert.deepEqual(phaseOnAppState({ kind: "paused" }, "active"), waiting());
   });
   it("does not start or change anything that was not listening", () => {
     for (const prev of [{ kind: "off" }, { kind: "denied", canAskAgain: false }, { kind: "unavailable" }, { kind: "asking" }] as AlertPhase[]) {
@@ -61,7 +89,7 @@ describe("app state", () => {
       assert.deepEqual(phaseOnAppState(prev, "active"), prev);
     }
     assert.equal(isListening({ kind: "paused" }), false);
-    assert.equal(isListening({ kind: "waiting" }), true);
+    assert.equal(isListening(waiting()), true);
   });
 });
 
@@ -81,7 +109,7 @@ describe("alert copy", () => {
     const t = strings[lang];
     const phases: AlertPhase[] = [
       { kind: "asking" }, { kind: "denied", canAskAgain: true }, { kind: "denied", canAskAgain: false }, { kind: "unavailable" },
-      { kind: "waiting" }, { kind: "paused" }, watching("far", 1500), watching("approaching", 700), watching("arrived", 250),
+      { kind: "approximate" }, { kind: "tooShort" }, waiting(), waiting(WEAK_SIGNAL_FIXES), watching("far", 900, WEAK_SIGNAL_FIXES), { kind: "paused" }, watching("far", 1500), watching("approaching", 700), watching("arrived", 250),
     ];
 
     it(`${lang}: every phase has visible text, off has none, and only approaching/arrived are announced assertively`, () => {
@@ -104,6 +132,18 @@ describe("alert copy", () => {
       assert.equal(approaching.tone, "warning");
     });
 
+    it(`${lang}: explains weak GPS and approximate location with something the user can do`, () => {
+      const weak = alertText(waiting(WEAK_SIGNAL_FIXES), "X", t)!;
+      assert.equal(weak.tone, "warning");
+      assert.equal(weak.lines.length, 1);
+      assert.equal(alertText(waiting(WEAK_SIGNAL_FIXES - 1), "X", t)!.tone, "info");
+      const stale = alertText(watching("far", 900, WEAK_SIGNAL_FIXES), "X", t)!;
+      assert.ok(stale.lines.includes(t.alertWeakSignalShort));
+      const approx = alertText({ kind: "approximate" }, "X", t)!;
+      assert.deepEqual(approx.lines, [t.alertApproximateHelp]);
+      assert.equal(alertText({ kind: "tooShort" }, "X", t)!.title, t.alertTooShort);
+    });
+
     it(`${lang}: points to phone settings only when the system cannot ask again`, () => {
       assert.deepEqual(alertText({ kind: "denied", canAskAgain: true }, "X", t)!.lines, []);
       assert.deepEqual(alertText({ kind: "denied", canAskAgain: false }, "X", t)!.lines, [t.alertDeniedSettings]);
@@ -112,7 +152,8 @@ describe("alert copy", () => {
     it(`${lang}: never claims tracking, live data, arrival times or guarantees`, () => {
       const all = [
         t.alertTitle, t.alertIntro, t.alertStart, t.alertExplain, t.alertAllow, t.alertStop, t.alertDeniedSettings,
-        t.alertUnverified, t.alertNoDropoff, t.alertLimits,
+        t.alertUnverified, t.alertNoDropoff, t.alertLimits, t.alertScreenOn, t.alertApproximate, t.alertApproximateHelp,
+        t.alertWeakSignal, t.alertWeakSignalHelp, t.alertWeakSignalShort, t.alertTooShort,
         ...phases.flatMap((p) => {
           const x = alertText(p, "Baclaran", t)!;
           return [x.title, ...x.lines];

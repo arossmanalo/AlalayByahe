@@ -1,6 +1,6 @@
 # Drop-off alert logic and trip pins (ALERT-001, ALERT-002)
 
-Status (2026-10-10): pure TypeScript modules with software tests. **Not tested on a phone.** No GPS, vibration, battery or walking result exists.
+Status (2026-10-10): pure TypeScript modules with software tests (the UI is in `src/ui/dropoff-alert.tsx`). **Not tested on a phone.** No GPS, vibration, battery or walking result exists.
 
 This supports an optional, user-started convenience alert: "You are near [stop]". It is **not vehicle tracking**. It knows nothing about the vehicle, route, schedule or arrival time, only how far the phone is from one target point. Do not describe it as live, automatic or "arriving now".
 
@@ -28,6 +28,9 @@ Behaviour:
 - **Re-arm:** only after a good fix farther than `warnMeters + 200` m. Then the state returns to `far` and both events can fire again. This hysteresis stops jitter from repeating alerts.
 - Ignored fixes (`invalid_fix`: NaN, infinite, out of range, negative accuracy; `low_accuracy`; `stale_fix`: timestamp not newer than the last accepted fix) leave the state unchanged and never count toward arrival.
 - Distances are aerial meters (`aerialMeters` in `src/data/geo.ts`), rounded to whole meters. This is only used to decide when to nudge the user, never for routing or walking directions.
+
+### Distances sized to the ride (`thresholdsForRide`)
+`thresholdsForRide(rideMeters)` returns `{ radiusMeters, warnMeters }` for the **final ride** (straight line from its board stop to the drop-off, `TripPins.finalRideBoard` to `TripPins.dropoff`): radius = a quarter of the ride clamped to 100..400 m, warn = half of it clamped to 200..800 m. The warn distance is always less than the ride, so the boarding stop is outside it and the alert cannot fire at boarding. For a ride shorter than `MIN_ALERT_RIDE_METERS` (300 m) it returns `null`: offer no alert. Measured on the release pack, every adjacent pair of LRT-1 stations is 616 m or more apart in a straight line (shortest: Abad Santos to R. Papa), so every LRT-1 ride gets an alert; a one-stop ride gets about 150 to 350 m radius and 300 to 700 m warning. If `finalRideBoard` is null (missing coordinate), the UI falls back to the 400/800 defaults.
 
 ### Thresholds are untested proposals
 400 m and 800 m, 100 m accuracy and two fixes are reasoned guesses. They have not been walked with a phone. At a typical 5 to 10 second fix interval, a vehicle at about 40 km/h covers roughly 55 to 110 m between fixes, so 800 m gives only about 1 to 2 minutes of warning. Tune after real tests; do not publish them as measured.

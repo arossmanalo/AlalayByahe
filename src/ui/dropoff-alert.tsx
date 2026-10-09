@@ -2,16 +2,19 @@
 // A reminder from the phone's own location while the app is open. It is not vehicle tracking, never
 // states an arrival time, and never blocks the journey. Location is read only after the user taps,
 // stays in memory, and is never stored, logged or sent anywhere.
+import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import * as Location from "expo-location";
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { AppState, Vibration, View } from "react-native";
 import type { JourneyOption, TransitPack } from "../contracts";
-import { createDropoffWatcher, type DropoffWatcher } from "../routing/dropoffProximity";
+import { aerialMeters } from "../data/geo";
+import { createDropoffWatcher, thresholdsForRide, type DropoffWatcher } from "../routing/dropoffProximity";
 import { buildTripPins } from "../routing/tripPins";
 import { AppButton, Body, Card, Heading, Notice, Small } from "./components/primitives";
 import {
   alertText,
   isListening,
+  needsScreenOn,
   phaseAfterPermission,
   phaseAfterUpdate,
   phaseOnAppState,
@@ -21,10 +24,19 @@ import {
 import { useUi } from "./services";
 
 const FIX_INTERVAL_MS = 5000;
+const KEEP_AWAKE_TAG = "stop-alert";
 
 export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: TransitPack }) {
   const { t } = useUi();
-  const dropoff = useMemo(() => buildTripPins(option, pack).dropoff, [option, pack]);
+  const pins = useMemo(() => buildTripPins(option, pack), [option, pack]);
+  const dropoff = pins.dropoff;
+  // Alert distances are sized to the final ride so a short ride cannot fire at the boarding stop.
+  // Null means the ride is too short for a useful alert. Without a board coordinate, defaults apply.
+  const sizing = useMemo(() => {
+    if (!pins.dropoff || !pins.finalRideBoard) return { tooShort: false, thresholds: {} };
+    const thresholds = thresholdsForRide(aerialMeters(pins.finalRideBoard.point, pins.dropoff.point));
+    return thresholds ? { tooShort: false, thresholds } : { tooShort: true, thresholds: {} };
+  }, [pins]);
   const [phase, setPhase] = useState<AlertPhase>({ kind: "off" });
   const [explaining, setExplaining] = useState(false);
 
@@ -51,7 +63,7 @@ export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: Tr
     stopWatch();
     const run = runRef.current;
     if (!watcherRef.current) {
-      const created = createDropoffWatcher({ target: dropoff.point });
+      const created = createDropoffWatcher({ target: dropoff.point, ...sizing.thresholds });
       if (!created.ok) {
         go({ kind: "unavailable" });
         return;
@@ -82,7 +94,7 @@ export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: Tr
     } catch {
       if (runRef.current === run) go({ kind: "unavailable" });
     }
-  }, [dropoff, go, stopWatch]);
+  }, [dropoff, go, sizing, stopWatch]);
 
   const start = useCallback(async () => {
     go({ kind: "asking" });
@@ -93,6 +105,7 @@ export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: Tr
         granted: permission.granted,
         canAskAgain: permission.canAskAgain,
         servicesEnabled,
+        approximateOnly: permission.android?.accuracy === "coarse",
       });
       go(next);
       if (next.kind === "waiting") await beginWatch();
@@ -129,6 +142,7 @@ export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: Tr
             granted: permission.granted,
             canAskAgain: permission.canAskAgain,
             servicesEnabled,
+            approximateOnly: permission.android?.accuracy === "coarse",
           });
           go(resumed);
           if (resumed.kind === "waiting") await beginWatch();
@@ -139,6 +153,16 @@ export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: Tr
     });
     return () => subscription.remove();
   }, [beginWatch, go, stopWatch]);
+
+  // The alert pauses when the app leaves the foreground, so the screen is held awake only while listening.
+  const screenOn = needsScreenOn(phase);
+  useEffect(() => {
+    if (!screenOn) return;
+    activateKeepAwakeAsync(KEEP_AWAKE_TAG).catch(() => undefined);
+    return () => {
+      deactivateKeepAwake(KEEP_AWAKE_TAG).catch(() => undefined);
+    };
+  }, [screenOn]);
 
   // Leaving the screen ends the alert.
   useEffect(
@@ -160,6 +184,15 @@ export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: Tr
     );
   }
 
+  if (sizing.tooShort) {
+    return (
+      <Card>
+        <Heading level={2}>{t.alertTitle}</Heading>
+        <Small>{t.alertTooShort}</Small>
+      </Card>
+    );
+  }
+
   const text = alertText(phase, dropoff.name, t);
   const active = phase.kind !== "off";
   return (
@@ -176,12 +209,18 @@ export function DropoffAlert({ option, pack }: { option: JourneyOption; pack: Tr
           </Notice>
         </View>
       ) : null}
-      {explaining && !active ? <Body>{t.alertExplain}</Body> : null}
+      {explaining && !active ? (
+        <>
+          <Body>{t.alertExplain}</Body>
+          <Body>{t.alertScreenOn}</Body>
+        </>
+      ) : null}
       {!active && !explaining ? <AppButton label={t.alertStart} onPress={() => setExplaining(true)} /> : null}
       {!active && explaining ? <AppButton label={t.alertAllow} onPress={() => void start()} /> : null}
-      {phase.kind === "denied" || phase.kind === "unavailable" ? (
+      {phase.kind === "denied" || phase.kind === "unavailable" || phase.kind === "approximate" ? (
         <AppButton label={t.retry} variant="secondary" onPress={() => void start()} />
       ) : null}
+      {needsScreenOn(phase) ? <Small>{t.alertScreenOn}</Small> : null}
       {active ? <AppButton label={t.alertStop} variant="secondary" onPress={stop} /> : null}
       <Small>{t.alertLimits}</Small>
     </Card>
