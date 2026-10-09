@@ -105,3 +105,29 @@ The user states this is the only possible route from Lipa to Candelaria. That st
 Checks on the pins (straight-line distances, for sanity only, never used as a walking distance): jeep leg about 1,340 m; walk about 142 m. A real walking distance cannot be shorter than 142 m.
 
 Leg 1 now lacks only: the jeep's signboard text and direction as seen (the user earlier reported "Lipa Palengke"), the date and recorder, the **measured walking distance and turn-by-turn steps** from the drop-off to the terminal (a Google Maps walking route reading would do, if named as the source), the terminal's name, and a second checker. The Tiaong jeep (leg 2) still needs its boarding spot at the terminal and the signboard text.
+
+## Fourth message from the user, 2026-10-10 (Lipa to Candelaria leg 2; Candelaria to Pedro Gil detail)
+
+### Lipa to Candelaria, leg 2 (clarified)
+
+Leg 2 is **one long jeepney ride**: it starts at the Lipa-side terminal where leg 1's walk ended (13.940246, 121.162833) and ends at the Tiaong intersection (13.960353, 121.321225). Signboard as reported earlier: "Tiaong" and "Bantayan"; fare P60 regular, P50 student. Straight-line distance between the two pins is about 17.3 km, so this is a long ride with no stops recorded between the ends. This answers the earlier question: the terminal is in Lipa, and the intersection is where the ride ends and the Candelaria jeep (leg 3) is boarded.
+
+Still missing for leg 2: the exact boarding spot at the terminal (the pin above is the walk's end), the date and recorder, a second checker, and whether the jeep stops anywhere between the ends where passengers may board or alight (none are recorded, so the pack would allow boarding at the terminal and alighting at the intersection only).
+
+### Candelaria to Pedro Gil to Vito Cruz (detail as received)
+
+| Route and part | Pickup | Drop-off | Sign | Fare |
+|---|---|---|---|---|
+| 1: bus, Candelaria to Pedro Gil | In front of Hacienda Inn, Candelaria, Quezon | In front of Mixue, Pedro Gil, Manila | "Buendia" | P250 regular, P230 student |
+| 1B: LRT-1, Pedro Gil to Vito Cruz | LRT-1 Pedro Gil Station (reached from the Mixue drop-off) | LRT-1 Vito Cruz Station | Dr. Santos-bound | Reported P25 / P12, **superseded**: the user said to follow the LRMC fares, so the data uses P19 stored value (P20 single journey) |
+| 2A: bus, Candelaria to PITX | In front of Hacienda Inn, Candelaria | PITX, Parañaque (1 Kennedy Road, Tambo) | "PITX" | P210 regular, P180 student |
+| 2B: bus, PITX to Vito Cruz | PITX bus boarding area (the text says "confirm the Fairview route gate") | Taft Avenue near DLSU / Vito Cruz | "SM Fairview" (text says "confirm it passes Vito Cruz") | P20 |
+
+Checks and cautions:
+- "Dr. Santos-bound" from Pedro Gil to Vito Cruz is consistent with the pack: Vito Cruz is south of Pedro Gil and the southbound record carries the headsign "Dr. Santos".
+- The only locations supplied are Google Maps **search links** (place names), not coordinates. They identify places, not exact boarding or drop-off spots, so they cannot become stop points.
+- Two items are flagged by the text itself as unconfirmed: the PITX Fairview gate, and whether the Fairview bus passes Vito Cruz. They must be confirmed by someone who rode it.
+- The drop-off for 2B is "Taft Avenue near DLSU / Vito Cruz", not a named stop; the walk from there to LRT Vito Cruz Station is not given.
+- The LRT-1 leg is already in the pack; only the road legs and the walks to and from the stations are missing.
+
+Still needed before any of these can be pack records: map pins for the Hacienda Inn stop, the Mixue drop-off at Pedro Gil, the PITX bay, and the Taft/DLSU drop-off; measured walks (Mixue to the LRT Pedro Gil entrance, Taft/DLSU drop-off to a station if used); dates and recorders; confirmation of the two flagged items; a second checker; and the reverse trips.
