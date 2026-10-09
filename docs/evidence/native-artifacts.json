@@ -1,12 +1,15 @@
 [
   {
     "platform": "android",
-    "artifactSha256": "9c34c0420ac7e8f7dc54c1231f05c368678131d87fd57b43e4bc8d550ac04b5f",
-    "sourceCommit": "34236a508544c5347285564937c07f3fcf4a6127",
-    "artifactFilename": "alalaybyahe-0.1.0-34236a5.apk",
-    "bytes": 208301781,
-    "builtAt": "2026-10-09T16:02:40.7537544Z",
+    "artifactSha256": "c5e9bfb35382f86c4957a968c51004d61d231c50aa0041050c779b70b5f6052e",
+    "sourceCommit": "0c43c2f5514346bd5f1468dda909f16f1ef79209",
+    "artifactFilename": "alalaybyahe-0.1.0-0c43c2f-release.apk",
+    "bytes": 122294575,
+    "builtAt": "2026-10-09T20:04:31Z",
     "variant": "release",
+    "flags": [],
+    "abis": ["arm64-v8a"],
+    "bundleCheck": "PASS (frozen pack lrt1_2026_10_10_1 present; demo data absent)",
     "signing": "generated_debug_key_for_local_testing"
   }
 ]

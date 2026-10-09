@@ -53,8 +53,28 @@ The same copied APK hash was rechecked. Its build identity is in `native-artifac
 
 The generated Release variant uses the template's debug signing key for local testing. It is not a store-signed release. A successful APK still needs a physical install, cold launch and inference test.
 
+## Round 3 APKs (2026-10-10, Member 1's Windows laptop)
+
+The earlier `34236a5` APK above is superseded and is no longer recorded in `native-artifacts.json`, because it was stale for current runtime sources. All round 3 builds come from the same `main` commit `0c43c2f5514346bd5f1468dda909f16f1ef79209`. They were built with `scripts/build-all-apks.ps1` from branch `docs/member2-build-handoff` (`59ac779`, run unchanged from outside the checkout) in a clean short-path checkout `C:\ab-m1`. Before each flavor, `android`, `.tmp` and `node_modules\.cache` were removed.
+
+| Setting | Value |
+|---|---|
+| Host | Windows 11, 15.2 GB RAM. Heavy apps were closed before building; roughly 5–7 GB commit memory was free at start |
+| JDK / SDK | JDK 21.0.7; `ANDROID_HOME=C:\Android\Sdk` (build-tools 36.0.0, NDK 27.1.12297006, CMake 3.22.1) |
+| Gradle user home | `C:\ab-g`, with `reactNativeArchitectures=arm64-v8a` and `kotlin.compiler.execution.strategy=in-process` to fit memory. **APKs contain arm64-v8a only.** Every target phone is arm64; x86 emulators are not supported by these APKs |
+| `node_modules` | Same lockfile as `main`. llama.rn's prebuilt native libraries were present with marker `cda945a7…`, matching llama.rn 0.12.9's pinned SHA-256 |
+| Frozen pack | `assets/data/release.json`, `pack_lrt1` / `lrt1_2026_10_10_1`. The recorded freeze hash `f2499c54…22c2931` is the SHA-256 of the pack's **canonical JSON** (`src/data/canonicalJson.ts`), not of the file bytes. File bytes hash `9d281589…` (LF) and `89830f31…` (CRLF checkout); all are the same committed blob `0b1df3b7`, unchanged since `384cece` |
+
+| Flavor | File | Bytes | SHA-256 | Bundle check | Release evidence? |
+|---|---|---|---|---|---|
+| release (no flags) | `alalaybyahe-0.1.0-0c43c2f-release.apk` | 122,294,575 | `c5e9bfb35382f86c4957a968c51004d61d231c50aa0041050c779b70b5f6052e` | PASS: frozen pack present; `pack_test_demo_luzon_roads`, "Baguio City terminal", `alalaybyahe-demo.db` absent | **Yes, the only one** |
+| benchmark (`EXPO_PUBLIC_AI_DIAGNOSTICS=1`) | building | — | — | — | No |
+| demo (`EXPO_PUBLIC_DEMO_BUILD=1`) | not yet built | — | — | — | No |
+
+Release build: 03:52:19–04:04:36 PHT (about 12 min), first attempt. Signature: `apksigner verify --print-certs` shows one signer, `CN=Android Debug`, certificate SHA-256 `fac61745dc0903786fb9ede62a962b399f7348f0bb6f899b8332667591033b9c`. That is the template's debug key for local testing, not a store-signed release. APK files are never committed; share them out of band and check the SHA-256 before `adb install -r`.
+
 ## Physical acceptance
 
-ADB reported **zero connected Android devices** at the last check. No Android install/cold launch/SQLite restart/inference/offline result is claimed.
+Honor X9b 5G (ALI-NX1, Android 15) connected and authorized over USB. The release APK above was installed with `adb install -r` at 04:05:31 PHT (versionName 0.1.0, primaryCpuAbi arm64-v8a). It launched and ran its JS bundle (`Running "main"`, no crash) with USB still connected; that is not yet the standalone/offline proof. No SQLite restart, inference, offline or routing result is claimed yet.
 
 iOS was excluded on 2026-10-10 because of limited resources. (Earlier: the user's Mac with Xcode 26.6 and iPhone 14 Pro was not accessible from this Windows chat.) iOS native generation, Personal Team signing, Release install, inference and offline tests are **Not Run**. Follow README's Mac procedure and the acceptance checklist; retain an anonymized report with the matching artifact/source/pack/model.
