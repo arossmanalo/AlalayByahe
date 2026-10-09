@@ -2,7 +2,7 @@
 
 Phone-local Taglish/Filipino/English intent extraction for AlalayByahe, implementing `AiPort` from shared contract v1.0. The model interprets language only. It never produces routes, stops, fares or instructions, and its output is validated before anyone sees it.
 
-**Status (2026-10-10, branch `feat/ai/ai-005-006`):** logic and native adapters are integrated in the app, typechecked and covered by Node tests with fake adapters (80 AI tests). On-device tooling for the remaining gates is ready: `diagnostics.ts` + `app/dev-ai.tsx` (probe, 42-case corpus benchmark, lifecycle checks). **No physical-device run has happened yet.** AI-001 Not Run (no phone connected, no current APK), AI-005 Not Run, AI-006 Not Run. Evidence: `docs/evidence/native-gate.md`, `ai-benchmarks.md`, `offline-ai.md`.
+**Status (2026-10-10 ~01:45, `main` `3aabd53`, branch `feat/ai/ai-005-006-results`):** logic and native adapters are integrated on `main`, typechecked and covered by Node tests with fake adapters (81 AI tests, 443 total). On-device tooling is merged: `diagnostics.ts` + `app/dev-ai.tsx` (probe, 42-case corpus benchmark, lifecycle checks). **No physical-device run has happened yet.** The Android test phone (Honor X9b 5G, Android 15) is connected and authorized. AI-001, AI-005 and AI-006 are **Not Run**, waiting for Member 4's benchmark and release APKs built from current `main`. Evidence: `docs/evidence/native-gate.md`, `ai-benchmarks.md`, `offline-ai.md`.
 
 ## Files
 
@@ -76,12 +76,47 @@ Native config needed at INT-001 (Member 4 owns; I have not edited it):
 - **Output handling.** Output is rejected (`AI_INVALID_OUTPUT`) if it is truncated, context-full, interrupted, hits the 256-token limit, lacks EOS, isn't JSON, has extra or missing keys, or has bad enums or numbers. Valid output also gets deterministic notes appended to `intent.ambiguities`. These cover places not literally in the message, same origin and destination, home without a saved place, conflicting or emptied modes, modes, limits or direct-only not found in the message, and peso-vs-centavo slips. The notes **never change** roles, places or limits. Model-written notes are capped at 3 and 120 chars, and notes containing digits or peso words are replaced, so model text cannot carry amounts or route numbers to the UI. Show `ambiguities` on the confirmation screen as "please check" hints, never as instructions.
 - **Engine label.** `Extraction.engine` reports `phone_local`, model id/revision and `llama.rn@0.12.9 (llama.cpp b<build>)` from the runtime actually used.
 
+## Decisions (Member 1, 2026-10-10)
+
+- **`ExtractInput.locale`:** keep the UI's fixed `"taglish"` for now. The model sees it only as a `Language:` hint line, and the prompt examples are Taglish. There is no measured reason to change it. The benchmark sends `"taglish"` like the app does, and *Compare: per-case locale* on the diagnostics screen measures the alternative on the same phone. If the per-case run is clearly better on the same corpus, I will propose a change to Members 3 and 4 with both reports attached; otherwise it stays.
+- **Localizing engine text (Member 3's proposal):** the AI side does not need it. Two AI strings reach users in English only: `AI_MESSAGES` in `errors.ts`, which the UI can key off the stable `AppError.code` it already receives, and the deterministic ambiguity notes from `validateIntent.ts`, which are free text in `RawIntent.ambiguities: string[]`. Localizing those notes would need stable note codes, which is a contract change. I suggest deferring it past P0. Whenever notes exist, the controller (`src/application/controller.ts`) also adds one generic English warning ("Some parts of your request need clarification."), which Member 3 can map to a localized string without any AI change.
+
 ## Coordination items (need Member 4 decision)
 
-1. **`src/contracts/index.ts`** is a verbatim transcription of contract v1.0 §3, so this branch compiles before INT-001 lands. A test fails if it drifts from the doc. Replace it with your INT-001 file (it should be identical).
-2. **Structural RawIntent validator** lives in `src/ai/validateIntent.ts`. If you want all validators in `src/contracts/validators.ts`, re-export `validateRawIntent` from there instead of duplicating it.
-3. **`ModelState` "installed" phase** (above). It is additive, so it would be a minor version bump (v1.1).
-4. `AiManager` adds `subscribe`, `cancelActive` and `cancelModelSetup` on top of `AiPort`. They are additive on the implementation; the `AiPort` contract is unchanged.
+Updated 2026-10-10 against `main` `3aabd53`.
+
+1. ~~`src/contracts/index.ts` transcription~~ **Resolved.** Member 4 owns the file since INT-001 (`bec4f16`). `tests/ai/extraction.test.ts` still fails if it drifts from contract v1.0 §3.
+2. **Two RawIntent validators exist.** `src/ai/validateIntent.ts` validates model output inside the AI layer. `src/contracts/validators.ts` has its own `validateRawIntent`, which the controller runs again through `validateExtraction`. Both are strict today, but they already differ slightly. The contracts version caps `ambiguities` at 20 entries and place text at 600 characters. The AI version does not cap place text, and produces at most 18 notes: 15 deterministic plus 3 model notes. Decide whether to keep both as defense in depth (and add a shared test fixture so they agree), or to have one delegate to the other.
+3. **`ModelState` "installed" phase** is still open. A verified model that isn't loaded yet reports `{ phase: "checking", progress: 1 }`. Adding `{ phase: "installed" }` is additive, so it would be a minor bump to v1.1.
+4. `AiManager` adds `subscribe`, `cancelActive`, `cancelModelSetup` and `observeCompletions` (diagnostics only) on top of `AiPort`. All are additive; the `AiPort` contract is unchanged.
+
+## Open items (what is left, by owner)
+
+Every result below is **Not Run** until it is measured on a phone. Evidence goes in the linked files.
+
+**Member 4**
+- [ ] Build the **benchmark APK** from current `main` with `EXPO_PUBLIC_AI_DIAGNOSTICS=1`. Send the file name, source commit and SHA-256 ([native-gate.md](../../docs/evidence/native-gate.md)).
+- [ ] Build the **release APK** from the same commit without the flag, and record both in `docs/evidence/native-artifacts.json`. AI-006 and the physical release evidence use this one.
+- [ ] Build the iPhone Release on the Mac (Personal Team), with a diagnostics build for the benchmark.
+- [ ] Decide coordination items 2 and 3 above.
+- [ ] Review and merge `feat/ai/ai-005-006-results` once results are in. It is a draft until then.
+
+**Member 1, once the benchmark APK arrives** (Honor X9b 5G, Android 15, already connected)
+- [ ] Check the APK's SHA-256 against Member 4's record, then `adb install -r`.
+- [ ] Model setup on Wi‑Fi through the Setup screen: record the time, bytes, hash result and free storage before and after; force-quit, relaunch, and confirm no re-download (AI-002 on device).
+- [ ] AI-001 probe → [native-gate.md](../../docs/evidence/native-gate.md). A failure is a Fail; stop and record the exact error.
+- [ ] AI-005: two app-locale benchmark runs back to back (thermals), then the per-case locale comparison → [ai-benchmarks.md](../../docs/evidence/ai-benchmarks.md). Record memory with `dumpsys meminfo` only if actually profiled.
+- [ ] Locale decision and model decision (keep 0.5B unless the measured rate misses the target), from those runs.
+- [ ] AI-004 on device: the automatic lifecycle checks, plus manual background mid-query and force-quit/relaunch.
+- [ ] AI-006 offline proof with the **release** APK → [offline-ai.md](../../docs/evidence/offline-ai.md).
+- [ ] Repeat the probe, benchmark and offline proof on the iPhone after Member 4's Mac build.
+- [ ] Update the status line above and the AI rows in `docs/planning/04-team-execution.md` with actual Pass/Fail.
+
+**Anyone with GitHub access**
+- [ ] Open the draft PR for `feat/ai/ai-005-006-results`. The GitHub CLI isn't installed on Member 1's laptop: https://github.com/arossmanalo/AlalayByahe/pull/new/feat/ai/ai-005-006-results
+
+**Member 3 (FYI, no action needed for P0)**
+- The AI's clarification notes (`RawIntent.ambiguities`) are English only. The controller's generic "Some parts of your request need clarification." can be localized without any AI change.
 
 ## Running checks
 

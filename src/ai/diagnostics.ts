@@ -1,4 +1,4 @@
-import type { ExtractInput, Result } from "../contracts";
+import type { ExtractInput, Locale, Result } from "../contracts";
 import { type CorpusCase, type RunRecord, type RunSummary, runCorpus, summarize } from "./evaluation";
 import type { AiManager, CompletionEvent } from "./manager";
 import { type NativeProbeReport, runNativeProbe } from "./nativeProbe";
@@ -50,11 +50,21 @@ export interface BenchmarkMiss {
   flags: Omit<CompletionOutcome, "text"> | null;
 }
 
+/**
+ * The locale the app actually sends with every query (src/ui/services.tsx).
+ * Benchmarks default to it so they measure production behavior.
+ */
+export const APP_QUERY_LOCALE: Locale = "taglish";
+
+export type BenchmarkLocaleMode = "app" | "per_case";
+
 export interface BenchmarkReport {
   kind: "ai_005_corpus";
   startedAt: string;
   platformLabel: string;
   corpusVersion: string;
+  /** "app": every case sent as APP_QUERY_LOCALE; "per_case": each case's own locale (comparison only). */
+  localeMode: BenchmarkLocaleMode;
   initMs: number | null;
   initError: string | null;
   summary: RunSummary | null;
@@ -70,6 +80,7 @@ export async function runBenchmark(
   deps: DiagnosticsDeps,
   corpus: { version: string; cases: CorpusCase[] },
   onProgress?: (done: number, total: number) => void,
+  localeMode: BenchmarkLocaleMode = "app",
 ): Promise<BenchmarkReport> {
   const now = deps.now ?? (() => Date.now());
   const report: BenchmarkReport = {
@@ -77,6 +88,7 @@ export async function runBenchmark(
     startedAt: new Date().toISOString(),
     platformLabel: deps.platformLabel,
     corpusVersion: corpus.version,
+    localeMode,
     initMs: null,
     initError: null,
     summary: null,
@@ -98,6 +110,7 @@ export async function runBenchmark(
   try {
     report.records = await runCorpus(deps.ai, corpus.cases, `bench_${t0}`, {
       firstIsCold: true,
+      localeOverride: localeMode === "app" ? APP_QUERY_LOCALE : undefined,
       onRecord: (_record, index, total) => onProgress?.(index + 1, total),
     });
   } finally {

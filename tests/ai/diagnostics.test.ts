@@ -78,6 +78,23 @@ describe("device diagnostics runner (DEV FIXTURE runtime)", () => {
     assert.equal(report.misses[1]?.rawText, "not json", "raw output kept for publishing the miss");
   });
 
+  it("benchmark sends the app's fixed locale by default and per-case locales only for the comparison", async () => {
+    const languageLines = (runtime: FakeRuntime) =>
+      runtime.requests.map((r) => r.messages.at(-1)?.content.split("\n")[0]);
+    const cases = HELD_OUT_CORPUS.cases.filter((c) => c.locale !== "taglish").slice(0, 2);
+    assert.equal(cases.length, 2);
+
+    const app = await setup();
+    const appReport = await runBenchmark(app.deps, { version: "test", cases });
+    assert.equal(appReport.localeMode, "app");
+    assert.deepEqual(languageLines(app.runtime), ["Language: taglish", "Language: taglish"]);
+
+    const perCase = await setup();
+    const perCaseReport = await runBenchmark(perCase.deps, { version: "test", cases }, undefined, "per_case");
+    assert.equal(perCaseReport.localeMode, "per_case");
+    assert.deepEqual(languageLines(perCase.runtime), cases.map((c) => `Language: ${c.locale}`));
+  });
+
   it("benchmark reports a failed model load instead of scoring", async () => {
     const { runtime, deps } = await setup();
     runtime.failLoad = new Error("simulated OOM");
