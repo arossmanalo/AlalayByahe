@@ -25,4 +25,4 @@ The command uses the real routing engine and prints a DEMO banner before and aft
 
 ## Showing it in the app
 
-Not wired. The native build bundles only `assets/data/release.json`, and the release check rejects imports from `tests/`. A demo build would be a separate, deliberate decision for Member 4: it would have to load this pack only in a development or demo build, with the existing DEV FIXTURE banner visible on every screen (`UiServices.kind = "dev_fixture"`), and must not be the build that is recorded as release evidence. Until that exists, the command above and the tests are how to demonstrate it.
+Yes, in a separate **demo build** only: see `docs/evidence/demo-build.md`. That build loads `assets/demo/demo-pack.json` (the real LRT-1 stations, the unverified road-route drafts and this synthetic network) with the test-pack warning on every screen. The release build contains none of it.

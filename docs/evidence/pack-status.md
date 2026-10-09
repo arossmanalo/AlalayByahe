@@ -105,3 +105,8 @@ Assumed with the freeze (the user said "ok freeze" after these were stated): **n
 Not frozen and not shipped: `data/candidates/roads-draft.json` (unverified road routes), `tests/fixtures/luzon-demo-pack.json` (synthetic demo data), `tests/fixtures/transit-pack.json` (synthetic fixture).
 
 Rules while frozen: no change to `assets/data/release.json` or `src/application/bundled-pack.ts`'s import of it, unless a fact is found wrong. A correction means a new version number, a fresh review, a Member 4 rebuild, and repeating the physical tests that depended on the earlier build. Adding road routes later is a new pack version with the same consequences.
+
+### Update to the freeze (user decision, same day)
+
+The user then asked for the road routes and the Luzon demo data to ship too. Decision taken: they ship in a **separate demo build** (`EXPO_PUBLIC_DEMO_BUILD=1`), not in the release build. The frozen release pack above is **unchanged** and stays the only data in the release build. See `docs/evidence/demo-build.md`.
+

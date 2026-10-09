@@ -14,11 +14,14 @@ export interface ApplicationServices {
 }
 export function createApplicationServices(input: {
   repository: TransitRepository; ai?: AiPort; routes?: RoutePort; geo?: GeoPort; bundledPack?: unknown;
+  /** Demo builds only: accept a test_fixture pack. The release composition never sets this. */
+  allowTestFixtures?: boolean;
 }): ApplicationServices {
   const ai = input.ai ?? unavailableAi();
   const setupControl = ai as AiPort & { cancelModelSetup?: () => void };
   const routes = input.routes ?? unavailableRoutes();
-  const controller = createJourneyController({ ai, routes, repository: input.repository });
+  const controller = createJourneyController({ ai, routes, repository: input.repository },
+    { allowTestFixtures: input.allowTestFixtures ?? false });
   let lifecycle: Promise<unknown> = Promise.resolve();
   function sequence<T>(work: () => Promise<T>): Promise<T> {
     const next = lifecycle.then(work, work);
@@ -32,7 +35,7 @@ export function createApplicationServices(input: {
       const data = await input.repository.initialize();
       let pack = data.ok ? await input.repository.getPack() : data;
       if (!pack.ok && pack.error.code === "DATA_NOT_READY" && input.bundledPack != null) {
-        const bundled = validateTransitPack(input.bundledPack);
+        const bundled = validateTransitPack(input.bundledPack, { allowTestFixtures: input.allowTestFixtures ?? false });
         const installed = bundled.ok ? await input.repository.replacePack(bundled.value) : bundled;
         pack = installed.ok ? await input.repository.getPack() : installed;
       }

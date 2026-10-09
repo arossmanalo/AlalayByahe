@@ -8,8 +8,8 @@ function connection(database: SQLiteDatabase): SqlConnection {
     all: <T>(sql: string, params: readonly SqlValue[] = []) => database.getAllAsync<T>(sql, [...params]),
   };
 }
-export async function openNativeSqlDriver(): Promise<SqlDriver> {
-  const database = await openDatabaseAsync("alalaybyahe.db");
+export async function openNativeSqlDriver(databaseName = "alalaybyahe.db"): Promise<SqlDriver> {
+  const database = await openDatabaseAsync(databaseName);
   const sql = connection(database);
   return {
     ...sql,
