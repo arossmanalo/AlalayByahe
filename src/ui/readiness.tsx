@@ -1,6 +1,6 @@
 // Member 3 (UI-004): AI and transit-data readiness, shown separately (AGENTS.md: separate readiness).
 import type { ModelState } from "../contracts";
-import { AppButton, Body, Card, Heading, ProgressBar, Row, Small, StatusPill } from "./components/primitives";
+import { AppButton, Body, Card, Heading, LabeledStatus, ProgressBar, Small, StatusPill } from "./components/primitives";
 import { ErrorCard } from "./error-card";
 import { formatDate } from "./format";
 import { useReadiness, useUi } from "./services";
@@ -18,6 +18,19 @@ function formatBytes(bytes: number): string {
   return `${(bytes / 1_000_000).toFixed(1)} MB`;
 }
 
+/** The loaded pack's coverage labels, or an explicit "none loaded". Target corridors are never listed here. */
+export function CoverageList({ labels }: { labels: readonly string[] }) {
+  const { t } = useUi();
+  if (labels.length === 0) return <Body>{t.coverageNone}</Body>;
+  return (
+    <>
+      {labels.map((label) => (
+        <Body key={label}>• {label}</Body>
+      ))}
+    </>
+  );
+}
+
 /** Compact two-pill summary for the home screen. */
 export function ReadinessSummary({ onOpenSetup }: { onOpenSetup: () => void }) {
   const { t } = useUi();
@@ -25,18 +38,12 @@ export function ReadinessSummary({ onOpenSetup }: { onOpenSetup: () => void }) {
   const dataOk = pack.status === "loaded" && pack.result.ok;
   return (
     <Card>
-      <Row>
-        <Small>{t.aiLabel}:</Small>
-        <StatusPill tone={modelTone(modelState)} label={t.aiPhase[modelState.phase]} />
-      </Row>
-      <Row>
-        <Small>{t.dataLabel}:</Small>
-        {pack.status === "loading" ? (
-          <StatusPill tone="info" label={t.loading} />
-        ) : (
-          <StatusPill tone={dataOk ? "success" : "danger"} label={dataOk ? t.dataReady : t.dataNotReady} />
-        )}
-      </Row>
+      <LabeledStatus label={t.aiLabel} tone={modelTone(modelState)} value={t.aiPhase[modelState.phase]} />
+      {pack.status === "loading" ? (
+        <LabeledStatus label={t.dataLabel} tone="info" value={t.loading} />
+      ) : (
+        <LabeledStatus label={t.dataLabel} tone={dataOk ? "success" : "danger"} value={dataOk ? t.dataReady : t.dataNotReady} />
+      )}
       <AppButton label={t.setupLink} variant="link" onPress={onOpenSetup} />
     </Card>
   );
@@ -122,11 +129,7 @@ export function DataReadinessCard() {
           {pack.result.value.kind === "test_fixture" ? <Body>{t.testPackWarning}</Body> : null}
           <Small>{t.dataVersion(pack.result.value.version, formatDate(pack.result.value.createdAt))}</Small>
           <Heading level={3}>{t.coverageHeading}</Heading>
-          {pack.result.value.coverageLabels.length === 0 ? (
-            <Body>{t.coverageNone}</Body>
-          ) : (
-            pack.result.value.coverageLabels.map((label) => <Body key={label}>• {label}</Body>)
-          )}
+          <CoverageList labels={pack.result.value.coverageLabels} />
         </>
       ) : (
         <ErrorCard error={pack.result.error} handlers={{ retry: () => void reloadPack() }} />

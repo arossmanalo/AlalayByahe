@@ -8,10 +8,12 @@ import {
   TextInput,
   View,
   type KeyboardTypeOptions,
+  type ReturnKeyTypeOptions,
   type StyleProp,
   type TextStyle,
   type ViewStyle,
 } from "react-native";
+import { useUi } from "../services";
 import { colors, legColors, minTouch, radius, spacing, toneColors, toneGlyph, type, type LegVisual, type Tone } from "../theme";
 
 export function Heading({ children, level = 1 }: { children: ReactNode; level?: 1 | 2 | 3 }) {
@@ -48,6 +50,7 @@ export function AppButton({
   disabled = false,
   busy = false,
   hint,
+  icon,
 }: {
   label: string;
   onPress: () => void;
@@ -55,6 +58,8 @@ export function AppButton({
   disabled?: boolean;
   busy?: boolean;
   hint?: string;
+  /** Decorative glyph shown before the label; screen readers hear only the label. */
+  icon?: string;
 }) {
   const inactive = disabled || busy;
   return (
@@ -87,6 +92,7 @@ export function AppButton({
           inactive && styles.buttonTextDisabled,
         ]}
       >
+        {icon ? `${icon} ` : ""}
         {label}
       </Text>
     </Pressable>
@@ -105,6 +111,7 @@ export function Notice({
   children?: ReactNode;
   actions?: ReactNode;
 }) {
+  const { t } = useUi();
   const c = toneColors[tone];
   const urgent = tone === "danger" || tone === "warning";
   return (
@@ -113,7 +120,7 @@ export function Notice({
       accessibilityLiveRegion={urgent ? "polite" : "none"}
       style={[styles.notice, { backgroundColor: c.bg, borderColor: c.border }]}
     >
-      <Text style={[styles.noticeTitle, { color: c.fg }]}>
+      <Text accessibilityLabel={`${t.toneNames[tone]}: ${title}`} style={[styles.noticeTitle, { color: c.fg }]}>
         {toneGlyph[tone]} {title}
       </Text>
       {typeof children === "string" ? <Text style={styles.body}>{children}</Text> : children}
@@ -126,9 +133,21 @@ export function StatusPill({ tone, label }: { tone: Tone; label: string }) {
   const c = toneColors[tone];
   return (
     <View style={[styles.pill, { backgroundColor: c.bg, borderColor: c.border }]}>
-      <Text style={[styles.pillText, { color: c.fg }]}>
+      <Text accessibilityLabel={label} style={[styles.pillText, { color: c.fg }]}>
         {toneGlyph[tone]} {label}
       </Text>
+    </View>
+  );
+}
+
+/** A label and its status, read by screen readers as one phrase such as "Local AI: Ready". */
+export function LabeledStatus({ label, tone, value }: { label: string; tone: Tone; value: string }) {
+  return (
+    <View accessible accessibilityLabel={`${label}: ${value}`}>
+      <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden style={[styles.row, styles.rowWrap]}>
+        <Text style={[styles.small, styles.muted]}>{label}:</Text>
+        <StatusPill tone={tone} label={value} />
+      </View>
     </View>
   );
 }
@@ -188,8 +207,17 @@ export function ChoiceChip({
   );
 }
 
-export function ChipRow({ children }: { children: ReactNode }) {
-  return <View style={styles.chipRow}>{children}</View>;
+/** Pass radioGroupLabel when the chips are radios so screen readers announce what is being chosen. */
+export function ChipRow({ children, radioGroupLabel }: { children: ReactNode; radioGroupLabel?: string }) {
+  return (
+    <View
+      accessibilityRole={radioGroupLabel ? "radiogroup" : undefined}
+      accessibilityLabel={radioGroupLabel}
+      style={styles.chipRow}
+    >
+      {children}
+    </View>
+  );
 }
 
 export function LabeledInput({
@@ -203,6 +231,8 @@ export function LabeledInput({
   multiline = false,
   placeholder,
   onSubmitEditing,
+  autoCorrect,
+  returnKeyType,
 }: {
   label: string;
   value: string;
@@ -214,7 +244,12 @@ export function LabeledInput({
   multiline?: boolean;
   placeholder?: string;
   onSubmitEditing?: () => void;
+  /** Turn off for place and service names so the keyboard does not "correct" them. */
+  autoCorrect?: boolean;
+  returnKeyType?: ReturnKeyTypeOptions;
 }) {
+  // The error is part of the hint so a screen reader hears it when the field is focused.
+  const a11yHint = [error, hint].filter(Boolean).join(". ") || undefined;
   return (
     <View style={styles.field}>
       <Text style={styles.label}>
@@ -224,11 +259,14 @@ export function LabeledInput({
       {hint ? <Text style={[styles.small, styles.muted]}>{hint}</Text> : null}
       <TextInput
         accessibilityLabel={label}
-        accessibilityHint={hint}
+        accessibilityHint={a11yHint}
         value={value}
         onChangeText={onChangeText}
         keyboardType={keyboardType}
         multiline={multiline}
+        autoCorrect={autoCorrect}
+        autoCapitalize={autoCorrect === false ? "none" : undefined}
+        returnKeyType={returnKeyType}
         placeholder={placeholder}
         placeholderTextColor={colors.textMuted}
         onSubmitEditing={onSubmitEditing}
@@ -274,6 +312,7 @@ const styles = StyleSheet.create({
   },
   button: {
     minHeight: minTouch,
+    minWidth: minTouch,
     paddingHorizontal: spacing.lg,
     paddingVertical: spacing.md,
     borderRadius: radius.md,
@@ -319,8 +358,9 @@ const styles = StyleSheet.create({
   progressFill: { height: "100%", backgroundColor: colors.primary },
   chip: {
     minHeight: minTouch,
+    minWidth: minTouch,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.controlBorder,
     borderRadius: radius.md,
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
@@ -337,7 +377,7 @@ const styles = StyleSheet.create({
   input: {
     minHeight: minTouch,
     borderWidth: 1,
-    borderColor: colors.border,
+    borderColor: colors.controlBorder,
     borderRadius: radius.md,
     backgroundColor: colors.surface,
     paddingHorizontal: spacing.md,

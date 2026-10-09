@@ -1,6 +1,7 @@
 // Member 3 (UI-001): interface strings in English and Filipino.
 // Place names, service names and headsigns from data are never translated.
 import type { ErrorCode, Mode, Priority, Reliability } from "../contracts";
+import type { Tone } from "./theme";
 
 export type UiLanguage = "en" | "fil";
 
@@ -44,6 +45,8 @@ const en = {
   repeatLast: "Run this search again",
   aiUnavailableHome: "Local AI is not ready on this phone. You can still choose places manually.",
   setUpAi: "Set up local AI",
+  aiUnavailable: "AI unavailable",
+  aiUnavailableManual: "Local AI is not ready on this phone, so this trip uses manual place search only.",
 
   // Readiness
   aiLabel: "Local AI",
@@ -79,6 +82,7 @@ const en = {
   dataVersion: (version: string, created: string) => `Version ${version}, created ${created}`,
   coverageHeading: "Supported coverage",
   coverageNone: "No verified coverage is loaded.",
+  coverageOnlyNote: "Only trips within this coverage can be planned.",
   offlineSection: "Offline and online",
   offlineBody:
     "After setup, trips between stored places work offline. New addresses and new walking paths may need internet.",
@@ -90,19 +94,19 @@ const en = {
   // Errors
   errorTitle: "Something needs attention",
   errorMessages: {
-    AI_NOT_READY: "Local AI is not ready. You can choose places manually.",
+    AI_NOT_READY: "Local AI is not ready. Set it up when you are connected, or choose places manually.",
     AI_INIT_FAILED: "Local AI could not start on this phone. You can choose places manually.",
     AI_INVALID_OUTPUT: "AI could not read that request. Try again or choose places.",
     AI_TIMEOUT: "AI took too long. You can choose places manually.",
-    CANCELLED: "Cancelled.",
+    CANCELLED: "Cancelled. You can try again.",
     INVALID_INPUT: "Enter an origin and destination.",
     NEEDS_CLARIFICATION: "Please confirm the journey fields.",
     PLACE_NOT_FOUND: "I could not identify that place. Choose it manually.",
     OUTSIDE_COVERAGE: "This place is outside our verified coverage.",
     NO_VERIFIED_JOURNEY: "No verified complete journey available.",
-    CONSTRAINT_UNSATISFIED:
-      "No journey matches all your preferences. A verified journey exists if you change them.",
-    SEARCH_LIMIT_REACHED: "The search stopped at its limit. This does not mean there is no route.",
+    CONSTRAINT_UNSATISFIED: "No option matches all your preferences. You can change them and search again.",
+    SEARCH_LIMIT_REACHED:
+      "Search limit reached. This does not mean there is no route. Try a narrower search, like closer places or fewer transport types.",
     DATA_NOT_READY: "Transit data is not loaded yet.",
     DATA_INVALID: "The transit data failed its checks and was not used.",
     STORAGE_FULL: "Your phone does not have enough free storage.",
@@ -149,7 +153,7 @@ const en = {
   defaultTag: "default",
   fromYourWords: "from your words",
   modesLabel: "Allowed transport",
-  modesNoneError: "Choose at least one type of transport. Your mode preferences conflict otherwise.",
+  modesNoneError: "Choose at least one type of transport.",
   priorityLabel: "Show first",
   accessWalkLabel: "Max walk to first ride (meters)",
   transferWalkLabel: "Max walk between rides (meters)",
@@ -196,6 +200,8 @@ const en = {
       : `Known subtotal ${subtotal} plus ${unknown} rides with unknown fare`,
   fareUnknown: "Fare unknown",
   fareUnknownLegs: (n: number) => (n === 1 ? "1 ride has no known fare" : `${n} rides have no known fare`),
+  fareKnownSubtotal: (subtotal: string) => `Known subtotal ${subtotal}`,
+  fareConfirmWithOperator: "Confirm the fare with the driver or operator.",
   fareReliability: { verified: "verified", estimated: "estimated", unknown: "unknown" } as Record<
     Reliability,
     string
@@ -252,11 +258,14 @@ const en = {
     "If the signboard does not match, the vehicle may be going the other way. Stay on until a safe, legal stop, then plan from there.",
   onboardPlan: "Plan from my vehicle",
   noServices: "No services are loaded.",
+  searchServices: "Search services",
+  searchServicesHint: "Type a route name or signboard text",
 
   // About
   aboutTitle: "About AlalayByahe",
   aboutWhat:
     "AlalayByahe helps you plan commutes with jeepneys, buses, vans (UV), tricycles and LRT using stored, source-checked information.",
+  aboutCoverageNote: "It plans only trips that the loaded transit data covers. See Supported coverage below.",
   aboutAi:
     "Your typed trip is read by an AI model running on this phone. The AI only reads your words; it never decides routes, boarding points or fares.",
   aboutRoutes:
@@ -290,6 +299,17 @@ const en = {
     senior: "Senior citizen",
     pwd: "PWD",
   } as Record<Passenger, string>,
+
+  // Screen reader text: tone glyphs are read as a word, and leg badges as one sentence.
+  toneNames: {
+    info: "Note",
+    success: "OK",
+    warning: "Warning",
+    danger: "Problem",
+    neutral: "Note",
+    fixture: "Test data",
+  } as Record<Tone, string>,
+  legSequenceA11y: (parts: string[]) => parts.join(", then "),
 };
 
 export type Strings = typeof en;
@@ -329,6 +349,9 @@ const fil: Strings = {
   repeatLast: "Hanapin ulit ito",
   aiUnavailableHome: "Hindi pa handa ang local AI sa phone na ito. Puwede ka pa ring pumili ng lugar nang mano-mano.",
   setUpAi: "I-setup ang local AI",
+  aiUnavailable: "Hindi magamit ang AI",
+  aiUnavailableManual:
+    "Hindi pa handa ang local AI sa phone na ito, kaya mano-manong paghahanap ng lugar lang ang gagamitin sa biyaheng ito.",
 
   aiLabel: "Local AI",
   dataLabel: "Transit data",
@@ -362,6 +385,7 @@ const fil: Strings = {
   dataVersion: (version, created) => `Bersyon ${version}, ginawa noong ${created}`,
   coverageHeading: "Sakop na suportado",
   coverageNone: "Walang naka-load na beripikadong sakop.",
+  coverageOnlyNote: "Mga biyahe lang sa loob ng sakop na ito ang maaaring planuhin.",
   offlineSection: "Offline at online",
   offlineBody:
     "Pagkatapos ng setup, gumagana offline ang biyahe sa pagitan ng mga naka-save na lugar. Puwedeng kailanganin ang internet para sa bagong address at bagong lakaran.",
@@ -372,19 +396,20 @@ const fil: Strings = {
 
   errorTitle: "May kailangang ayusin",
   errorMessages: {
-    AI_NOT_READY: "Hindi pa handa ang local AI. Puwede kang pumili ng lugar nang mano-mano.",
+    AI_NOT_READY: "Hindi pa handa ang local AI. I-setup ito kapag may internet, o pumili ng lugar nang mano-mano.",
     AI_INIT_FAILED: "Hindi nasimulan ang local AI sa phone na ito. Puwede kang pumili ng lugar nang mano-mano.",
     AI_INVALID_OUTPUT: "Hindi nabasa ng AI ang hiling mo. Subukan ulit o pumili ng lugar.",
     AI_TIMEOUT: "Masyadong natagalan ang AI. Puwede kang pumili ng lugar nang mano-mano.",
-    CANCELLED: "Kinansela.",
+    CANCELLED: "Kinansela. Puwede mong subukan ulit.",
     INVALID_INPUT: "Ilagay kung saan ka manggagaling at saan ka pupunta.",
     NEEDS_CLARIFICATION: "Pakikumpirma ang mga detalye ng biyahe.",
     PLACE_NOT_FOUND: "Hindi ko matukoy ang lugar na iyon. Piliin ito nang mano-mano.",
     OUTSIDE_COVERAGE: "Labas sa beripikadong sakop namin ang lugar na ito.",
     NO_VERIFIED_JOURNEY: "Walang beripikado at kumpletong biyahe.",
     CONSTRAINT_UNSATISFIED:
-      "Walang biyaheng tugma sa lahat ng kagustuhan mo. May beripikadong biyahe kung babaguhin mo ang mga ito.",
-    SEARCH_LIMIT_REACHED: "Huminto ang paghahanap sa limitasyon nito. Hindi ibig sabihin na walang ruta.",
+      "Walang opsyong tugma sa lahat ng kagustuhan mo. Puwede mo itong baguhin at maghanap ulit.",
+    SEARCH_LIMIT_REACHED:
+      "Naabot ang limitasyon ng paghahanap. Hindi ibig sabihin nito na walang ruta. Paliitin ang hinahanap, gaya ng mas malapit na lugar o mas kaunting uri ng sasakyan.",
     DATA_NOT_READY: "Hindi pa naka-load ang transit data.",
     DATA_INVALID: "Hindi pumasa sa pagsusuri ang transit data kaya hindi ito ginamit.",
     STORAGE_FULL: "Kulang ang libreng storage ng phone mo.",
@@ -429,7 +454,7 @@ const fil: Strings = {
   defaultTag: "default",
   fromYourWords: "mula sa sinabi mo",
   modesLabel: "Pinapayagang sasakyan",
-  modesNoneError: "Pumili ng kahit isang uri ng sasakyan. Nagkakasalungat ang mga kagustuhan mo kung wala.",
+  modesNoneError: "Pumili ng kahit isang uri ng sasakyan.",
   priorityLabel: "Unahing ipakita",
   accessWalkLabel: "Pinakamahabang lakad papunta sa unang sakay (metro)",
   transferWalkLabel: "Pinakamahabang lakad sa pagitan ng sakay (metro)",
@@ -449,7 +474,7 @@ const fil: Strings = {
   resultsIntro: "Galing sa naka-save at sinuring datos ang mga opsyon. Walang live tracking.",
   optionLabel: (n) => `Opsyon ${n}`,
   transfers: (n) => (n === 1 ? "1 lipat" : `${n} lipat`),
-  walkTotal: (m) => `${m} lakad`,
+  walkTotal: (m) => `${m} na lakad`,
   whyThisOption: "Bakit ito",
   viewSteps: "Tingnan ang mga hakbang",
   boardFirst: (label) => `Unang sakay sa ${label}`,
@@ -474,6 +499,8 @@ const fil: Strings = {
       : `Alam na subtotal ${subtotal} at ${unknown} sakay na hindi alam ang pamasahe`,
   fareUnknown: "Hindi alam ang pamasahe",
   fareUnknownLegs: (n) => (n === 1 ? "1 sakay ang walang alam na pamasahe" : `${n} sakay ang walang alam na pamasahe`),
+  fareKnownSubtotal: (subtotal) => `Alam na subtotal ${subtotal}`,
+  fareConfirmWithOperator: "Kumpirmahin ang pamasahe sa driver o operator.",
   fareReliability: { verified: "beripikado", estimated: "tantiya", unknown: "hindi alam" },
   fareBasis: (basis) => `Batayan: ${basis}`,
   fareNotTotal: "Hindi ito ang buong kabuuan.",
@@ -525,10 +552,14 @@ const fil: Strings = {
     "Kung hindi tugma ang karatula, baka pabalik ang sasakyan. Manatiling nakasakay hanggang sa ligtas at legal na hintuan, saka magplano mula roon.",
   onboardPlan: "Magplano mula sa sinasakyan ko",
   noServices: "Walang naka-load na serbisyo.",
+  searchServices: "Maghanap ng serbisyo",
+  searchServicesHint: "I-type ang pangalan ng ruta o nakasulat sa karatula",
 
   aboutTitle: "Tungkol sa AlalayByahe",
   aboutWhat:
     "Tinutulungan ka ng AlalayByahe na magplano ng biyahe sa jeep, bus, van (UV), tricycle at LRT gamit ang naka-save at sinuring impormasyon.",
+  aboutCoverageNote:
+    "Nagpaplano lang ito ng mga biyaheng sakop ng naka-load na transit data. Tingnan ang Sakop na suportado sa ibaba.",
   aboutAi:
     "Binabasa ng AI model na tumatakbo sa phone na ito ang tinype mong biyahe. Binabasa lang ng AI ang sinabi mo; hindi ito nagpapasya ng ruta, sakayan o pamasahe.",
   aboutRoutes:
@@ -551,6 +582,16 @@ const fil: Strings = {
     lowest_known_fare: "Pinakamababang alam na pamasahe",
   },
   passengerNames: { regular: "Regular", student: "Estudyante", senior: "Senior citizen", pwd: "PWD" },
+
+  toneNames: {
+    info: "Paalala",
+    success: "OK",
+    warning: "Babala",
+    danger: "Problema",
+    neutral: "Paalala",
+    fixture: "Pang-test na datos",
+  },
+  legSequenceA11y: (parts) => parts.join(", saka "),
 };
 
 export const strings: Record<UiLanguage, Strings> = { en, fil };

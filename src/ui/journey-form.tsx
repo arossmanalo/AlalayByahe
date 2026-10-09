@@ -65,7 +65,7 @@ export function PreferencesForm({
         {t.priorityLabel}
         {tag("priority", form.priority === d.priority) ? ` (${tag("priority", form.priority === d.priority)})` : ""}
       </Heading>
-      <ChipRow>
+      <ChipRow radioGroupLabel={t.priorityLabel}>
         {ALL_PRIORITIES.map((p) => (
           <ChoiceChip
             key={p}
@@ -120,7 +120,7 @@ export function PreferencesForm({
       {form.budgetText.trim() !== "" ? <Small>{t.budgetUnknownNote}</Small> : null}
 
       <Heading level={3}>{t.passengerLabel}</Heading>
-      <ChipRow>
+      <ChipRow radioGroupLabel={t.passengerLabel}>
         {ALL_PASSENGERS.map((p: JourneyPreferences["passenger"]) => (
           <ChoiceChip
             key={p}

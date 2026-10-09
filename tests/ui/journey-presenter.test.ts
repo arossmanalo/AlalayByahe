@@ -2,9 +2,12 @@ import assert from "node:assert/strict";
 import { describe, it } from "node:test";
 import type { JourneyOption, RouteRequest } from "../../src/contracts";
 import { DEFAULT_PREFERENCES } from "../../src/ui/form-logic";
+import { strings } from "../../src/ui/i18n";
 import {
   collectSourceIds,
+  coverageSummary,
   fareDisplay,
+  fareText,
   journeySteps,
   legSequence,
   optionIssues,
@@ -41,6 +44,51 @@ describe("fareDisplay", () => {
   it("shows a complete fare as a range when min differs from max", () => {
     const d = fareDisplay({ status: "complete", knownMinCentavos: 1300, knownMaxCentavos: 1500, unknownRideLegs: 0, sourceIds: [] });
     assert.deepEqual(d, { kind: "complete", minCentavos: 1300, maxCentavos: 1500 });
+  });
+});
+
+describe("fareText (EC-051, EC-057)", () => {
+  for (const lang of ["en", "fil"] as const) {
+    const t = strings[lang];
+    it(`${lang}: never calls a partial subtotal a total`, () => {
+      for (const unknownRideLegs of [0, 1, 2]) {
+        const text = fareText({ status: "partial", knownMinCentavos: 1300, knownMaxCentavos: 1300, unknownRideLegs, sourceIds: [] }, t);
+        assert.equal(text.kind, "partial");
+        assert.equal(text.title, `${t.fareLabel}: ${t.fareNotTotal}`);
+        for (const line of text.lines) assert.ok(!line.includes(t.fareComplete("₱13.00")), line);
+        assert.ok(text.lines.some((line) => line.includes("₱13.00")));
+      }
+    });
+    it(`${lang}: shows an unknown fare with no amount and asks to confirm it`, () => {
+      const text = fareText({ status: "unknown", knownMinCentavos: 0, knownMaxCentavos: 0, unknownRideLegs: 2, sourceIds: [] }, t);
+      assert.equal(text.kind, "unknown");
+      assert.ok(!text.lines.join(" ").includes("₱"));
+      assert.deepEqual(text.lines, [t.fareUnknownLegs(2), t.fareConfirmWithOperator]);
+    });
+    it(`${lang}: calls only a complete fare a total`, () => {
+      const text = fareText({ status: "complete", knownMinCentavos: 1300, knownMaxCentavos: 1500, unknownRideLegs: 0, sourceIds: [] }, t);
+      assert.deepEqual(text, { kind: "complete", label: t.fareLabel, value: t.fareCompleteRange("₱13.00–₱15.00") });
+    });
+  }
+});
+
+describe("coverageSummary (UI-006)", () => {
+  it("states the pack labels and drops engine warnings that only repeat them", () => {
+    const summary = coverageSummary(
+      ["LRT-1 stations Baclaran to Fernando Poe Jr.", "LRT-1 stations Baclaran to Fernando Poe Jr."],
+      ["Coverage: LRT-1 stations Baclaran to Fernando Poe Jr.", "Data version 1. Routes are documented, not live availability."],
+    );
+    assert.deepEqual(summary, {
+      labels: ["LRT-1 stations Baclaran to Fernando Poe Jr."],
+      notes: ["Data version 1. Routes are documented, not live availability."],
+    });
+  });
+  it("claims no coverage when no pack is loaded", () => {
+    assert.deepEqual(coverageSummary([], []), { labels: [], notes: [] });
+  });
+  it("keeps engine warnings that are not pack labels", () => {
+    const summary = coverageSummary(["Corridor A"], ["Coverage: Corridor B", "Some fares are unknown, so cheapest cannot be confirmed."]);
+    assert.deepEqual(summary.notes, ["Coverage: Corridor B", "Some fares are unknown, so cheapest cannot be confirmed."]);
   });
 });
 

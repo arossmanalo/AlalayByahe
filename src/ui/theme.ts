@@ -1,5 +1,6 @@
 // Member 3 (UI-001): shared visual tokens.
-// Contrast targets WCAG AA for body text on `surface` and `background`.
+// Contrast targets WCAG AA for body text on `surface` and `background`, and 3:1 for input and chip
+// boundaries (WCAG 1.4.11). tests/ui/contrast.test.ts checks every pair the screens use.
 // Meaning is never carried by color alone: every tone also has a text label.
 import type { Mode } from "../contracts";
 
@@ -10,6 +11,8 @@ export const colors = {
   text: "#14181F",
   textMuted: "#47505E",
   border: "#C3CAD4",
+  // Edges of inputs and unselected chips. `border` is for decorative card edges only.
+  controlBorder: "#6E7783",
   primary: "#0A5A87",
   primaryPressed: "#073F60",
   onPrimary: "#FFFFFF",

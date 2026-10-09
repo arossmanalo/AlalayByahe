@@ -1,19 +1,27 @@
 // Member 3 (UI-003): up to three grounded options, or an explained failure with recovery.
+// UI-006: the loaded pack's actual coverage is stated on every outcome, so an unsupported corridor
+// reads as "No verified complete journey available." next to the subset that is supported.
 import { useRouter } from "expo-router";
-import { AppButton, Body, Heading, Notice, Small } from "../src/ui/components/primitives";
+import { AppButton, Body, Card, Heading, Notice, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
 import { ErrorCard } from "../src/ui/error-card";
 import { newQueryId } from "../src/ui/form-logic";
 import { JourneyCard } from "../src/ui/journey-card";
-import { partitionOptions } from "../src/ui/journey-presenter";
-import { useJourneySession, useUi } from "../src/ui/services";
+import { coverageSummary, partitionOptions } from "../src/ui/journey-presenter";
+import { CoverageList } from "../src/ui/readiness";
+import { useJourneySession, useReadiness, useUi } from "../src/ui/services";
 
 export default function ResultsScreen() {
   const router = useRouter();
   const { t } = useUi();
+  const { pack } = useReadiness();
   const { session, planRoute, startManual } = useJourneySession();
   const { result, request, via } = session;
   const planning = session.pending?.kind === "route";
+  const coverage = coverageSummary(
+    pack.status === "loaded" && pack.result.ok ? pack.result.value.coverageLabels : [],
+    result?.ok ? result.value.coverageWarnings : [],
+  );
 
   // An onboard trip is edited in the onboard flow so its OnboardContext is never silently dropped.
   const edit = () =>
@@ -48,9 +56,9 @@ export default function ResultsScreen() {
     const { shown, hiddenIncomplete } = partitionOptions(result.value.options);
     content = (
       <>
-        {result.value.coverageWarnings.length > 0 ? (
+        {coverage.notes.length > 0 ? (
           <Notice tone="warning" title={t.coverageWarnings}>
-            {result.value.coverageWarnings.map((w) => (
+            {coverage.notes.map((w) => (
               <Body key={w}>• {w}</Body>
             ))}
           </Notice>
@@ -90,6 +98,11 @@ export default function ResultsScreen() {
       ) : null}
       <Small>{t.resultsIntro}</Small>
       {planning ? <Notice tone="info" title={t.planning} /> : content}
+      <Card>
+        <Heading level={2}>{t.coverageHeading}</Heading>
+        <CoverageList labels={coverage.labels} />
+        <Small>{t.coverageOnlyNote}</Small>
+      </Card>
       <AppButton label={t.editJourney} variant="secondary" onPress={edit} disabled={!request} />
       <AppButton label={t.newSearch} variant="link" onPress={() => router.dismissTo("/")} />
     </Screen>
