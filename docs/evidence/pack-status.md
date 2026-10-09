@@ -38,7 +38,7 @@ Because the pack has no walking links, journeys can only start and end at LRT-1 
 | Alias normalization shared with storage | `src/data/normalize.ts` | Implemented, tested |
 | Canonical JSON for pack fingerprints | `src/data/canonicalJson.ts` | Implemented, tested |
 | CLI: `npm run data:validate` | `scripts/validate-data.ts` | Implemented, run |
-| Release `TransitPack` (LRT-1 stations only) | `assets/data/release.json` | Created, reviewed, validates for release; **bundled on the `feat/routes/route-006` branch, not yet on `main`** |
+| Release `TransitPack` (LRT-1 stations only) | `assets/data/release.json` | Created, reviewed, validates for release; **bundled in the app on `main`; native rebuild and physical tests pending** |
 
 ## Validation rules worth knowing
 

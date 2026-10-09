@@ -71,7 +71,7 @@ The only data with an operator source is **LRT-1 station-to-station travel, 25 s
 
 ## Required before ROUTE-006 can be called done
 
-1. ~~Independent review of the LRT-1 transcription~~ Done 2026-10-10; pack at `assets/data/release.json` passes the release gate and is bundled on branch `feat/routes/route-006`.
+1. ~~Independent review of the LRT-1 transcription~~ Done 2026-10-10; pack at `assets/data/release.json` passes the release gate and is bundled on `main` (PR #6).
 2. Real road-service evidence for at least one target corridor (LTFRB Region IV-A route list and fares, plus dated teammate observations), transcribed with walking links and reviewed.
 3. The integrated app (INT-003) runs those journeys end to end, and a teammate reads the rendered instructions against the sources.
 4. Member 4 locks the pack version before regression and the demo.

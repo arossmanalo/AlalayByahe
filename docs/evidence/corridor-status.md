@@ -30,7 +30,7 @@ fare used by a demo journey has a dated, checked source, and the reverse is evid
 ## Next actions
 
 1. **Done (2026-10-10):** a second registered teammate (Aryl Manalo) checked the LRT-1 transcription; the pack is verified for LRT-1 stations only.
-2. **Member 4:** review and merge `feat/routes/route-006` (it imports `assets/data/release.json` in `src/application/bundled-pack.ts`), then rebuild the native app.
+2. **Member 4:** the pack is bundled on `main` (PR #6); rebuild the native app and run the physical tests.
 3. **Teammates on the ground:** for each road corridor, record terminals, signboards, exact boarding and drop-off spots with GPS, fares, dates and the walk between legs, using the template in `unblock-kit.md` section B. Reverse directions separately. A second teammate checks each record.
 4. **A human:** send the LTFRB Region IV-A request (`unblock-kit.md` section C) if the team wants the authorized route lists.
 5. Until legs exist end to end for a corridor, it stays unsupported.
