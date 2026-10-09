@@ -59,3 +59,33 @@ Test doubles occur only in tests. Native composition imports no test pack, fake 
 At the initial install, npm reported 29 advisories. Pinned overrides `decode-uri-component@0.5.0` and `xcode > uuid@11.1.1` removed their reported issues. **19 high advisories remain** in Expo/Metro toolchain dependency paths involving braces and node-forge; the registry had no fixed releases for those two packages at this checkpoint. No forced downgrade to incompatible Expo/RN versions was performed. Expo Doctor success does not mean npm audit is clean.
 
 Relevant advisory records: [braces](https://github.com/advisories/GHSA-vfj7-8cjw-p6xm), [node-forge](https://github.com/advisories/GHSA-86w9-cpqp-85rv). Reassess before distribution; these are dependency findings, not evidence of a demonstrated application exploit.
+
+## Checkpoint 2026-10-10 (about 01:40 PHT): config decisions, pack freeze, audit
+
+State verified on `main` at `3aabd53`: `npm run typecheck` clean, `npm test` 442 pass, `npm run doctor` 21/21, `npm run data:validate` passes the bundled `pack_lrt1` (`lrt1_2026_10_10_1`, SHA-256 `f2499c54…22c2931`). `release:check` is blocked only by missing Android and iOS physical evidence and the stale Android artifact (`34236a5`). Nothing has run on a phone.
+
+### `app.config.ts` decisions (Member 3 proposals)
+
+| Proposal | Decision | Reason |
+|---|---|---|
+| `userInterfaceStyle` | Changed to `"light"` | The palette is light only. `"automatic"` risked an illegible status bar or keyboard in system dark mode. Revisit when a dark palette exists. |
+| `orientation` | Kept `"portrait"` | Smaller test surface before the freeze; rotation is not a P0 requirement. Screens already apply side safe-area insets if it is enabled later. |
+| Engine text localization | Deferred | Needs stable codes from Members 2 and 4. Engine messages stay English. |
+
+The `userInterfaceStyle` change is a runtime change: any artifact built before it is stale for `release:check`.
+
+### Pack freeze (proposed, not yet agreed)
+
+Proposed: no change to `assets/data/release.json` after **03:00 PHT on 2026-10-10**, so a build and device tests fit before the 06:00 release gate. Any later change invalidates the recorded artifact and the physical report. Member 2 and the user must agree to this time; until they do it is a proposal.
+
+### Dependency audit reassessment
+
+`npm audit` still reports 19 high advisories, all in Expo/Metro toolchain paths (`braces`, `node-forge` via `@expo/code-signing-certificates`). The only offered fix is `npm audit fix --force`, which would install `expo@44.0.6`, an incompatible downgrade, so it was not applied. These packages run at build time on the developer machine; they are not application code and they do not take user input at runtime. This is a finding to disclose, not evidence of an application exploit. No change made.
+
+### Install scripts
+
+llama.rn's postinstall fetches its prebuilt native libraries. After `npm ci` on Node 24.21 / npm 11.19 the iOS `rnllama.xcframework` and Android `jniLibs` were present. npm 11.19 prints an install-scripts notice; confirm the libraries exist after any fresh install before building.
+
+### Build host status
+
+This Mac has Xcode 26.6 but no signing identity (Personal Team not configured) and no connected iPhone. It has no Android SDK, `adb` or Android device. Android release and benchmark APKs have not been rebuilt for the current commit.
