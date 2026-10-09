@@ -34,6 +34,8 @@ When Member 2's `tripPins` (ALERT-002) merges, `alertTargetFor` can use its fina
 
 ## Exact change for Member 4 (after Member 2's PR merges)
 
+**Applied 2026-10-10 ~05:10 PHT on `feat/integration/final-r3`.** Member 2's real API returns `Result<DropoffWatcher>` with `distanceMeters: number | null`; the UI port now matches it, and a test drives the alert states with the real watcher. The final release, benchmark and demo builds include this.
+
 No new dependency and **no `app.config.ts` change** are needed for the alert. `expo-location` (already installed, 57.0.20) declares `ACCESS_COARSE_LOCATION` and `ACCESS_FINE_LOCATION` in its own Android manifest, and runtime permission is requested from the card. In `src/application/ui-bridge.tsx`:
 
 ```ts
@@ -65,7 +67,7 @@ See `tests/ui/manual.md`, section "ALERT-003 near-drop-off alert". Every device 
 
 Done after ALERT-001/002 and this UI merged. Branch `feat/ui/alert-wiring-and-fixes`. **Device behaviour: Not Run.**
 
-- **Wired:** `src/application/ui-bridge.tsx` now passes `location: createExpoLocationWatch()` and `createDropoffWatcher` (the adapter in `src/ui/dropoff-watcher.ts`, which wraps `src/routing/dropoffProximity.ts`). The card no longer shows "not available in this version".
+- **Wired:** `src/application/ui-bridge.tsx` now passes `location: createExpoLocationWatch()` and `createDropoffWatcher` (directly from `src/routing/dropoffProximity.ts`; Member 4 merged the same wiring in a7980ce). The card no longer shows "not available in this version".
 - **Ride-sized distances:** `alertTargetFor` sizes the radius and warning distance to the final ride (`thresholdsForRide`): a quarter and a half of the straight-line ride, clamped to 100..400 m and 200..800 m. A ride under 300 m gets no alert ("too short"). Every adjacent LRT-1 pair is at least 616 m apart, so no LRT-1 ride is excluded. Without a board coordinate the 400/800 defaults apply.
 - **Approximate-only location (Android 12+):** `requestPermission` returns `"approximate"` when the user allowed only approximate location; the card says precise location is needed and does not start.
 - **Weak GPS:** about 30 s (6 fixes) of consecutive low-accuracy fixes shows a weak-signal message; with an earlier reading showing, the distance is marked possibly out of date.

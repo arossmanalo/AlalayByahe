@@ -1,4 +1,5 @@
 import { BuildInfo, initLlama, type LlamaContext } from "llama.rn";
+import { extractCompletionText } from "./completionText";
 import { EXPECTED_RUNTIME } from "./modelManifest";
 import type { CompletionOutcome, CompletionRequest, LlamaRuntime, LlamaSession, LoadSettings } from "./runtime";
 
@@ -6,8 +7,10 @@ import type { CompletionOutcome, CompletionRequest, LlamaRuntime, LlamaSession, 
 // typings). Only the manager calls it; UI code never touches the native context.
 
 function toOutcome(result: Awaited<ReturnType<LlamaContext["completion"]>>): CompletionOutcome {
+  const picked = extractCompletionText(result.text, result.content);
   return {
-    text: result.text,
+    text: picked.text,
+    ...(picked.rawText !== undefined ? { rawText: picked.rawText } : {}),
     truncated: result.truncated,
     contextFull: result.context_full,
     interrupted: result.interrupted,
@@ -28,6 +31,9 @@ function createSession(context: LlamaContext): LlamaSession {
       if (released) throw new Error("Llama context already released.");
       const result = await context.completion({
         messages: request.messages,
+        // llama.rn's default; set explicitly so a default change cannot alter the prompt.
+        // It does not remove the header from `text` (see completionText.ts).
+        add_generation_prompt: true,
         n_predict: request.maxTokens,
         temperature: request.temperature,
         seed: request.seed,

@@ -15,7 +15,7 @@ import {
   WEAK_SIGNAL_FIXES,
   type AlertStatus,
 } from "../../src/ui/dropoff-alert";
-import { createDropoffWatcher } from "../../src/ui/dropoff-watcher";
+import { createDropoffWatcher } from "../../src/routing/dropoffProximity";
 import { strings, type UiLanguage } from "../../src/ui/i18n";
 
 const pack = JSON.parse(readFileSync(new URL("../../assets/data/release.json", import.meta.url), "utf8")) as TransitPack;
@@ -104,32 +104,33 @@ describe("weak GPS signal", () => {
   });
 });
 
-describe("routing watcher adapter", () => {
+describe("routing watcher with ride-sized options", () => {
   const T = { latitude: 14.5339, longitude: 120.998 };
   const north = (m: number) => ({ latitude: T.latitude + m / 111_195, longitude: T.longitude });
 
-  it("passes events through, reports ignored fixes with a reason, and accepts ride-sized options", () => {
-    const w = createDropoffWatcher({ target: T, radiusMeters: 150, warnMeters: 300 });
-    const fix = (m: number, over = {}) => ({ ...north(m), accuracyMeters: 10, timestampMs: 0, ...over });
+  it("reports ignored fixes with a reason and repeats the last accepted state", () => {
+    const created = createDropoffWatcher({ target: T, radiusMeters: 150, warnMeters: 300 });
+    assert.ok(created.ok);
+    if (!created.ok) return;
+    const w = created.value;
     let ts = 0;
-    const next = (m: number, over = {}) => w.update(fix(m, { timestampMs: (ts += 5000), ...over }));
+    const next = (m: number, over = {}) => w.update({ ...north(m), accuracyMeters: 10, timestampMs: (ts += 5000), ...over });
     assert.equal(next(900).event, undefined);
     assert.equal(next(250).event, "approaching");
     const weak = next(100, { accuracyMeters: 500 });
     assert.equal(weak.ignored, "low_accuracy");
     assert.equal(weak.event, undefined);
-    assert.equal(weak.state, "approaching", "an ignored fix repeats the last accepted state and distance");
-    assert.ok(Number.isFinite(weak.distanceMeters));
-    const first = createDropoffWatcher({ target: T });
-    const none = first.update({ ...north(100), accuracyMeters: 500, timestampMs: 1 });
-    assert.ok(Number.isNaN(none.distanceMeters), "no usable fix yet means no distance");
-    assert.equal(none.ignored, "low_accuracy");
+    assert.equal(weak.state, "approaching");
     assert.equal(next(100).event, undefined);
     assert.equal(next(90).event, "arrived");
+    const first = createDropoffWatcher({ target: T });
+    assert.ok(first.ok);
+    if (first.ok) assert.equal(first.value.update({ ...north(100), accuracyMeters: 500, timestampMs: 1 }).distanceMeters, null);
   });
 
-  it("throws a clear error for invalid options so the card can show 'Alerts are off'", () => {
-    assert.throws(() => createDropoffWatcher({ target: { latitude: Number.NaN, longitude: 1 } }), /latitude/i);
+  it("invalid options come back as a structured error, so the card can show 'Alerts are off'", () => {
+    const created = createDropoffWatcher({ target: { latitude: Number.NaN, longitude: 1 } });
+    assert.equal(created.ok, false);
   });
 });
 

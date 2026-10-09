@@ -75,8 +75,13 @@ function ActiveAlert({
     dispatch({ type: "permission", outcome });
     if (outcome !== "granted") return;
     setWeakCount(0);
+    const created = createWatcher({ target: target.point, ...target.thresholds });
+    if (!created.ok) {
+      dispatch({ type: "watch_failed" });
+      return;
+    }
+    const watcher = created.value;
     try {
-      const watcher = createWatcher({ target: target.point, ...target.thresholds });
       const sub = await location.watch(
         (fix) => {
           if (mine !== generation.current) return;
