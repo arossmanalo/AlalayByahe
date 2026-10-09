@@ -2,7 +2,7 @@
 
 Phone-local Taglish/Filipino/English intent extraction for AlalayByahe, implementing `AiPort` from shared contract v1.0. The model interprets language only. It never produces routes, stops, fares or instructions, and its output is validated before anyone sees it.
 
-**Status (2026-10-10 ~01:45, `main` `3aabd53`, branch `feat/ai/ai-005-006-results`):** logic and native adapters are integrated on `main`, typechecked and covered by Node tests with fake adapters (81 AI tests, 443 total). On-device tooling is merged: `diagnostics.ts` + `app/dev-ai.tsx` (probe, 42-case corpus benchmark, lifecycle checks). **No physical-device run has happened yet.** The Android test phone (Honor X9b 5G, Android 15) is connected and authorized. AI-001, AI-005 and AI-006 are **Not Run**, waiting for Member 4's benchmark and release APKs built from current `main`. Evidence: `docs/evidence/native-gate.md`, `ai-benchmarks.md`, `offline-ai.md`.
+**Status (2026-10-10 ~03:20 PHT, `main` `69536ea`, branch `feat/ai/round3-device-results`):** Android only; iOS is descoped. Logic and native adapters are integrated, typechecked and covered by Node tests with fake adapters (490 total). Device tooling is merged, and every diagnostics report now records which build produced it (diagnostics flag, demo flag, loaded pack). The screen refuses to run on a demo build. **No physical-device run has happened yet.** AI-001, AI-005 and AI-006 are **Not Run**, waiting for Member 4's benchmark and release APKs. The Honor X9b 5G (Android 15) is authorized but was unplugged at 03:09. Evidence: `docs/evidence/native-gate.md`, `ai-benchmarks.md`, `offline-ai.md`.
 
 ## Files
 
@@ -95,9 +95,12 @@ Updated 2026-10-10 against `main` `3aabd53`.
 Every result below is **Not Run** until it is measured on a phone. Evidence goes in the linked files.
 
 **Member 4**
+
+> **Merge timing:** `feat/ai/round3-device-results` changes runtime code (`app/dev-ai.tsx`, `src/ai/diagnostics.ts`). `release:check` marks an APK stale after any later runtime change, so merge this **before** building the benchmark and release APKs, or hold it until the release evidence is recorded.
+
 - [ ] Build the **benchmark APK** from current `main` with `EXPO_PUBLIC_AI_DIAGNOSTICS=1`. Send the file name, source commit and SHA-256 ([native-gate.md](../../docs/evidence/native-gate.md)).
 - [ ] Build the **release APK** from the same commit without the flag, and record both in `docs/evidence/native-artifacts.json`. AI-006 and the physical release evidence use this one.
-- [ ] Build the iPhone Release on the Mac (Personal Team), with a diagnostics build for the benchmark.
+- [ ] ~~iPhone build~~: out of scope (iOS descoped 2026-10-10).
 - [ ] Decide coordination items 2 and 3 above.
 - [ ] Review and merge `feat/ai/ai-005-006-results` once results are in. It is a draft until then.
 
@@ -109,7 +112,7 @@ Every result below is **Not Run** until it is measured on a phone. Evidence goes
 - [ ] Locale decision and model decision (keep 0.5B unless the measured rate misses the target), from those runs.
 - [ ] AI-004 on device: the automatic lifecycle checks, plus manual background mid-query and force-quit/relaunch.
 - [ ] AI-006 offline proof with the **release** APK → [offline-ai.md](../../docs/evidence/offline-ai.md).
-- [ ] Repeat the probe, benchmark and offline proof on the iPhone after Member 4's Mac build.
+- [ ] ~~iPhone repeats~~: out of scope (iOS descoped 2026-10-10). A second Android phone is a bonus only.
 - [ ] Update the status line above and the AI rows in `docs/planning/04-team-execution.md` with actual Pass/Fail.
 
 **Anyone with GitHub access**
@@ -131,7 +134,7 @@ Before INT-001 these were run from tooling installed outside the repo, so no rep
 
 ## Not yet verified (blocks any phone-local claim)
 
-- Expo 57 + llama.rn 0.12.9 native build/install on Android and iPhone (AI-001).
+- Expo 57 + llama.rn 0.12.9 native build/install and real inference on Android (AI-001). iOS is out of scope.
 - Real schema-constrained completion and its `stopped_eos`/`tokens_cached` behavior with Qwen's chat template. The output check requires `stopped_eos`; if a real device reports otherwise for clean JSON, revisit `interpretCompletion`.
 - expo `DownloadTask` behavior with Hugging Face's redirecting `resolve` URL, HTTP error statuses and backgrounding.
 - @noble/hashes speed on Hermes for 491 MB (hash time is recorded in the probe report).

@@ -10,6 +10,8 @@ Owner: Member 1. Gate M1. **Status: Blocked / Not Run** (rechecked 2026-10-10 ~0
 | iOS needs the Mac | Windows cannot build iOS | **Descoped 2026-10-10**; no iOS build planned |
 | Model not on any phone | Never downloaded on a device | Step 3 below, through the app's setup screen |
 
+Note (2026-10-10 03:09 PHT): `adb devices` was empty because the phone was unplugged. Reconnect it before the session; it was already authorized.
+
 Resolved: the Android phone is connected and authorized over USB (see Device below); app scaffold and real native ports (INT-001, merged). The Android SDK on Member 1's laptop now lives at `C:\Android\Sdk`. The first install had been silently redirected into the Claude app's private storage and was moved on 2026-10-10. `npm ci` on Windows must run from **PowerShell or cmd**, not Git Bash: llama.rn's postinstall calls `tar`, and Git Bash's GNU tar fails on `C:\` paths (`Cannot connect to C: resolve failed`).
 
 ## Device (prepared; nothing installed yet)
@@ -45,11 +47,11 @@ Do not distribute that APK. The AI-006 offline proof and release evidence should
 
 ## Procedure per phone
 
-1. `adb install -r <apk>`. Record APK filename, SHA-256 and source commit.
+1. Check the APK first: `certutil -hashfile <apk> SHA256` must equal the SHA-256 that Member 4 recorded in `native-artifacts.json` for that file and commit. Use the **benchmark** APK (diagnostics flag), never the demo APK. Then `adb install -r <apk>` and record the APK filename, SHA-256 and source commit.
 2. Record free storage before setup: `adb shell df -h /data`.
 3. **Model setup** (AI-002 on device): on Wi‑Fi, open Setup, tap download, then record start/end time, bytes, the hash result shown, and free storage afterwards. Then `adb shell am force-stop ph.alalaybyahe.app`, relaunch, and confirm the model shows ready without downloading again.
 4. Open diagnostics: `adb shell am start -a android.intent.action.VIEW -d "alalaybyahe://dev-ai"`. Enter an anonymized device label (no serials or IMEI).
-5. **Probe:** type a fresh query on the phone and tap *Run native probe*. Capture the report with `adb logcat -d -s ReactNativeJS | findstr AI-DIAG`.
+5. **Probe:** type a fresh query on the phone and tap *Run native probe*. Capture the report with `adb logcat -d -s ReactNativeJS | findstr AI-DIAG`. Check its `build` block before using it: `diagnosticsFlag: true`, `demoBuild: false`, `packId: pack_lrt1`, `packVersion: lrt1_2026_10_10_1`, and `validForMeasurement: true`. A report with any other value comes from the wrong APK and is not evidence.
 6. If `probe.error` is set, or `probe.parsed.ok` is false, the gate **fails** for this platform. Record the exact error.
 
 ## Results
