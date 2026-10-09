@@ -116,3 +116,33 @@ The user froze `assets/data/release.json` (pack `pack_lrt1`, version `lrt1_2026_
 | Each export checked as the opposite kind | | Fails as it must |
 
 A JavaScript export does not prove an APK builds or that an installed APK is clean; the same check must be run on each built APK (`docs/evidence/android-build-runbook.md`). No APK has been built yet for this commit.
+
+## Merge queue and drafts, 2026-10-10 (about 04:00 PHT)
+
+Merged to `main` (fast-forward or merge commit, no force): `docs/member2-build-handoff` (build script and handoff), `feat/routes/route-006-checklist` (PR #15, ROUTE-006 device checklist) and `feat/ui/ui-006-device-r3` (Member 3: a coverage-prefix regex fix and a pure banner rule; the only runtime change of the three). Each was tested alone in an isolated worktree and then combined:
+
+| Branch | Merges cleanly | typecheck | `npm test` | `data:validate` | `release:check` |
+|---|---|---|---|---|---|
+| `docs/member2-build-handoff` | yes | PASS | 491 pass | PASS | blocked: no Android evidence, stale artifact |
+| `feat/routes/route-006-checklist` | yes | PASS | 491 pass | PASS | same two blockers |
+| `feat/ui/ui-006-device-r3` | yes | PASS | 499 pass | PASS | same two blockers |
+| All three combined (`main` `053caa3`) | yes | PASS | 499 pass | PASS | same two blockers |
+
+Nothing has been built yet, so these merges invalidated no artifact.
+
+### Release gate now requires the release variant
+
+`releaseBlockers` accepted a physical report that matched any Android entry in `native-artifacts.json`. A benchmark or demo APK recorded there could have satisfied the gate. It now requires `"variant": "release"` on the matching artifact, and `scripts/check-release.ts` checks staleness only for release entries. Tested in `tests/integration/release.test.ts`. This changes `src/application/release-gate.ts`, so **an APK built before this change reaches `main` is stale**; build from the commit that contains it.
+
+### Drafts added (no APK needed, none published)
+
+`docs/evidence/physical-test-script.md` and the `physical-release.json` skeleton (all Not Run; a test keeps it that way), `docs/disclosures.md`, README status and disclosures, `docs/submission.md` (outline, shot-by-shot script, fallbacks, post draft), `docs/requirements-check.md`, `docs/evidence/dependency-advisories.md` and `docs/evidence/artifact-record-template.md`.
+
+### Findings for the user
+
+- The public event page states **no submission deadline**; its listed window runs to 2026-10-10 7:00 PM. Our 10:00 AM PHT target is the team's own, not official.
+- The repository has **no `LICENSE` file**.
+- `git log` shows **five author names**; the page allows teams of 1 to 4.
+- The repository is public (unauthenticated API returned 200).
+- The advisories: 2 root advisories (`braces`, `node-forge`), no published fix, neither in the app bundle (source-map check). Details: `dependency-advisories.md`.
+- The `.git/index` file in the Member 4 working copy on the Mac disappeared several times without an identified cause; restored with `git reset` each time, no data lost.

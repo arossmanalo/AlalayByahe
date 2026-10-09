@@ -22,7 +22,9 @@ const blockers = releaseBlockers({
 });
 // A documentation-only commit may follow a build. Runtime changes require a
 // newly built artifact and physical test, even when an old report still exists.
-for (const artifact of Array.isArray(artifacts) ? artifacts : []) {
+// Only the release variant is release evidence; a benchmark or demo APK built earlier must not
+// force a release rebuild, and cannot satisfy the gate either (see releaseBlockers).
+for (const artifact of (Array.isArray(artifacts) ? artifacts : []).filter(a => a?.variant === "release")) {
   try {
     if (typeof artifact?.sourceCommit !== "string" || !/^[a-f0-9]{40}$/.test(artifact.sourceCommit)) throw new Error("Invalid source commit");
     const changed = execFileSync("git", ["diff", "--name-only", artifact.sourceCommit, "--",
