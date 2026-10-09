@@ -58,3 +58,9 @@ None of these is usable as pack evidence. They only tell teammates where to look
 
 - The **only** corridor-relevant road leads are an unlabelled Lipa to San Pablo van line on a commercial site and an unconfirmed PNR line. Neither names an operator, boarding point, stop, fare or direction.
 - The practical route to real data is a written request to LTFRB Region IV-A (Lipa City) for current authorized UV Express and jeepney routes and fare matrices for Lipa, San Pablo and Candelaria, plus dated observations by teammates who ride and photograph the signboards and terminals.
+
+## Teammate observations (2026-10-10)
+
+| ID | Source | Type | Status |
+|---|---|---|---|
+| S-20 | Route and fare reports for all three corridors relayed in chat by the user (Member 4) | Teammate-reported, undated, no named recorder, no coordinates | Recorded in `teammate-observations.md`. **Not evidence yet.** Conflicts with the LRMC matrix on the Pedro Gil to Vito Cruz LRT fare (P25 reported, P19 stored value / P20 single journey documented). |

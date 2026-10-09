@@ -37,3 +37,7 @@ fare used by a demo journey has a dated, checked source, and the reverse is evid
 ## Road-service leads (see sources.md S-15 to S-19)
 
 Searches found no official list for jeepney, UV Express/van, bus or tricycle service on Lipa, San Pablo or Candelaria. Commercial sites hint that a van runs Lipa City to San Pablo, with no operator, boarding point or fare. The next step for those two corridors is a request to LTFRB Region IV-A and dated teammate observations; until then they stay unsupported.
+
+## Teammate-reported routes (2026-10-10)
+
+The team reported a route and fares for each corridor (see `teammate-observations.md`). They are undated, unattributed, have no stop coordinates or walking paths, and one LRT fare conflicts with the operator matrix. They are **leads, not evidence**: all three corridors remain unsupported until each leg is recorded with the observation template and reviewed.
