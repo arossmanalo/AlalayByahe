@@ -144,6 +144,30 @@ For whoever holds the phone. Release first, and record it completely before inst
   - **Demo data (Member 2) or place search (Member 4).** In the demo build, typing "Lipa" lists only "Lipa City terminal (DEMO)" and "Candelaria" only "Candelaria terminal (DEMO)". The road-draft stops have no aliases, and `resolveStoredPlaces` returns substring matches only when nothing matches exactly or by alias. A tester who types the town names gets the invented network, not the three-jeepney road draft. Workaround: search "De La Salle" and "Mang Inasal" (DB-04). Fix options: give the draft stops aliases, or list substring matches beside alias matches. Both need the owner's decision.
   - **Keyboard on Android (device check, M-22 and A-06).** The screen's keyboard props act on iOS only. With edge-to-edge on target SDK 36, whether the window still resizes for the keyboard has to be seen on a phone. No change was made without that evidence.
 
+## Stop alert (ALERT-003). All device columns Not Run
+
+Optional "Notify me near my stop" card on the journey detail screen. It is a reminder from the phone's location while the app is open, not vehicle tracking. Distances (800 m approaching, 400 m arrived, 100 m accuracy, 2 fixes) are **untested proposals**; nothing below has been run on a phone. Needs a new APK built after this change.
+
+| ID | Check | Expected | Android device |
+|---|---|---|---|
+| AL-01 | Open a verified LRT-1 journey (Vito Cruz to Baclaran) | Card "Stop alert (optional)" shows with the limits text; no permission is requested yet | Not Run |
+| AL-02 | Tap "Notify me near my stop" | Explanation appears (location stays on the phone); still no permission prompt | Not Run |
+| AL-03 | Tap "Allow location and start", choose Allow | Message "Looking for your location"; a Stop alerts button shows | Not Run |
+| AL-04 | Choose Deny | "Alerts are off: location is not allowed"; journey steps still work; Try again offered | Not Run |
+| AL-05 | Deny with "Don't ask again", then Try again | Same message plus the phone-settings hint | Not Run |
+| AL-06 | Location switched off in phone settings, then Start | "Alerts are off: location is not available"; recovers after switching it on and pressing Try again | Not Run |
+| AL-07 | Mock or walk toward Baclaran station | Distance text updates; within about 800 m a banner and one short vibration; within about 400 m, two good fixes, a banner and a longer vibration; each fires once | Not Run |
+| AL-08 | Jitter or weak GPS (indoors, poor accuracy) | No repeated alerts; low-accuracy fixes are ignored | Not Run |
+| AL-09 | Vibration turned off on the phone | Banner text still shows and TalkBack reads it | Not Run |
+| AL-10 | TalkBack on | Approaching and arrived changes are announced; buttons have labels; 48 dp targets | Not Run |
+| AL-11 | 200% text scale | Card readable, nothing truncated | Not Run |
+| AL-12 | Send the app to the background, return | "Alerts paused" while away, then back to waiting and continuing; no background location | Not Run |
+| AL-13 | Revoke location in settings while paused, return | Shows denied, not a crash | Not Run |
+| AL-14 | Tap Stop alerts, or leave the journey screen | Alerts and any vibration stop; nothing keeps running | Not Run |
+| AL-15 | Demo build, a road journey | Card shows "Unverified (demo data)"; the test-pack banner is still visible | Not Run |
+| AL-16 | Airplane mode with location on | GPS fixes can still arrive; the card works without internet; record what happened | Not Run |
+| AL-17 | Filipino language | Card text is translated and makes sense | Not Run |
+
 ## Fixture triggers
 
 With `createDevFixtureServices()`:

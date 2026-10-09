@@ -2,16 +2,19 @@
 import { useLocalSearchParams, useRouter } from "expo-router";
 import { AppButton, Body, Heading, Notice, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
+import { DropoffAlert } from "../src/ui/dropoff-alert";
 import { FareSummary, LegSequence } from "../src/ui/journey-card";
 import { optionIssues } from "../src/ui/journey-presenter";
 import { JourneySteps, RouteDiagram } from "../src/ui/journey-steps";
-import { useJourneySession, useUi } from "../src/ui/services";
+import { useJourneySession, useReadiness, useUi } from "../src/ui/services";
 
 export default function JourneyScreen() {
   const router = useRouter();
   const { optionId } = useLocalSearchParams<{ optionId?: string }>();
   const { t } = useUi();
   const { session } = useJourneySession();
+  const { pack } = useReadiness();
+  const loadedPack = pack.status === "loaded" && pack.result.ok ? pack.result.value : null;
   const options = session.result?.ok ? session.result.value.options : [];
   const index = options.findIndex((o) => o.id === optionId);
   const option = index >= 0 ? options[index] : null;
@@ -52,6 +55,8 @@ export default function JourneyScreen() {
           ))}
         </Notice>
       ) : null}
+
+      {loadedPack ? <DropoffAlert key={option.id} option={option} pack={loadedPack} /> : null}
 
       <RouteDiagram option={option} request={session.request} />
       <JourneySteps

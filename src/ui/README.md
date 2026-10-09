@@ -130,6 +130,18 @@ Branch `feat/ui/ui-006-device-r3` from `main` `69536ea`. Device verification is 
 
 `tests/ui/manual.md` has a device session record to fill in, the Demo build section and the adb steps for the walk.
 
+## Stop alert (ALERT-003, October 10, 2026)
+
+`src/ui/dropoff-alert.tsx` adds an optional "Notify me near my stop" card to the journey detail screen (`app/journey.tsx`). It uses the pure modules `src/routing/dropoffProximity.ts` and `src/routing/tripPins.ts` (see `docs/evidence/dropoff-alert.md`) and the pure helpers in `src/ui/dropoff-alert-logic.ts`.
+
+- A reminder from the phone's own location while the app is open. It is not vehicle tracking and states no arrival time. The user taps to start; a Stop alerts button is always shown.
+- Location permission is asked only after the user taps, after an explanation. Denied or unavailable location never blocks the journey. Location stays in memory, is not stored, logged or sent.
+- Foreground only: it pauses in the background and resumes on return. No background location, no notifications, no new dependency (`expo-location` was already installed; vibration uses React Native's `Vibration`).
+- The message is visible text, announced by TalkBack for approaching and arrived. Vibration is never the only signal.
+- The card shows "Unverified (demo data)" for pins from a test pack. Only LRT-1 stops in the release pack are verified pins. Without a drop-off coordinate the card says alerts are unavailable.
+- Config (Member 4's file, changed with the user's authorization): `app.config.ts` adds the `expo-location` plugin (foreground only) and the `ACCESS_COARSE_LOCATION`, `ACCESS_FINE_LOCATION` and `VIBRATE` Android permissions. A new APK is required.
+- Tests: `tests/ui/dropoff-alert-logic.test.ts` (software). Device checks AL-01 to AL-17 in `manual.md` are all **Not Run**. The distances are untested proposals.
+
 ## Gaps to resolve with owners
 
 - Model setup cancellation is now supplied as an optional UiServices capability from Member 1's existing AiManager extension. Canonical AiPort remains unchanged; the real setup screen offers cancellation during download/checking.
