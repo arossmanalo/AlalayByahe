@@ -47,7 +47,7 @@ test("the demo composition installs the demo pack, which is a test_fixture so th
   assert.equal(status.data.ok, true);
   const pack = value(await repository.getPack());
   assert.equal(pack.kind, "test_fixture");
-  assert.match(pack.coverageLabels[0]!, /DEMO BUILD/);
+  assert.match(pack.coverageLabels[0]!, /Demonstration network/);
   assert.ok(pack.places.length > 80);
   await services.close();
 });
@@ -82,7 +82,7 @@ test("all three layers plan through the same controller: real LRT-1, road drafts
 
   const synthetic = await plan(await place("Laoag"), await place("Legazpi"));
   assert.equal(synthetic.options[0]!.transfers, 2);
-  assert.ok(synthetic.coverageWarnings.some((w) => /DEMO BUILD/.test(w)), "every result repeats that the data is a demo");
+  assert.ok(synthetic.coverageWarnings.some((w) => /Demonstration network/.test(w)), "every result still states that the network is a demonstration");
   await services.close();
 });
 

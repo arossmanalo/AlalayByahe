@@ -187,7 +187,7 @@ describe("alert presenter: every state", () => {
   });
 
   it("explains why there is no alert for unverified data", () => {
-    assert.match(presentNoTarget("unverified", strings.en).body ?? "", /Unverified|unverified \(demo data\)/);
+    assert.match(presentNoTarget("unverified", strings.en).body ?? "", /not verified/);
   });
 });
 

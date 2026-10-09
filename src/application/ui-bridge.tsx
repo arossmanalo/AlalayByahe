@@ -3,6 +3,7 @@ import { createDropoffWatcher } from "../routing/dropoffProximity";
 import { createExpoLocationWatch } from "../ui/expo-location-watch";
 import { UiProvider, useReadiness, type UiServices } from "../ui/services";
 import { APP_LIMITS, MODEL_MANIFEST } from "./config";
+import { DEMO_BUILD } from "./demo-build";
 import { useApplication } from "./react-context";
 
 function SyncPackAfterBoot() {
@@ -16,7 +17,7 @@ function SyncPackAfterBoot() {
 export function NativeUiBridge({ children }: PropsWithChildren) {
   const { services } = useApplication();
   const ui = useMemo<UiServices>(() => ({
-    kind: "real", controller: services.controller, ai: services.ai,
+    kind: "real", hideTestPackBanner: DEMO_BUILD, controller: services.controller, ai: services.ai,
     repository: services.repository, modelManifest: MODEL_MANIFEST,
     onlineHelpersEnabled: APP_LIMITS.enableOnlineHelpers,
     cancelModelSetup: services.cancelModelSetup,

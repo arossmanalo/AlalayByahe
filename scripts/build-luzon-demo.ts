@@ -21,8 +21,7 @@ const SOURCE = "source_test_luzon_demo";
 
 const ev = (reliability: Evidence["reliability"] = "estimated"): Evidence => ({
   sourceIds: reliability === "unknown" ? [] : [SOURCE], checkedAt: AT, reliability,
-  note: "SYNTHETIC DEMO DATA. Invented for testing; not a real route, stop or fare.",
-});
+  });
 
 interface City { key: string; name: string; lat: number; lon: number; aliases?: string[] }
 const C = (key: string, name: string, lat: number, lon: number, aliases: string[] = []): City => ({ key, name, lat, lon, aliases });
@@ -30,15 +29,15 @@ const C = (key: string, name: string, lat: number, lon: number, aliases: string[
 const cities: City[] = [
   // Metro Manila
   C("cubao", "Cubao terminal", 14.6197, 121.0526, ["Cubao", "Araneta Cubao"]),
-  C("pitx", "PITX terminal", 14.5093, 120.9913, ["PITX", "Parañaque Integrated Terminal Exchange"]),
-  C("buendia", "Buendia Gil Puyat hub", 14.5541, 120.9972, ["Buendia", "Gil Puyat"]),
-  C("edsa_taft", "EDSA Taft hub", 14.5388, 121.0007, ["EDSA", "Taft"]),
+  C("pitx", "PITX Parañaque terminal", 14.5093, 120.9913, ["PITX", "Parañaque Integrated Terminal Exchange"]),
+  C("buendia", "Buendia Gil Puyat bus stop", 14.5541, 120.9972, ["Buendia", "Gil Puyat"]),
+  C("edsa_taft", "EDSA Taft bus stop", 14.5388, 121.0007, ["EDSA", "Taft"]),
   C("monumento", "Monumento terminal", 14.6541, 120.9839, ["Monumento"]),
-  C("north_ave", "North Avenue hub", 14.6521, 121.0323, ["North Avenue", "North Ave"]),
-  C("vito_cruz", "Vito Cruz hub", 14.5635, 120.9947, ["Vito Cruz"]),
-  C("baclaran", "Baclaran hub", 14.5339, 120.9981, ["Baclaran"]),
-  C("central_manila", "Central Manila hub", 14.5929, 120.9816, ["Central", "Carriedo"]),
-  C("recto", "Recto hub", 14.6035, 120.9833, ["Recto"]),
+  C("north_ave", "North Avenue bus stop", 14.6521, 121.0323, ["North Avenue", "North Ave"]),
+  C("vito_cruz", "Vito Cruz jeepney stop", 14.5635, 120.9947, ["Vito Cruz"]),
+  C("baclaran", "Baclaran bus stop", 14.5339, 120.9981, ["Baclaran"]),
+  C("central_manila", "Central Manila jeepney stop", 14.5929, 120.9816, ["Central", "Carriedo"]),
+  C("recto", "Recto bus stop", 14.6035, 120.9833, ["Recto"]),
   C("alabang", "Alabang terminal", 14.4188, 121.0398, ["Alabang"]),
   // Calabarzon
   C("calamba", "Calamba terminal", 14.2117, 121.1653, ["Calamba"]),
@@ -136,17 +135,17 @@ const pid = (k: string) => `place_test_${k}`;
 const sid = (k: string) => `stop_test_${k}`;
 
 const places: Place[] = cities.map((c) => ({
-  id: pid(c.key), name: `${c.name} (DEMO)`, aliases: [c.name, ...(c.aliases ?? [])],
-  kind: /terminal|hub/i.test(c.name) ? "terminal" : "landmark", locality: "Luzon (DEMO)",
+  id: pid(c.key), name: c.name, aliases: [...new Set(c.aliases ?? [])].filter((a) => a !== c.name),
+  kind: /terminal/i.test(c.name) ? "terminal" : /stop/i.test(c.name) ? "boarding_point" : "landmark", locality: "Luzon",
   point: { latitude: c.lat, longitude: c.lon }, evidence: ev(),
 }));
 const stops: Stop[] = cities.map((c) => ({
-  id: sid(c.key), placeId: pid(c.key), label: `${c.name} (DEMO)`, point: { latitude: c.lat, longitude: c.lon },
+  id: sid(c.key), placeId: pid(c.key), label: c.name, point: { latitude: c.lat, longitude: c.lon },
   board: true, alight: true, evidence: ev(),
 }));
 
 const services: Service[] = lines.map((l) => ({
-  id: `service_test_${l.key}`, name: `${l.name} (DEMO)`, mode: l.mode, signboardAliases: [], evidence: ev(),
+  id: `service_test_${l.key}`, name: l.name, mode: l.mode, signboardAliases: [], evidence: ev(),
 }));
 
 const directions: Direction[] = [];
@@ -155,8 +154,8 @@ for (const l of lines) {
   for (const [suffix, order] of [["fwd", l.stops], ["rev", [...l.stops].reverse()]] as const) {
     const last = order[order.length - 1] as string;
     directions.push({
-      id: `dir_test_${l.key}_${suffix}`, serviceId: `service_test_${l.key}`, headsign: `${city(last).name} (DEMO)`,
-      availability: "documented", availabilityNote: "SYNTHETIC DEMO DATA; not a real service.", evidence: ev(),
+      id: `dir_test_${l.key}_${suffix}`, serviceId: `service_test_${l.key}`, headsign: city(last).name,
+      availability: "documented", availabilityNote: "Sample service for the demonstration network.", evidence: ev(),
     });
     order.forEach((k, i) => routeStops.push({
       directionId: `dir_test_${l.key}_${suffix}`, sequence: i + 1, stopId: sid(k),
@@ -197,7 +196,7 @@ const walkLinks: WalkLink[] = walkPairs.flatMap(([a, b]) => [[a, b], [b, a]].map
   const meters = Math.ceil(km(from as string, to as string) * 1000 * 1.3 + 20);
   return {
     id: `walk_test_${from}_to_${to}`, fromPlaceId: pid(from as string), toPlaceId: pid(to as string), meters,
-    steps: [`DEMO: walk from ${city(from as string).name} to ${city(to as string).name} (about ${meters} m).`],
+    steps: [`Walk from ${city(from as string).name} to ${city(to as string).name} (about ${meters} m).`],
     evidence: ev(),
   };
 }));
@@ -205,10 +204,10 @@ const walkLinks: WalkLink[] = walkPairs.flatMap(([a, b]) => [[a, b], [b, a]].map
 const pack: TransitPack = {
   schemaVersion: "1.0",
   packId: "pack_test_luzon_demo",
-  version: "test_fixture_luzon_demo_1",
+  version: "test_fixture_luzon_demo_2",
   kind: "test_fixture",
   createdAt: AT,
-  coverageLabels: ["DEMO DATA, NOT REAL: synthetic routes, stops, fares and walks across Luzon, for testing and demos only"],
+  coverageLabels: ["Demonstration network across Luzon: sample routes, stops, fares and walks, not real transport information"],
   sources: [{
     id: SOURCE, title: "SYNTHETIC Luzon demo data", publisher: "AlalayByahe test fixtures", retrievedAt: AT,
     usageBasis: "Invented for testing and demos. Town coordinates are approximate public geography; every route, stop, fare and walk is made up. Never release data.",

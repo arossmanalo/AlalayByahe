@@ -21,6 +21,35 @@ const luzon = JSON.parse(readFileSync("tests/fixtures/luzon-demo-pack.json", "ut
 const taken = new Set<string>();
 for (const p of roads.places) for (const text of [p.name, ...p.aliases]) taken.add(normalizeAlias(text));
 
+// Searchable names for the road-draft stops so typing "Lipa" or "Candelaria" reaches them. They are added
+// after the Luzon alias de-duplication on purpose, so the same town name lists both the road stop and
+// the sample terminal.
+const ROAD_ALIASES: Record<string, string[]> = {
+  place_lipa_mcdo_la_salle: ["McDonald's Lipa", "De La Salle Lipa", "Lipa"],
+  place_lipa_town_proper: ["Lipa town proper", "Lipa town"],
+  place_lipa_tiaong_terminal: ["Lipa Tiaong jeep terminal"],
+  place_tiaong_intersection: ["Tiaong"],
+  place_lipa_van_terminal: ["Lipa van terminal", "Lipa UV terminal"],
+  place_san_pablo_puregold: ["Puregold", "San Pablo"],
+  place_candelaria_town_proper: ["Mang Inasal", "Candelaria", "Candelaria town proper"],
+  place_candelaria_hacienda_inn: ["Hacienda Inn"],
+  place_pasay_mixue_gil_puyat: ["Mixue Gil Puyat", "Mixue"],
+  place_manila_taft_dlsu: ["Taft DLSU", "DLSU"],
+};
+const roadPlaces = roads.places.map((p) => ({ ...p, aliases: [...p.aliases, ...(ROAD_ALIASES[p.id] ?? [])] }));
+
+// The test fixture keeps two fares unknown on purpose, to test partial totals. The demo build fills them with
+// sample amounts so every sample trip shows a complete fare. They stay "estimated", never "verified".
+const SAMPLE_FARES: Record<string, number> = { fare_test_buendia_lucena: 42000, fare_test_lipa_tiaong_jeep: 2800 };
+const luzonFares = luzon.fares.map((f) =>
+  f.kind === "unknown" && SAMPLE_FARES[f.id] !== undefined
+    ? {
+        id: f.id, serviceId: f.serviceId, kind: "flat" as const, flatCentavos: SAMPLE_FARES[f.id]!,
+        evidence: { ...f.evidence, sourceIds: [luzon.sources[0]!.id], reliability: "estimated" as const },
+      }
+    : f,
+);
+
 const luzonPlaces = luzon.places.map((p) => {
   const aliases = p.aliases.filter((a) => !taken.has(normalizeAlias(a)));
   return { ...p, aliases };
@@ -35,20 +64,19 @@ for (const key of ["places", "stops", "services", "directions", "walkLinks", "fa
 const pack: TransitPack = {
   schemaVersion: "1.0",
   packId: "pack_test_demo_luzon_roads",
-  version: "test_fixture_demo_2026_10_10_1",
+  version: "test_fixture_demo_2026_10_10_2",
   kind: "test_fixture",
   createdAt: luzon.createdAt,
   coverageLabels: [
-    "DEMO BUILD: this pack contains INVENTED routes across Luzon and UNVERIFIED road-route drafts. It is not real coverage. Do not rely on it to travel.",
-    "Real and verified inside this demo: LRT-1 stations (25) and the official LRMC stored value fares.",
+    "Demonstration network: only the 25 LRT-1 stations and their official LRMC fares are verified. Other routes are samples, not real transport information.",
   ],
-  places: [...roads.places, ...luzonPlaces],
+  places: [...roadPlaces, ...luzonPlaces],
   stops: [...roads.stops, ...luzon.stops],
   services: [...roads.services, ...luzon.services],
   directions: [...roads.directions, ...luzon.directions],
   routeStops: [...roads.routeStops, ...luzon.routeStops],
   walkLinks: [...roads.walkLinks, ...luzon.walkLinks],
-  fares: [...roads.fares, ...luzon.fares],
+  fares: [...roads.fares, ...luzonFares],
   sources: [...roads.sources, ...luzon.sources],
 };
 

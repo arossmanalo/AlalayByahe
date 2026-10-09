@@ -39,7 +39,11 @@ export function Screen({ title, children }: { title: string; children: ReactNode
 function FixtureBanners() {
   const { services, t } = useUi();
   const { pack } = useReadiness();
-  const banner = testDataBanner(services.kind, pack.status === "loaded" && pack.result.ok ? pack.result.value.kind : null);
+  const banner = testDataBanner(
+    services.kind,
+    pack.status === "loaded" && pack.result.ok ? pack.result.value.kind : null,
+    services.hideTestPackBanner,
+  );
   if (!banner) return null;
   const c = toneColors.fixture;
   const body = banner === "dev_fixture" ? t.devFixtureBody : t.testPackWarning;

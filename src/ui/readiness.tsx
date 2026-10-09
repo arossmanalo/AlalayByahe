@@ -116,7 +116,7 @@ export function ModelReadinessCard({ onManual }: { onManual: () => void }) {
 
 /** Transit pack status, independent of AI. A test fixture pack is labeled as such. */
 export function DataReadinessCard() {
-  const { t } = useUi();
+  const { t, services } = useUi();
   const { pack, reloadPack } = useReadiness();
   return (
     <Card>
@@ -125,8 +125,8 @@ export function DataReadinessCard() {
         <StatusPill tone="info" label={t.loading} />
       ) : pack.result.ok ? (
         <>
-          <StatusPill tone={pack.result.value.kind === "test_fixture" ? "fixture" : "success"} label={t.dataReady} />
-          {pack.result.value.kind === "test_fixture" ? <Body>{t.testPackWarning}</Body> : null}
+          <StatusPill tone={pack.result.value.kind === "test_fixture" && !services.hideTestPackBanner ? "fixture" : "success"} label={t.dataReady} />
+          {pack.result.value.kind === "test_fixture" && !services.hideTestPackBanner ? <Body>{t.testPackWarning}</Body> : null}
           <Small>{t.dataVersion(pack.result.value.version, formatDate(pack.result.value.createdAt))}</Small>
           <Heading level={3}>{t.coverageHeading}</Heading>
           <CoverageList labels={pack.result.value.coverageLabels} />
