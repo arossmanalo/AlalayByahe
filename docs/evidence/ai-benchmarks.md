@@ -22,7 +22,7 @@ Exact critical slots ≥ 90% on ≥ 20 cases per primary phone; silent role swap
 | Honor X9b 5G (ALI-NX1) | Android 15 | 1 (app locale) | 42 | — | — | — | — | — | — | — | — | — | **Not Run** |
 | Honor X9b 5G (ALI-NX1) | Android 15 | 2 (app locale, back to back: thermals) | 42 | — | — | — | — | — | — | — | — | — | **Not Run** |
 | Honor X9b 5G (ALI-NX1) | Android 15 | 3 (per-case locale, comparison) | 42 | — | — | — | — | — | — | — | — | — | **Not Run** |
-| iPhone 14 Pro | — | 1 | 42 | — | — | — | — | — | — | — | — | — | **Not Run** |
+| iPhone 14 Pro | — | 1 | 42 | — | — | — | — | — | — | — | — | — | **Out of scope** (iOS descoped 2026-10-10) |
 
 Publish every miss with its raw output, failed slots and device.
 
@@ -34,12 +34,12 @@ Measure only if actually profiled. On Android, run this during a benchmark:
 adb shell dumpsys meminfo ph.alalaybyahe.app
 ```
 
-Record TOTAL PSS / RSS before load, after load and during a completion. On iPhone, use the Xcode memory gauge or Instruments.
+Record TOTAL PSS / RSS before load, after load and during a completion. (iOS is out of scope.)
 
 | Device | Before load | After load | During completion | Tool | Result |
 |---|---|---|---|---|---|
 | Honor X9b 5G (ALI-NX1) | — | — | — | — | **Not Run** |
-| iPhone 14 Pro | — | — | — | — | **Not Run** |
+| iPhone 14 Pro | — | — | — | — | **Out of scope** (iOS descoped 2026-10-10) |
 
 ## Model decision
 

@@ -1,5 +1,7 @@
 # AlalayByahe Planning Package
 
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
+
 **Status: implementation approved; integrated native source is available on feat/integration/int-001-foundation.**
 
 Start with [Master plan — 18 requested parts and 8 delegation deliverables](01-master-plan.md).
@@ -21,9 +23,9 @@ Copy the entire relevant file into that member's AI assistant. Each includes sec
 4. [Member 4 — User: integration, offline and QA](prompts/04-integration-qa.md)
 
 ## Review before implementation
-The agreed product is native Android/iPhone, phone-local Qwen extraction, deterministic verified routing, truthful fares, manual onboard replanning and offline stored-place journeys after setup. Scanner/maps are optional. Arbitrary new addresses/walk paths may require optional connectivity.
+The agreed product is native Android (iPhone was excluded on 2026-10-10), phone-local Qwen extraction, deterministic verified routing, truthful fares, manual onboard replanning and offline stored-place journeys after setup. Scanner/maps are optional. Arbitrary new addresses/walk paths may require optional connectivity.
 
-Important gates: actual phone-local inference, iOS signing, physical offline testing and source-backed corridor data. The scaffold and real ports are implemented; see [integration evidence](../evidence/integration.md). No verified corridor or submission is claimed. The missing participant briefing PDF leaves some pasted event rules unconfirmed. Treat Oct 10,10 AM Manila as the conservative internal deadline.
+Important gates: actual phone-local inference on Android, physical offline testing and source-backed corridor data. The scaffold and real ports are implemented; see [integration evidence](../evidence/integration.md). No verified corridor or submission is claimed. The missing participant briefing PDF leaves some pasted event rules unconfirmed. Treat Oct 10,10 AM Manila as the conservative internal deadline.
 
 The repository is connected to GitHub. The user's standing commit/push instruction applies to task-owned changes.
 

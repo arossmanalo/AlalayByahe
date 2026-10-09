@@ -11,7 +11,7 @@ Owner: Member 1 with Member 4. **Status: Not Run.** No installed build has run a
 ## Procedure (T-OFF-01 / T-AI-01)
 
 1. Stop Metro on the laptop. Unplug USB. Turn on airplane mode, and also turn off Wi‑Fi and Bluetooth.
-2. Force-quit the app (Android: swipe away from recents; iPhone: swipe up). Relaunch it from the home screen.
+2. Force-quit the app (Android: swipe away from recents). Relaunch it from the home screen.
 3. Type a **fresh** query that is not in the corpus and has not been tried before, e.g. a new Taglish sentence naming two LRT-1 stations (such as "Paano pumunta mula Vito Cruz papuntang Baclaran?").
 4. Expect the confirmation screen to show origin/destination/preferences extracted by the local model, labelled "Read by AI on this phone (qwen2.5-0.5b-q4_k_m)".
 5. Record the query text, the extracted fields, the elapsed time and a screen recording or screenshots. Then submit a second fresh query to show it was not a one-off.
@@ -25,4 +25,4 @@ The reviewed LRT-1 pack is now bundled on `main` (stations only). A fresh query 
 | Device (anonymized) | OS | Build (commit) | Airplane / radios off | Metro / USB | Fresh query | Extraction shown | Elapsed ms | Clarification | Result |
 |---|---|---|---|---|---|---|---|---|---|
 | Honor X9b 5G (ALI-NX1) | Android 15 | — | — | — | — | — | — | — | **Not Run** |
-| iPhone 14 Pro | — | — | — | — | — | — | — | — | **Not Run** |
+| iPhone 14 Pro | — | — | — | — | — | — | — | — | **Out of scope** (iOS descoped 2026-10-10) |

@@ -7,7 +7,7 @@ Owner: Member 1. Gate M1. **Status: Blocked / Not Run** (rechecked 2026-10-10 ~0
 | Blocker | Evidence (2026-10-10) | Next owner / action |
 |---|---|---|
 | No APK built from current `main` | `native-artifacts.json` still records only `alalaybyahe-0.1.0-34236a5.apk`, and `npm run release:check` reports it stale; it predates the bundled LRT-1 pack and the diagnostics screen. No newer APK exists on Member 1's laptop. A local Member 1 build from `feat/ai/ai-005-006` was stopped by decision at ~373/840 Gradle tasks, so that APKs come from one owner and one commit | **Member 4:** build two APKs from current `main`: (1) **benchmark**, with `EXPO_PUBLIC_AI_DIAGNOSTICS=1`; (2) **release**, without it. Send each file name, source commit and SHA-256, and record them in `native-artifacts.json` |
-| iOS needs the Mac | Windows cannot build iOS | Member 4 / Mac owner, after Android |
+| iOS needs the Mac | Windows cannot build iOS | **Descoped 2026-10-10**; no iOS build planned |
 | Model not on any phone | Never downloaded on a device | Step 3 below, through the app's setup screen |
 
 Resolved: the Android phone is connected and authorized over USB (see Device below); app scaffold and real native ports (INT-001, merged). The Android SDK on Member 1's laptop now lives at `C:\Android\Sdk`. The first install had been silently redirected into the Claude app's private storage and was moved on 2026-10-10. `npm ci` on Windows must run from **PowerShell or cmd**, not Git Bash: llama.rn's postinstall calls `tar`, and Git Bash's GNU tar fails on `C:\` paths (`Cannot connect to C: resolve failed`).
@@ -56,7 +56,7 @@ Do not distribute that APK. The AI-006 offline proof and release evidence should
 
 | Platform (anonymized) | OS | Build (commit, type) | Install | Model setup (bytes / hash / time) | Load ms | Completion ms | Valid JSON | Result |
 |---|---|---|---|---|---|---|---|---|
-| iPhone 14 Pro | — | — | Not Run | Not Run | — | — | — | **Not Run** |
+| iPhone 14 Pro | — | — | Not Run | Not Run | — | — | — | **Out of scope** (iOS descoped 2026-10-10) |
 | Honor X9b 5G (ALI-NX1) | Android 15 | — (awaiting Member 4 benchmark APK) | Not Run | Not Run | — | — | — | **Not Run** |
 
-Phone-local inference must not be claimed until a row shows a real pass with the raw report attached. iOS stays Not Run without the Mac build.
+Phone-local inference must not be claimed until a row shows a real pass with the raw report attached. iOS is out of scope; no iOS result exists or is claimed.

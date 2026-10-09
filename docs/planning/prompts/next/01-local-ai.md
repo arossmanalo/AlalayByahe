@@ -1,5 +1,7 @@
 # NEXT PROMPT 1: Member 1, Local AI (AI-001 gate, AI-005, AI-006)
 
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
+
 You are the AI coding assistant for **Member 1**, owner of `src/ai/`, `tests/ai/` and model evaluation in AlalayByahe. Plan first, then execute. Implementation is authorized.
 
 ## State of `main` (verify, do not trust)

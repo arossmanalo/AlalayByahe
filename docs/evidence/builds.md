@@ -57,4 +57,4 @@ The generated Release variant uses the template's debug signing key for local te
 
 ADB reported **zero connected Android devices** at the last check. No Android install/cold launch/SQLite restart/inference/offline result is claimed.
 
-The user's Mac with Xcode 26.6 and iPhone 14 Pro is not accessible from this Windows chat. iOS native generation, Personal Team signing, Release install, inference and offline tests are **Not Run**. Follow README's Mac procedure and the acceptance checklist; retain an anonymized report with the matching artifact/source/pack/model.
+iOS was excluded on 2026-10-10 because of limited resources. (Earlier: the user's Mac with Xcode 26.6 and iPhone 14 Pro was not accessible from this Windows chat.) iOS native generation, Personal Team signing, Release install, inference and offline tests are **Not Run**. Follow README's Mac procedure and the acceptance checklist; retain an anonymized report with the matching artifact/source/pack/model.

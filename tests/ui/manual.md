@@ -2,7 +2,7 @@
 
 Status values: Pass, Fail, Not Run, Deferred. Record the device, OS version, font scale and build (dev fixture or real controller) for every run. A run against `createDevFixtureServices()` checks layout and flow only. It is not evidence of real inference, routing or transit data.
 
-| ID | Check | Edge cases | Fixture run (web preview) | Real run (Android) | Real run (iPhone) |
+| ID | Check | Edge cases | Fixture run (web preview) | Real run (Android) | Real run (iPhone, out of scope) |
 |---|---|---|---|---|---|
 | M-01 | Every P0 screen is reachable: home, setup, confirm, manual, results, journey, onboard, about | UI-001 | Pass (Oct 9 run reached the AI confirm screen; Oct 10 run reached manual and about) | Not Run | Not Run |
 | M-02 | DEV FIXTURE banner shows on every screen with fixture services or a test_fixture pack, and never with real wiring | UI-006 | Pass (every screen visited; real wiring not available) | Not Run | Not Run |
@@ -32,7 +32,7 @@ Status values: Pass, Fail, Not Run, Deferred. Record the device, OS version, fon
 
 Required by the UI-006 finish prompt. Android uses Member 4's APK installed with `adb install -r` and cold-launched without Metro or Expo Go. iPhone runs only after Member 4's Mac build. Record device, OS, build commit and pack version, and add screenshots with no personal data.
 
-| ID | Flow | Edge cases | Fixture run (web preview, Oct 10) | Real run (Android) | Real run (iPhone) |
+| ID | Flow | Edge cases | Fixture run (web preview, Oct 10) | Real run (Android) | Real run (iPhone, out of scope) |
 |---|---|---|---|---|---|
 | D-01 | Install and cold launch without Metro or Expo Go | EC-133 | Not applicable | Not Run: no device, ADB or current APK | Not Run: no iOS build |
 | D-02 | First launch: AI and transit data readiness shown separately; with no release pack, "Transit data: Not loaded" and journeys fail as data unavailable | EC-084, EC-087 | Partial: separate readiness shown with fixture pack loaded; missing-pack state not run | Not Run | Not Run |
@@ -50,7 +50,7 @@ Required by the UI-006 finish prompt. Android uses Member 4's APK installed with
 | D-14 | Long text over 600 characters | EC-014 | Not Run (unit test only) | Not Run | Not Run |
 | D-15 | Offline: airplane mode, force-quit, relaunch, stored-place trip | EC-083, EC-094 | Not applicable | Not Run | Not Run |
 
-| ID | Accessibility check | Fixture run (web preview, Oct 10) | Real run (Android) | Real run (iPhone) |
+| ID | Accessibility check | Fixture run (web preview, Oct 10) | Real run (Android) | Real run (iPhone, out of scope) |
 |---|---|---|---|---|
 | A-01 | Screen reader labels, roles and states (TalkBack / VoiceOver) | Partial: web tree shows "Warning: …" notice titles, "Local AI: Not downloaded" as one label, named "Language" radio group, "Walk, then Bus, then Walk", swap button without its glyph, "Search services". react-native-web ignores the native-only hide-descendants props, so duplicate reading can only be checked on a device | Not Run | Not Run |
 | A-02 | 48 dp minimum touch targets | Code: buttons, chips and inputs have 48 minimum height and width | Not Run | Not Run |
@@ -59,6 +59,8 @@ Required by the UI-006 finish prompt. Android uses Member 4's APK installed with
 | A-05 | No color-only status | Pass: every tone has a glyph and a written title, and screen readers hear the tone as a word | Not Run | Not Run |
 | A-06 | Keyboard and IME | Partial: place and service search send `autocorrect="off"` and a search return key; scroll-to-dismiss needs a device | Not Run | Not Run |
 | A-07 | Safe areas (notch, gesture bar) | Not applicable | Not Run | Not Run |
+
+> iOS was descoped on 2026-10-10. The iPhone column is out of scope and will not be run.
 
 ### Real-pack journeys (bundled pack `lrt1_2026_10_10_1`)
 
