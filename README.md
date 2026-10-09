@@ -74,3 +74,5 @@ After setup, the target is local extraction plus offline journeys for stored pla
 The actual Member 4 editing checkout is `.worktrees/member4`, isolated from the concurrently used Member 2 branch. Screens receive real ports through `NativeUiBridge`/`UiProvider`; the shared application owns initialization and background cancellation. AI confirmation keeps its draft query ID, including explicit edits.
 
 See [integration handoff](docs/evidence/integration.md), [execution dashboard](docs/planning/04-team-execution.md), [acceptance plan](docs/planning/06-acceptance-and-demo.md) and [submission draft](docs/submission.md). No post, video upload or event submission has been performed.
+
+Optional maps: [free provider research](docs/evidence/maps-options.md) recommends Geoapify with MapLibre React Native. It is a proposal; map dependencies and online helpers are not enabled.
