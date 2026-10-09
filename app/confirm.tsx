@@ -6,6 +6,7 @@ import type { AppError, RouteRequest } from "../src/contracts";
 import { AppButton, Body, Card, Heading, Notice, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
 import { ErrorCard } from "../src/ui/error-card";
+import { shouldShowError } from "../src/ui/error-logic";
 import {
   DEFAULT_PREFERENCES,
   explicitFields,
@@ -18,13 +19,14 @@ import {
 } from "../src/ui/form-logic";
 import { PreferencesForm } from "../src/ui/journey-form";
 import { PlacePicker, selectionFromPlace, type PlaceSelection } from "../src/ui/place-picker";
-import { useJourneySession, useUi } from "../src/ui/services";
+import { useJourneySession, useReadiness, useUi } from "../src/ui/services";
 
 export default function ConfirmScreen() {
   const router = useRouter();
   const params = useLocalSearchParams<{ manual?: string; edit?: string }>();
   const { t } = useUi();
   const { session, planRoute, cancelPending } = useJourneySession();
+  const { modelState } = useReadiness();
 
   const draft = params.manual === "1" ? null : session.draft;
   const editing = params.edit === "1" && session.request !== null ? session.request : null;
@@ -102,8 +104,9 @@ export default function ConfirmScreen() {
       router.push("/results");
       return;
     }
-    if (result.error.code === "CANCELLED") return;
-    if (result.error.code === "NEEDS_CLARIFICATION" || result.error.code === "INVALID_INPUT") {
+    if (!shouldShowError(result.error)) return;
+    const code = result.error.code;
+    if (code === "CANCELLED" || code === "NEEDS_CLARIFICATION" || code === "INVALID_INPUT") {
       setRouteError(result.error);
       return;
     }
@@ -115,6 +118,11 @@ export default function ConfirmScreen() {
     <Screen title={manual ? t.manualTitle : t.confirmTitle}>
       <Heading>{manual ? t.manualTitle : t.confirmTitle}</Heading>
       <Body muted>{manual ? t.manualIntro : t.confirmIntro}</Body>
+      {manual && modelState.phase !== "ready" ? (
+        <Notice tone="warning" title={t.aiUnavailable}>
+          <Body>{t.aiUnavailableManual}</Body>
+        </Notice>
+      ) : null}
 
       {!manual && session.queryText ? (
         <Card>
@@ -159,7 +167,7 @@ export default function ConfirmScreen() {
         error={placeErrors.origin}
       />
 
-      <AppButton label={`⇅ ${t.swapPlaces}`} variant="secondary" onPress={swap} />
+      <AppButton label={t.swapPlaces} icon="⇅" variant="secondary" onPress={swap} />
 
       <PlacePicker
         heading={t.destinationHeading}
@@ -177,7 +185,7 @@ export default function ConfirmScreen() {
 
       <PreferencesForm form={form} onChange={setForm} errors={prefErrors} explicit={explicit} />
 
-      {routeError ? <ErrorCard error={routeError} handlers={{}} /> : null}
+      {routeError ? <ErrorCard error={routeError} handlers={{ retry: () => void submit() }} /> : null}
 
       <AppButton
         label={planning ? t.planning : t.findRoutes}

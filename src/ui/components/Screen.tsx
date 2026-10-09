@@ -16,6 +16,8 @@ export function Screen({ title, children }: { title: string; children: ReactNode
         contentInsetAdjustmentBehavior="automatic"
         automaticallyAdjustKeyboardInsets
         keyboardShouldPersistTaps="handled"
+        // Number pads have no return key on iOS; scrolling closes the keyboard so the buttons stay reachable.
+        keyboardDismissMode="on-drag"
         contentContainerStyle={[
           styles.content,
           {
@@ -39,16 +41,18 @@ function FixtureBanners() {
   const fixturePack = pack.status === "loaded" && pack.result.ok && pack.result.value.kind === "test_fixture";
   if (services.kind !== "dev_fixture" && !fixturePack) return null;
   const c = toneColors.fixture;
+  const body = services.kind === "dev_fixture" ? t.devFixtureBody : t.testPackWarning;
   return (
     <View
       accessible
       accessibilityRole="alert"
+      accessibilityLabel={`${t.devFixtureTitle}. ${body}`}
       style={[styles.banner, { backgroundColor: c.bg, borderColor: c.border }]}
     >
       <Text style={[styles.bannerTitle, { color: c.fg }]}>
         {toneGlyph.fixture} {t.devFixtureTitle}
       </Text>
-      <Text style={styles.bannerBody}>{services.kind === "dev_fixture" ? t.devFixtureBody : t.testPackWarning}</Text>
+      <Text style={styles.bannerBody}>{body}</Text>
     </View>
   );
 }

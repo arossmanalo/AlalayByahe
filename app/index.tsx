@@ -5,6 +5,7 @@ import type { AppError } from "../src/contracts";
 import { AppButton, Body, ChipRow, ChoiceChip, Heading, LabeledInput, Notice, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
 import { ErrorCard } from "../src/ui/error-card";
+import { shouldShowError } from "../src/ui/error-logic";
 import { checkQueryText, MAX_QUERY_CHARS, newQueryId } from "../src/ui/form-logic";
 import type { UiLanguage } from "../src/ui/i18n";
 import { ReadinessSummary } from "../src/ui/readiness";
@@ -34,7 +35,7 @@ export default function HomeScreen() {
     setInputError(null);
     const result = await interpret(check.text);
     if (result.ok) router.push("/confirm");
-    else if (result.error.code !== "CANCELLED") setError(result.error);
+    else if (shouldShowError(result.error)) setError(result.error);
   };
 
   const onManual = () => {
@@ -45,12 +46,13 @@ export default function HomeScreen() {
   const onRepeat = async () => {
     if (!session.request || !session.via) return;
     const result = await planRoute({ ...session.request, queryId: newQueryId() }, session.via);
-    if (result.ok || result.error.code !== "CANCELLED") router.push("/results");
+    if (result.ok || shouldShowError(result.error)) router.push("/results");
   };
 
   return (
     <Screen title={t.appName}>
-      <ChipRow>
+      <Small>{t.languageLabel}</Small>
+      <ChipRow radioGroupLabel={t.languageLabel}>
         {LANGUAGES.map((lang) => (
           <ChoiceChip
             key={lang}
@@ -94,9 +96,11 @@ export default function HomeScreen() {
       ) : (
         <Notice
           tone="warning"
-          title={t.aiUnavailableHome}
+          title={t.aiUnavailable}
           actions={<AppButton label={t.setUpAi} variant="secondary" onPress={() => router.push("/setup")} />}
-        />
+        >
+          <Body>{t.aiUnavailableHome}</Body>
+        </Notice>
       )}
 
       {error ? (
