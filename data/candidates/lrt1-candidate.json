@@ -1,0 +1,2064 @@
+{
+  "schemaVersion": "1.0",
+  "packId": "pack_lrt1_candidate",
+  "version": "lrt1_candidate_2026_10_09_1",
+  "kind": "release",
+  "createdAt": "2026-10-09T23:00:00+08:00",
+  "coverageLabels": [
+    "LRT-1 only: Dr. Santos to Central Terminal, rides and stored value fares. Unreviewed candidate. No road services, no walking links, no target corridor covered end to end."
+  ],
+  "sources": [
+    {
+      "id": "source_lrmc_svc_matrix_2025_04_02",
+      "title": "New LRT-1 Stored Value Fare Matrix, effective April 2, 2025",
+      "url": "https://i0.wp.com/lrmc.ph/wp-content/uploads/2025/03/New-SJT-fare-matrix-effective-April-2-2025-1.png",
+      "publisher": "Light Rail Manila Corporation (LRMC)",
+      "retrievedAt": "2026-10-09T23:00:00+08:00",
+      "usageBasis": "Operator publication read on screen and transcribed for 14 stations. The image titled Stored Value is served at the file name containing SJT; file names on the LRMC site are swapped, so the title inside the image was used.",
+      "factsSupported": [
+        "Station order south to north",
+        "Stored value fare for each station pair among the 14 stations",
+        "Both directions served between every pair"
+      ],
+      "checkedBy": "Member 2 (unreviewed)"
+    },
+    {
+      "id": "source_wikipedia_lrt1",
+      "title": "LRT Line 1 (Metro Manila)",
+      "url": "https://en.wikipedia.org/wiki/LRT_Line_1_(Metro_Manila)",
+      "publisher": "Wikipedia contributors",
+      "retrievedAt": "2026-10-09T23:00:00+08:00",
+      "usageBasis": "CC BY-SA 4.0. Used only to cross-check station names, terminals and the Taft Avenue name for EDSA station.",
+      "factsSupported": [
+        "Terminals Dr. Santos and Fernando Poe Jr.",
+        "EDSA station is also called Taft Avenue"
+      ],
+      "checkedBy": "Member 2 (unreviewed)"
+    },
+    {
+      "id": "source_wikipedia_station_coordinates",
+      "title": "Wikipedia station articles (coordinates via MediaWiki API)",
+      "url": "https://en.wikipedia.org/wiki/LRT_Line_1_(Metro_Manila)",
+      "publisher": "Wikipedia contributors",
+      "retrievedAt": "2026-10-09T23:00:00+08:00",
+      "usageBasis": "CC BY-SA 4.0. Approximate station coordinates only. The Baclaran value duplicates the EDSA value, which is wrong, so it was not used.",
+      "factsSupported": [
+        "Approximate station coordinates"
+      ],
+      "checkedBy": "Member 2 (unreviewed)"
+    },
+    {
+      "id": "source_osm_nominatim",
+      "title": "OpenStreetMap via Nominatim search",
+      "url": "https://nominatim.openstreetmap.org/",
+      "publisher": "OpenStreetMap contributors",
+      "retrievedAt": "2026-10-09T23:00:00+08:00",
+      "usageBasis": "ODbL 1.0, attribution required: Data (c) OpenStreetMap contributors. Used to cross-check station coordinates and the Buendia name; nodes are bus stops beside the stations, not platforms.",
+      "factsSupported": [
+        "Approximate station coordinates",
+        "Gil Puyat station is also called Buendia"
+      ],
+      "checkedBy": "Member 2 (unreviewed)"
+    }
+  ],
+  "places": [
+    {
+      "id": "place_lrt1_dr_santos",
+      "name": "Dr. Santos Station",
+      "aliases": [
+        "Dr. Santos",
+        "LRT Dr. Santos"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.4853,
+        "longitude": 120.98956
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; OSM bus stops nearby sit about 200 m east. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_ninoy_aquino_avenue",
+      "name": "Ninoy Aquino Avenue Station",
+      "aliases": [
+        "Ninoy Aquino Avenue",
+        "Ninoy Aquino Ave"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.49864,
+        "longitude": 120.99436
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM bus stop within about 40 m. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_pitx",
+      "name": "PITX Station",
+      "aliases": [
+        "PITX",
+        "LRT PITX"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.50848,
+        "longitude": 120.99128
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM within about 100 m. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_mia_road",
+      "name": "MIA Road Station",
+      "aliases": [
+        "MIA Road"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.51843,
+        "longitude": 120.99299
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point only; no OSM cross-check was returned. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_redemptorist_aseana",
+      "name": "Redemptorist-Aseana Station",
+      "aliases": [
+        "Redemptorist-Aseana",
+        "Redemptorist",
+        "Aseana"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.53028,
+        "longitude": 120.99294
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point only; no OSM cross-check was returned. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_baclaran",
+      "name": "Baclaran Station",
+      "aliases": [
+        "Baclaran",
+        "LRT Baclaran"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.5339,
+        "longitude": 120.998
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "OpenStreetMap bus-stop nodes at the station. The Wikipedia point for Baclaran is identical to its EDSA point and was rejected. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_edsa",
+      "name": "EDSA Station",
+      "aliases": [
+        "EDSA",
+        "Taft Avenue",
+        "Taft",
+        "LRT EDSA",
+        "LRT Taft"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.538825,
+        "longitude": 121.00068
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM within about 60 m. Wikipedia's route diagram labels this station Taft Avenue; the LRMC matrix labels it EDSA. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_libertad",
+      "name": "Libertad Station",
+      "aliases": [
+        "Libertad",
+        "LRT Libertad"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.54778,
+        "longitude": 120.99863
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM within about 60 m. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_gil_puyat",
+      "name": "Gil Puyat Station",
+      "aliases": [
+        "Gil Puyat",
+        "Buendia",
+        "LRT Buendia"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.55413,
+        "longitude": 120.99718
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; OSM bus stop about 125 m north. OSM also names the station Buendia. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_vito_cruz",
+      "name": "Vito Cruz Station",
+      "aliases": [
+        "Vito Cruz",
+        "LRT Vito Cruz"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.563475,
+        "longitude": 120.99468
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM within about 60 m. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_quirino",
+      "name": "Quirino Station",
+      "aliases": [
+        "Quirino",
+        "LRT Quirino"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.57022,
+        "longitude": 120.99168
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM within about 100 m. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_pedro_gil",
+      "name": "Pedro Gil Station",
+      "aliases": [
+        "Pedro Gil",
+        "LRT Pedro Gil"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.57663,
+        "longitude": 120.98799
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM within about 40 m. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_un_avenue",
+      "name": "UN Avenue Station",
+      "aliases": [
+        "UN Avenue",
+        "UN Ave",
+        "United Nations",
+        "LRT United Nations"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.58249,
+        "longitude": 120.98466
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates",
+          "source_osm_nominatim"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point; agrees with OSM within about 50 m. The LRMC matrix says UN Avenue; Wikipedia and OSM say United Nations. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_lrt1_central",
+      "name": "Central Terminal Station",
+      "aliases": [
+        "Central",
+        "Central Terminal",
+        "LRT Central"
+      ],
+      "kind": "station",
+      "locality": "Metro Manila",
+      "point": {
+        "latitude": 14.5929,
+        "longitude": 120.98162
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_wikipedia_station_coordinates"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Wikipedia point only; no OSM cross-check was returned. Approximate; not a surveyed entrance. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    }
+  ],
+  "stops": [
+    {
+      "id": "stop_lrt1_dr_santos",
+      "placeId": "place_lrt1_dr_santos",
+      "label": "Dr. Santos (LRT-1 platform)",
+      "point": {
+        "latitude": 14.4853,
+        "longitude": 120.98956
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_ninoy_aquino_avenue",
+      "placeId": "place_lrt1_ninoy_aquino_avenue",
+      "label": "Ninoy Aquino Avenue (LRT-1 platform)",
+      "point": {
+        "latitude": 14.49864,
+        "longitude": 120.99436
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_pitx",
+      "placeId": "place_lrt1_pitx",
+      "label": "PITX (LRT-1 platform)",
+      "point": {
+        "latitude": 14.50848,
+        "longitude": 120.99128
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_mia_road",
+      "placeId": "place_lrt1_mia_road",
+      "label": "MIA Road (LRT-1 platform)",
+      "point": {
+        "latitude": 14.51843,
+        "longitude": 120.99299
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_redemptorist_aseana",
+      "placeId": "place_lrt1_redemptorist_aseana",
+      "label": "Redemptorist-Aseana (LRT-1 platform)",
+      "point": {
+        "latitude": 14.53028,
+        "longitude": 120.99294
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_baclaran",
+      "placeId": "place_lrt1_baclaran",
+      "label": "Baclaran (LRT-1 platform)",
+      "point": {
+        "latitude": 14.5339,
+        "longitude": 120.998
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_edsa",
+      "placeId": "place_lrt1_edsa",
+      "label": "EDSA (LRT-1 platform)",
+      "point": {
+        "latitude": 14.538825,
+        "longitude": 121.00068
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_libertad",
+      "placeId": "place_lrt1_libertad",
+      "label": "Libertad (LRT-1 platform)",
+      "point": {
+        "latitude": 14.54778,
+        "longitude": 120.99863
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_gil_puyat",
+      "placeId": "place_lrt1_gil_puyat",
+      "label": "Gil Puyat (LRT-1 platform)",
+      "point": {
+        "latitude": 14.55413,
+        "longitude": 120.99718
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_vito_cruz",
+      "placeId": "place_lrt1_vito_cruz",
+      "label": "Vito Cruz (LRT-1 platform)",
+      "point": {
+        "latitude": 14.563475,
+        "longitude": 120.99468
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_quirino",
+      "placeId": "place_lrt1_quirino",
+      "label": "Quirino (LRT-1 platform)",
+      "point": {
+        "latitude": 14.57022,
+        "longitude": 120.99168
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_pedro_gil",
+      "placeId": "place_lrt1_pedro_gil",
+      "label": "Pedro Gil (LRT-1 platform)",
+      "point": {
+        "latitude": 14.57663,
+        "longitude": 120.98799
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_un_avenue",
+      "placeId": "place_lrt1_un_avenue",
+      "label": "UN Avenue (LRT-1 platform)",
+      "point": {
+        "latitude": 14.58249,
+        "longitude": 120.98466
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_lrt1_central",
+      "placeId": "place_lrt1_central",
+      "label": "Central Terminal (LRT-1 platform)",
+      "point": {
+        "latitude": 14.5929,
+        "longitude": 120.98162
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    }
+  ],
+  "services": [
+    {
+      "id": "service_lrt1",
+      "name": "LRT-1",
+      "mode": "lrt",
+      "signboardAliases": [
+        "LRT-1",
+        "LRT Line 1",
+        "Line 1"
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    }
+  ],
+  "directions": [
+    {
+      "id": "dir_lrt1_northbound",
+      "serviceId": "service_lrt1",
+      "headsign": "Fernando Poe Jr.",
+      "availability": "documented",
+      "availabilityNote": "Documented only by the fare matrix. Operating hours and disruptions are not recorded; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02",
+          "source_wikipedia_lrt1"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Headsign from the northern terminal named by Wikipedia. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "dir_lrt1_southbound",
+      "serviceId": "service_lrt1",
+      "headsign": "Dr. Santos",
+      "availability": "documented",
+      "availabilityNote": "Documented only by the fare matrix. Operating hours and disruptions are not recorded; not live availability.",
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02",
+          "source_wikipedia_lrt1"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Headsign from the southern terminal named by Wikipedia. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    }
+  ],
+  "routeStops": [
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 1,
+      "stopId": "stop_lrt1_dr_santos",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 2,
+      "stopId": "stop_lrt1_ninoy_aquino_avenue",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 3,
+      "stopId": "stop_lrt1_pitx",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 4,
+      "stopId": "stop_lrt1_mia_road",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 5,
+      "stopId": "stop_lrt1_redemptorist_aseana",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 6,
+      "stopId": "stop_lrt1_baclaran",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 7,
+      "stopId": "stop_lrt1_edsa",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 8,
+      "stopId": "stop_lrt1_libertad",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 9,
+      "stopId": "stop_lrt1_gil_puyat",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 10,
+      "stopId": "stop_lrt1_vito_cruz",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 11,
+      "stopId": "stop_lrt1_quirino",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 12,
+      "stopId": "stop_lrt1_pedro_gil",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 13,
+      "stopId": "stop_lrt1_un_avenue",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_northbound",
+      "sequence": 14,
+      "stopId": "stop_lrt1_central",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 1,
+      "stopId": "stop_lrt1_central",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 2,
+      "stopId": "stop_lrt1_un_avenue",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 3,
+      "stopId": "stop_lrt1_pedro_gil",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 4,
+      "stopId": "stop_lrt1_quirino",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 5,
+      "stopId": "stop_lrt1_vito_cruz",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 6,
+      "stopId": "stop_lrt1_gil_puyat",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 7,
+      "stopId": "stop_lrt1_libertad",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 8,
+      "stopId": "stop_lrt1_edsa",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 9,
+      "stopId": "stop_lrt1_baclaran",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 10,
+      "stopId": "stop_lrt1_redemptorist_aseana",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 11,
+      "stopId": "stop_lrt1_mia_road",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 12,
+      "stopId": "stop_lrt1_pitx",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 13,
+      "stopId": "stop_lrt1_ninoy_aquino_avenue",
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lrt1_southbound",
+      "sequence": 14,
+      "stopId": "stop_lrt1_dr_santos",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. Transcribed by Member 2; not yet checked by a second teammate."
+      }
+    }
+  ],
+  "walkLinks": [],
+  "fares": [
+    {
+      "id": "fare_lrt1_svc_2025_04_02",
+      "serviceId": "service_lrt1",
+      "kind": "matrix",
+      "validFrom": "2025-04-02",
+      "evidence": {
+        "sourceIds": [
+          "source_lrmc_svc_matrix_2025_04_02"
+        ],
+        "checkedAt": "2026-10-09T23:00:00+08:00",
+        "reliability": "estimated",
+        "note": "Stored value card fares only. Single journey fares are a different table and are not included. Transcribed by Member 2; not yet checked by a second teammate."
+      },
+      "matrix": [
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 3100
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 3200
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 3300
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 3400
+        },
+        {
+          "fromStopId": "stop_lrt1_dr_santos",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 3600
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 3100
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 3200
+        },
+        {
+          "fromStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 3300
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 3000
+        },
+        {
+          "fromStopId": "stop_lrt1_pitx",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 3200
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_mia_road",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 3000
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_redemptorist_aseana",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_baclaran",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_edsa",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_libertad",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_gil_puyat",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 3100
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_vito_cruz",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 3200
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_quirino",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 3300
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 3100
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_pedro_gil",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 3400
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 3200
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 3000
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 2800
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2500
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2100
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 1700
+        },
+        {
+          "fromStopId": "stop_lrt1_un_avenue",
+          "toStopId": "stop_lrt1_central",
+          "centavos": 1800
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_dr_santos",
+          "centavos": 3600
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_ninoy_aquino_avenue",
+          "centavos": 3300
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_pitx",
+          "centavos": 3200
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_mia_road",
+          "centavos": 3000
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_redemptorist_aseana",
+          "centavos": 2900
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_baclaran",
+          "centavos": 2700
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_edsa",
+          "centavos": 2600
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_libertad",
+          "centavos": 2400
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_gil_puyat",
+          "centavos": 2300
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_vito_cruz",
+          "centavos": 2200
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_quirino",
+          "centavos": 2000
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_pedro_gil",
+          "centavos": 1900
+        },
+        {
+          "fromStopId": "stop_lrt1_central",
+          "toStopId": "stop_lrt1_un_avenue",
+          "centavos": 1800
+        }
+      ]
+    }
+  ]
+}

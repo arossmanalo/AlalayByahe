@@ -335,6 +335,13 @@ describe("warnings do not block a valid pack", () => {
     assert.ok(report.issues.some((i) => i.code === "coordinates" && i.severity === "warning"));
   });
 
+  it("warns when two different places share an exact coordinate", () => {
+    const pack = fresh();
+    pack.places[2].point = { ...pack.places[1].point };
+    const report = dev(pack);
+    assert.ok(report.issues.some((i) => i.code === "coordinates" && i.severity === "warning" && /same coordinate/.test(i.message)));
+  });
+
   it("warns on a repeated alias", () => {
     const pack = fresh();
     pack.places[0].aliases = ["test origin", "Test  Origin!"];
@@ -355,7 +362,10 @@ describe("contract-shaped results", () => {
     assert.ok(Object.isFrozen(result.value));
     assert.ok(Object.isFrozen(result.value.places[0]));
     assert.ok(Object.isFrozen(result.value.fares[1]?.distanceRule?.verifiedSegmentMeters[0]));
-    assert.throws(() => { (result.value.places[0] as { name: string }).name = "x"; }, TypeError);
+    // Strict mode throws, sloppy mode ignores the write; either way the value must not change.
+    const before = result.value.places[0]?.name;
+    try { (result.value.places[0] as { name: string }).name = "x"; } catch { /* strict mode */ }
+    assert.equal(result.value.places[0]?.name, before);
   });
 
   it("returns DATA_INVALID with the first failing path and no raw diagnostics in the message", () => {

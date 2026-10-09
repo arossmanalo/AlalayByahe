@@ -468,6 +468,7 @@ export function analyzePack(input: unknown, options: ValidateOptions): PackRepor
   const placeSeen = new Map<string, string>();
   const places = new Map<string, PlaceInfo>();
   const placeNameKeys = new Map<string, string>();
+  const placePointKeys = new Map<string, string>();
   forEachRecord(env, root, "places", (rec, path) => {
     checkKeys(env, rec, path, ["id", "name", "aliases", "kind", "locality", "point", "evidence"]);
     const id = reqId(env, rec, "id", path, ID_PREFIX.place);
@@ -485,6 +486,13 @@ export function analyzePack(input: unknown, options: ValidateOptions): PackRepor
       if (prior !== undefined) {
         issues.error("duplicate_id", `${path}.name`, `Place "${name}" duplicates ${prior} (same name and locality); give them distinct names.`);
       } else placeNameKeys.set(key, path);
+      // Two different places at exactly the same point usually means one coordinate was copied
+      // from the other (a station and its neighbour, for instance). Worth a human look.
+      const pointKey = `${point.latitude.toFixed(6)},${point.longitude.toFixed(6)}`;
+      const sameSpot = placePointKeys.get(pointKey);
+      if (sameSpot !== undefined) {
+        issues.warn("coordinates", `${path}.point`, `Place has exactly the same coordinate as ${sameSpot}; one of them may have been copied in error.`);
+      } else placePointKeys.set(pointKey, path);
     }
     if (name !== undefined) {
       const seenAlias = new Set<string>([normalizeAlias(name)]);
