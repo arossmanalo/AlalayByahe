@@ -16,7 +16,7 @@ Last updated: 2026-10-10 (Member 2). Checked against the working tree on this da
 | Validation | `npm run data:validate -- assets/data/release.json --release`: 0 errors, 0 warnings. Member 4's `validateTransitPack` also accepts it. |
 | Rebuild | `npx tsx scripts/build-lrt1-pack.ts` (needs a new review if any transcription changes) |
 
-It is **connected to the app on branch `feat/routes/route-006`**: `src/application/bundled-pack.ts` imports `assets/data/release.json` (Member 4's file; changed there as a one-line coordination fix). `npm run release:check` no longer reports the pack as unconnected, and the Android Hermes export bundles it (`lrt1_2026_10_10_1` is present in the bytecode). On `main` it stays `null` until that branch is merged. Merging changes a runtime source, so the recorded native artifact stays stale until Member 4 rebuilds.
+It is **bundled in the app on `main`**: `src/application/bundled-pack.ts` imports `assets/data/release.json` (Member 4, PR #6). `npm run release:check` no longer reports the pack as unconnected, and the Android Hermes export bundles it (`lrt1_2026_10_10_1` is present in the bytecode). The pack change is a runtime change, so the recorded Android artifact is stale until Member 4 rebuilds it.
 
 ### What this does and does not support
 
