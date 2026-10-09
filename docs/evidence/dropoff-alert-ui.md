@@ -61,3 +61,17 @@ Written request for Member 4, for after the release:
 ## Manual tests
 
 See `tests/ui/manual.md`, section "ALERT-003 near-drop-off alert". Every device column is **Not Run**.
+
+
+## Wiring and follow-up fixes (2026-10-10, Member 2's assistant at the user's request)
+
+Done after ALERT-001/002 and this UI merged. Branch `feat/ui/alert-wiring-and-fixes`. **Device behaviour: Not Run.**
+
+- **Wired:** `src/application/ui-bridge.tsx` now passes `location: createExpoLocationWatch()` and `createDropoffWatcher` (directly from `src/routing/dropoffProximity.ts`; Member 4 merged the same wiring in a7980ce). The card no longer shows "not available in this version".
+- **Ride-sized distances:** `alertTargetFor` sizes the radius and warning distance to the final ride (`thresholdsForRide`): a quarter and a half of the straight-line ride, clamped to 100..400 m and 200..800 m. A ride under 300 m gets no alert ("too short"). Every adjacent LRT-1 pair is at least 616 m apart, so no LRT-1 ride is excluded. Without a board coordinate the 400/800 defaults apply.
+- **Approximate-only location (Android 12+):** `requestPermission` returns `"approximate"` when the user allowed only approximate location; the card says precise location is needed and does not start.
+- **Weak GPS:** about 30 s (6 fixes) of consecutive low-accuracy fixes shows a weak-signal message; with an earlier reading showing, the distance is marked possibly out of date.
+- **Screen:** `expo-keep-awake` (pinned `57.0.2`, already in the lockfile as a dependency of `expo`; now declared in `package.json`) holds the screen awake only while the alert is watching, because the alert pauses in the background. This costs battery and does not help if the user presses the power button. It is a mitigation, not background alerts.
+- **No `app.config.ts` change:** `expo-location` declares the Android location permissions in its own manifest and React Native's template includes VIBRATE; confirm both in the generated manifest after the next prebuild.
+- **Tests:** `tests/ui/dropoff-alert-fixes.test.ts` plus the routing tests for `thresholdsForRide` and `finalRideBoard`. Device checks AL-18 to AL-22 are added to `tests/ui/manual.md`, all Not Run.
+- A new APK is needed; earlier phone results do not apply to it.

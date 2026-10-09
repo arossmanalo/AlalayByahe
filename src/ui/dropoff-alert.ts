@@ -2,6 +2,8 @@
 // phone's own location while the app is open; it never tracks a vehicle, never
 // predicts an arrival time and runs in the foreground only. No React or native code.
 import type { JourneyOption, Point, Result, RideLeg, TransitPack } from "../contracts";
+import { aerialMeters } from "../data/geo";
+import { thresholdsForRide, type AlertThresholds } from "../routing/dropoffProximity";
 import type { Strings } from "./i18n";
 import type { Tone } from "./theme";
 
@@ -14,7 +16,8 @@ export interface LocationFix {
   timestampMs: number;
 }
 
-export type PermissionOutcome = "granted" | "denied" | "unavailable";
+/** "approximate": Android 12+ user allowed only approximate location, too coarse for this alert. */
+export type PermissionOutcome = "granted" | "denied" | "unavailable" | "approximate";
 
 /** Foreground location only. Fixes stay in memory on the phone; never logged, stored or sent. */
 export interface LocationWatchPort {
@@ -26,11 +29,13 @@ export type WatcherState = "far" | "approaching" | "arrived";
 
 /** Structural match for Member 2's `createDropoffWatcher` (src/routing/dropoffProximity.ts, ALERT-001). */
 export interface DropoffWatcher {
+  /** An ignored fix (`ignored` says why) repeats the last accepted state and distance. */
   update(fix: LocationFix): {
     state: WatcherState;
     /** null when the fix was ignored before any accepted fix. */
     distanceMeters: number | null;
     event?: "approaching" | "arrived";
+    ignored?: "invalid_fix" | "low_accuracy" | "stale_fix";
   };
 }
 
@@ -48,11 +53,13 @@ export interface AlertTarget {
   stopId: string;
   name: string;
   point: Point;
+  /** Distances sized to the final ride; undefined means the watcher defaults apply (board point unknown). */
+  thresholds?: AlertThresholds;
 }
 
 export type TargetResult =
   | { ok: true; target: AlertTarget }
-  | { ok: false; reason: "no_ride" | "no_coordinate" | "unverified" };
+  | { ok: false; reason: "no_ride" | "no_coordinate" | "unverified" | "too_short" };
 
 function finiteCoordinate(p: Point | undefined): p is Point {
   return !!p && Number.isFinite(p.latitude) && Number.isFinite(p.longitude) &&
@@ -71,6 +78,13 @@ export function alertTargetFor(option: JourneyOption, pack: TransitPack | null):
   const stop = pack?.stops.find((s) => s.id === last.alightStopId);
   if (!stop || !finiteCoordinate(stop.point)) return { ok: false, reason: "no_coordinate" };
   if (pack?.kind !== "release" || stop.evidence.reliability !== "verified") return { ok: false, reason: "unverified" };
+  // Size the alert to the final ride so a short ride cannot fire at the boarding stop.
+  const board = pack.stops.find((x) => x.id === last.boardStopId);
+  if (board && finiteCoordinate(board.point)) {
+    const thresholds = thresholdsForRide(aerialMeters(board.point, stop.point));
+    if (!thresholds) return { ok: false, reason: "too_short" };
+    return { ok: true, target: { stopId: stop.id, name: last.alightLabel, point: stop.point, thresholds } };
+  }
   return { ok: true, target: { stopId: stop.id, name: last.alightLabel, point: stop.point } };
 }
 
@@ -81,6 +95,7 @@ export type AlertStatus =
   | { phase: "asking" }
   | { phase: "denied" }
   | { phase: "unavailable" }
+  | { phase: "approximate" }
   | { phase: "waiting_fix" }
   | { phase: "far"; distanceMeters: number }
   | { phase: "approaching"; distanceMeters: number }
@@ -126,6 +141,21 @@ export function vibrationFor(event: "approaching" | "arrived" | undefined): numb
   return null;
 }
 
+// ---- Weak GPS signal ----
+
+/** About 30 s of consecutive fixes that are too imprecise (at the 5 s fix interval). */
+export const WEAK_SIGNAL_FIXES = 6;
+
+/** Low-accuracy fixes accumulate; a usable fix resets; other ignored fixes change nothing. */
+export function nextWeakCount(count: number, ignored: "invalid_fix" | "low_accuracy" | "stale_fix" | undefined): number {
+  if (ignored === "low_accuracy") return count + 1;
+  return ignored ? count : 0;
+}
+
+export function isWeakSignal(count: number): boolean {
+  return count >= WEAK_SIGNAL_FIXES;
+}
+
 // ---- Presenter ----
 
 export interface AlertView {
@@ -154,6 +184,8 @@ export function presentAlert(status: AlertStatus, targetName: string, t: Strings
       return { tone: "warning", title: t.alertDenied, body: t.alertJourneyStillWorks, primary: { label: t.alertStart, action: "start" }, showStop: false, announce: t.alertDenied };
     case "unavailable":
       return { tone: "warning", title: t.alertUnavailable, body: t.alertJourneyStillWorks, primary: { label: t.alertStart, action: "start" }, showStop: false, announce: t.alertUnavailable };
+    case "approximate":
+      return { tone: "warning", title: t.alertApproximate, body: t.alertApproximateHelp, primary: { label: t.alertStart, action: "start" }, showStop: false, announce: t.alertApproximate };
     case "waiting_fix":
       return { tone: "info", title: t.alertOn, body: t.alertNoFix, ...stopOnly, announce: t.alertOn };
     case "far":
@@ -168,6 +200,6 @@ export function presentAlert(status: AlertStatus, targetName: string, t: Strings
 }
 
 export function presentNoTarget(reason: Exclude<TargetResult, { ok: true }>["reason"], t: Strings): AlertView {
-  const body = reason === "unverified" ? t.alertNoTargetUnverified : reason === "no_coordinate" ? t.alertNoTargetCoordinate : t.alertNoTargetRide;
+  const body = reason === "too_short" ? t.alertNoTargetShort : reason === "unverified" ? t.alertNoTargetUnverified : reason === "no_coordinate" ? t.alertNoTargetCoordinate : t.alertNoTargetRide;
   return { tone: "neutral", title: t.alertTitle, body, primary: null, showStop: false, announce: null };
 }

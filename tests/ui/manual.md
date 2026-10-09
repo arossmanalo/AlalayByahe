@@ -163,6 +163,19 @@ Needs a build with Member 2's `createDropoffWatcher` and the location port wired
   - **Demo data (Member 2) or place search (Member 4).** In the demo build, typing "Lipa" lists only "Lipa City terminal (DEMO)" and "Candelaria" only "Candelaria terminal (DEMO)". The road-draft stops have no aliases, and `resolveStoredPlaces` returns substring matches only when nothing matches exactly or by alias. A tester who types the town names gets the invented network, not the three-jeepney road draft. Workaround: search "De La Salle" and "Mang Inasal" (DB-04). Fix options: give the draft stops aliases, or list substring matches beside alias matches. Both need the owner's decision.
   - **Keyboard on Android (device check, M-22 and A-06).** The screen's keyboard props act on iOS only. With edge-to-edge on target SDK 36, whether the window still resizes for the keyboard has to be seen on a phone. No change was made without that evidence.
 
+## Stop alert follow-ups (AL-18 to AL-22). All device columns Not Run
+
+Run with the ALERT-003 checks in the section above. Needs a new APK built after the wiring and fixes.
+
+| ID | Check | Expected | Android device |
+|---|---|---|---|
+| AL-18 | Grant only "Approximate" location (Android 12+) | "Alerts need precise location" with settings help; the alert does not start; the start button is offered again | Not Run |
+| AL-19 | Alert on, leave the screen idle for 2 minutes | Screen stays awake while the alert is watching; after Stop alerts or leaving the screen it can sleep again | Not Run |
+| AL-20 | Alert on, press the power button, unlock | Alerts pause ("app in background"); Resume alerts continues; no location used while locked | Not Run |
+| AL-21 | Weak GPS for about 30 s (indoors) | "Your phone's location is not precise enough yet" with help; a later usable fix clears it | Not Run |
+| AL-22 | Shortest LRT-1 ride (Abad Santos to R. Papa) | An alert is offered and does not fire at the boarding station | Not Run |
+| AL-23 | Release build, a verified LRT-1 journey | The card is the working card, not "not available in this version" | Not Run |
+
 ## Fixture triggers
 
 With `createDevFixtureServices()`:

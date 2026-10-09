@@ -9,8 +9,10 @@ export function createExpoLocationWatch(): LocationWatchPort {
     async requestPermission(): Promise<PermissionOutcome> {
       try {
         if (!(await Location.hasServicesEnabledAsync())) return "unavailable";
-        const { status } = await Location.requestForegroundPermissionsAsync();
-        return status === "granted" ? "granted" : "denied";
+        const permission = await Location.requestForegroundPermissionsAsync();
+        if (permission.status !== "granted") return "denied";
+        // Android 12+ lets the user share only approximate location, which is too coarse for this alert.
+        return permission.android?.accuracy === "coarse" ? "approximate" : "granted";
       } catch {
         return "unavailable";
       }
