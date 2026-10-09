@@ -52,3 +52,42 @@ For every leg, fill the template in `docs/evidence/unblock-kit.md` section B (bo
 The Corridor 3 LRT leg could then be combined with the LRT-1 stored value fares already transcribed; the road legs cannot be added until their stops, walks and dates exist.
 
 Until then: **Corridors 1, 2 and 3 remain unsupported and must not be advertised**, and the app will not suggest any of these routes.
+
+## Answers and details received 2026-10-10 (second message from the user)
+
+Still teammate-reported, unreviewed, and not in any pack.
+
+| Topic | Reported | Effect |
+|---|---|---|
+| LRT fare, Pedro Gil to Vito Cruz | "Follow the LRT fare online": use the official LRMC tables. | The pack keeps the LRMC figures (P19 stored value, P20 single journey). The earlier P25/P12 report is dropped. |
+| Jeeps from the Pedro Gil LRT station area | They start near Pedro Gil station. The "Quiapo", "UST" and "Gil Puyat" jeeps all pass Vito Cruz at some point. | Still needs one recorded ride (boarding side of the road, GPS of the boarding spot and of the Vito Cruz drop-off) before it can become a record. |
+| Tiaong intersection | GPS 13.960353, 121.321225 (a Google Maps image was to be attached; none arrived in the chat). | Usable as a coordinate once the leg is recorded. |
+| Tiaong jeep terminal | "The same as the intersection". | Ambiguous; see the questions below. The Lipa-side boarding terminal for the Tiaong jeep is still not given. |
+| Candelaria jeep drop | Mang Inasal, Candelaria town proper. | Needs a GPS point for the exact stop. |
+| Lipa van to San Pablo | Leaves from GPS 13.942662, 121.153493. | Usable as the boarding coordinate once the leg is recorded. |
+| "Wawa" | A place in Barangay Del Remedio. | Needs the jeepney's exact drop-off point and a GPS point. |
+| PITX | 1 Kennedy Road, Tambo, Parañaque City, Metro Manila. | Address only; needs the exact bus bay and GPS point. |
+
+### Still missing per leg (what blocks a pack record)
+
+| Corridor and leg | Known | Still missing |
+|---|---|---|
+| Lipa to Candelaria, jeep "Lipa Palengke" | Board at McDonald's near De La Salle Lipa; P14 regular, P12 student | GPS of the boarding spot, the drop-off spot and its GPS, date, recorder |
+| Lipa to Candelaria, walk to the Tiaong jeep | "A little walk" | Start, end, meters, steps, and where the Lipa-side Tiaong jeep terminal is |
+| Lipa to Candelaria, Tiaong jeep | Sign "Tiaong" and "Bantayan"; ends at the Tiaong intersection 13.960353, 121.321225; P60 regular, P50 student | The boarding terminal in Lipa and its GPS; whether the terminal and the intersection really are the same place |
+| Lipa to Candelaria, jeep to Candelaria | Boards at the Tiaong intersection; drops at Mang Inasal, Candelaria; P30 regular, P25 student | Signboard text, GPS of the drop-off, exact boarding spot at the intersection |
+| Lipa to San Pablo, jeepney "SM Lipa" | P12; drops behind KFC near Big Ben | Boarding spot and GPS, drop-off GPS |
+| Lipa to San Pablo, walk to the van | "To the terminal" | Meters and steps from the drop-off to the van terminal |
+| Lipa to San Pablo, van | Leaves from 13.942662, 121.153493; P130; rides to Puregold | Which Puregold, its drop-off GPS, operator, student fare |
+| Lipa to San Pablo, jeepney "Wawa" | P12; boards at Puregold; Wawa is in Barangay Del Remedio | Boarding GPS, exact drop-off and GPS |
+| Candelaria to Vito Cruz, "Buendia" bus | Boards at the bus stop in front of Hacienda Inn Candelaria; drops at Pedro Gil; P250 regular, P230 student | GPS of the boarding stop and drop-off; which Pedro Gil stop |
+| Candelaria to Vito Cruz, "PITX" bus | Same boarding stop; drops at PITX, 1 Kennedy Road, Tambo; P210 regular, P180 student | GPS of PITX bay, operator |
+| Candelaria to Vito Cruz, "Fairview" bus | From PITX to Vito Cruz; P20 | PITX boarding bay, Vito Cruz drop-off spot and GPS |
+| Walk from Pedro Gil bus drop to the LRT station or jeep stop | "Near" | Meters, steps |
+| All return trips | Not reported | Each direction is a separate record |
+
+### Questions to answer next
+
+1. "The Tiaong jeep terminal is the same as the intersection": do you mean the jeep from Lipa ends at the Tiaong intersection, and the Candelaria jeep boards there? Then where is the **Lipa-side** terminal where the Tiaong jeep starts?
+2. Please send the Google Maps image for the Tiaong intersection, or confirm that the coordinates are the pin to use.
+3. Which Pedro Gil stop does the "Buendia" bus drop at (on Taft Avenue by the LRT station, or on Pedro Gil Street)?
