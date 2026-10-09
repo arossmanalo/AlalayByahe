@@ -21,6 +21,8 @@ export interface NativeProbeReport {
   completionMs: number | null;
   queryText: string;
   rawText: string | null;
+  /** Text actually validated (chat template header removed), when it differs from rawText. */
+  textUsed: string | null;
   outcome: Omit<CompletionOutcome, "text"> | null;
   parsed: { ok: true; intent: RawIntent } | { ok: false; code: string; detail: string } | null;
   error: string | null;
@@ -51,6 +53,7 @@ export async function runNativeProbe(options: NativeProbeOptions): Promise<Nativ
     completionMs: null,
     queryText: options.text,
     rawText: null,
+    textUsed: null,
     outcome: null,
     parsed: null,
     error: null,
@@ -91,8 +94,9 @@ export async function runNativeProbe(options: NativeProbeOptions): Promise<Nativ
     const t2 = now();
     const outcome = await session.complete(buildCompletionRequest(input));
     report.completionMs = now() - t2;
-    const { text, ...flags } = outcome;
-    report.rawText = text;
+    const { text, rawText, ...flags } = outcome;
+    report.rawText = rawText ?? text;
+    report.textUsed = rawText !== undefined ? text : null;
     report.outcome = flags;
     const parsed = interpretCompletion(outcome, input);
     report.parsed = parsed.ok

@@ -157,12 +157,12 @@ export async function runBenchmark(
     .filter((r) => !r.score?.exact)
     .map((r) => {
       const event = raw.get(r.queryId);
-      const flags = event ? (({ text: _t, ...rest }) => rest)(event.outcome) : null;
+      const flags = event ? (({ text: _t, rawText: _r, ...rest }) => rest)(event.outcome) : null;
       return {
         id: r.id,
         errorCode: r.errorCode,
         failedSlots: r.score ? Object.entries(r.score.slots).filter(([, hit]) => !hit).map(([slot]) => slot) : [],
-        rawText: event?.outcome.text ?? null,
+        rawText: event ? (event.outcome.rawText ?? event.outcome.text) : null,
         flags,
       };
     });

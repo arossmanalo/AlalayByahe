@@ -26,7 +26,10 @@ export interface CompletionRequest {
 }
 
 export interface CompletionOutcome {
+  /** Text handed to JSON validation (template header removed, see completionText.ts). */
   text: string;
+  /** Native text before cleaning, kept for evidence when it differs from `text`. */
+  rawText?: string;
   truncated: boolean;
   contextFull: boolean;
   interrupted: boolean;
