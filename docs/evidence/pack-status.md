@@ -16,7 +16,7 @@ Last updated: 2026-10-10 (Member 2). Checked against the working tree on this da
 | Validation | `npm run data:validate -- assets/data/release.json --release`: 0 errors, 0 warnings. Member 4's `validateTransitPack` also accepts it. |
 | Rebuild | `npx tsx scripts/build-lrt1-pack.ts` (needs a new review if any transcription changes) |
 
-It is **not yet connected to the app**: `src/application/bundled-pack.ts` still exports `null`. Member 4 imports `assets/data/release.json` there and rebuilds; a pack change invalidates the recorded native artifact.
+It is **bundled in the app on `main`**: `src/application/bundled-pack.ts` imports `assets/data/release.json` (Member 4, PR #6). `npm run release:check` no longer reports the pack as unconnected, and the Android Hermes export bundles it (`lrt1_2026_10_10_1` is present in the bytecode). The pack change is a runtime change, so the recorded Android artifact is stale until Member 4 rebuilds it.
 
 ### What this does and does not support
 
@@ -38,7 +38,7 @@ Because the pack has no walking links, journeys can only start and end at LRT-1 
 | Alias normalization shared with storage | `src/data/normalize.ts` | Implemented, tested |
 | Canonical JSON for pack fingerprints | `src/data/canonicalJson.ts` | Implemented, tested |
 | CLI: `npm run data:validate` | `scripts/validate-data.ts` | Implemented, run |
-| Release `TransitPack` (LRT-1 stations only) | `assets/data/release.json` | Created, reviewed, validates for release; **not yet bundled in the app** |
+| Release `TransitPack` (LRT-1 stations only) | `assets/data/release.json` | Created, reviewed, validates for release; **bundled in the app on `main`; native rebuild and physical tests pending** |
 
 ## Validation rules worth knowing
 

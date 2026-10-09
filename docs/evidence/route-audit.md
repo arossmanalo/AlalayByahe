@@ -1,6 +1,6 @@
 # Route audit (ROUTE-006)
 
-Date: 2026-10-09. Auditor: Member 2 (assistant-assisted). **This is a self-audit, not the independent teammate review the plan requires.** Status: **ROUTE-006 is not complete** (no end-to-end run in the integrated app yet; the LRT-1 transcription has had an independent review).
+Date: 2026-10-09. Auditor: Member 2 (assistant-assisted). **This is a self-audit, not the independent teammate review the plan requires.** Status: **ROUTE-006 is not complete.** The LRT-1 transcription has had an independent review and a software end-to-end run passes; no phone run, no rendered-screen review, no road-corridor evidence.
 
 ## Verdict per corridor
 
@@ -24,6 +24,7 @@ The only data with an operator source is **LRT-1 station-to-station travel, 25 s
 | Engine against the transcription | Every one of the 600 ordered station pairs planned on a verified-in-memory copy; ride, fare and zero transfers match the matrix | Pass |
 | Release gate | `data:validate --release` 0 errors, 0 warnings; Member 4's validator accepts it; an unreviewed copy is still refused (test) | Pass |
 | Independent review | Aryl Manalo, 2026-10-10: station order, full Vito Cruz and EDSA rows, 24 sampled pairs incl. corners, 5 coordinates, 2 headsigns | All matched |
+| Software end-to-end (`tests/integration/release-pack.test.ts`) | The real bundled pack, installed into an empty production Node SQLite database, with the real controller and RoutePort and a labelled AI test double: name and alias lookup (Taft, Buendia), confirmed journey Vito Cruz to Baclaran = P21 complete, Taft to Vito Cruz northbound and the reverse southbound = P20, student fare shown as an estimate at P19 (not the reported P25), Lipa/Candelaria/San Pablo/Tiaong not found, outside place refused | Pass (not a phone or screen test) |
 | Forward/reverse | Reverse trips use the separate northbound/southbound records; both give the same documented fare | Pass |
 
 ## Worked traces compared with the source image
@@ -70,7 +71,7 @@ The only data with an operator source is **LRT-1 station-to-station travel, 25 s
 
 ## Required before ROUTE-006 can be called done
 
-1. ~~Independent review of the LRT-1 transcription~~ Done 2026-10-10; pack at `assets/data/release.json` passes the release gate.
+1. ~~Independent review of the LRT-1 transcription~~ Done 2026-10-10; pack at `assets/data/release.json` passes the release gate and is bundled on `main` (PR #6).
 2. Real road-service evidence for at least one target corridor (LTFRB Region IV-A route list and fares, plus dated teammate observations), transcribed with walking links and reviewed.
 3. The integrated app (INT-003) runs those journeys end to end, and a teammate reads the rendered instructions against the sources.
 4. Member 4 locks the pack version before regression and the demo.
