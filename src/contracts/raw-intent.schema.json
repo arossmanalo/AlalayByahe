@@ -1,0 +1,132 @@
+{
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "kind",
+    "originText",
+    "destinationText",
+    "useCurrentLocation",
+    "allowedModes",
+    "excludedModes",
+    "priority",
+    "maxAccessWalkMeters",
+    "maxTransferWalkMeters",
+    "maxEgressWalkMeters",
+    "budgetCentavos",
+    "directOnly",
+    "ambiguities"
+  ],
+  "properties": {
+    "kind": {
+      "type": "string",
+      "enum": [
+        "journey",
+        "onboard",
+        "unrelated"
+      ]
+    },
+    "originText": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "destinationText": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "useCurrentLocation": {
+      "type": "boolean"
+    },
+    "allowedModes": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "van",
+              "jeepney",
+              "bus",
+              "tricycle",
+              "lrt"
+            ]
+          },
+          "uniqueItems": true
+        }
+      ]
+    },
+    "excludedModes": {
+      "type": "array",
+      "items": {
+        "type": "string",
+        "enum": [
+          "van",
+          "jeepney",
+          "bus",
+          "tricycle",
+          "lrt"
+        ]
+      },
+      "uniqueItems": true
+    },
+    "priority": {
+      "anyOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "string",
+          "enum": [
+            "nearest_useful",
+            "fewest_transfers",
+            "lowest_known_fare"
+          ]
+        }
+      ]
+    },
+    "maxAccessWalkMeters": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "maxTransferWalkMeters": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "maxEgressWalkMeters": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "budgetCentavos": {
+      "type": [
+        "integer",
+        "null"
+      ],
+      "minimum": 0
+    },
+    "directOnly": {
+      "type": "boolean"
+    },
+    "ambiguities": {
+      "type": "array",
+      "items": {
+        "type": "string"
+      }
+    }
+  }
+}
+

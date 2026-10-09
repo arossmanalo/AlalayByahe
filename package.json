@@ -1,0 +1,57 @@
+{
+  "name": "alalaybyahe",
+  "version": "0.1.0",
+  "private": true,
+  "main": "expo-router/entry",
+  "engines": {
+    "node": ">=24.14.0 <25"
+  },
+  "packageManager": "npm@11.9.0",
+  "scripts": {
+    "start": "expo start --dev-client",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
+    "typecheck": "tsc --noEmit",
+    "test:pure": "tsx --test \"tests/integration/*.test.ts\" \"tests/routing/*.test.ts\"",
+    "test": "npm run test:pure",
+    "data:validate": "tsx scripts/validate-data.ts",
+    "release:check": "tsx scripts/check-release.ts",
+    "prebuild:android": "expo prebuild --platform android --no-install",
+    "prebuild:ios": "expo prebuild --platform ios --no-install",
+    "build:android:foundation": "expo run:android --variant release",
+    "build:ios:foundation": "expo run:ios --device --configuration Release",
+    "doctor": "npx expo-doctor"
+  },
+  "dependencies": {
+    "@noble/hashes": "2.4.0",
+    "expo": "57.0.27",
+    "expo-build-properties": "57.0.22",
+    "expo-constants": "57.0.21",
+    "expo-dev-client": "57.0.19",
+    "expo-file-system": "57.0.7",
+    "expo-font": "57.0.4",
+    "expo-linking": "57.0.12",
+    "expo-location": "57.0.20",
+    "expo-router": "57.0.25",
+    "expo-sqlite": "57.0.4",
+    "expo-system-ui": "57.0.4",
+    "llama.rn": "0.12.9",
+    "react": "19.2.3",
+    "react-dom": "19.2.3",
+    "react-native": "0.86.3",
+    "react-native-reanimated": "4.5.1",
+    "react-native-safe-area-context": "5.7.0",
+    "react-native-screens": "4.26.0",
+    "react-native-worklets": "0.10.1"
+  },
+  "devDependencies": {
+    "@types/node": "24.19.1",
+    "@types/react": "19.2.4",
+    "tsx": "4.23.15",
+    "typescript": "6.0.3"
+  },
+  "overrides": {
+    "decode-uri-component": "0.5.0",
+    "xcode": { "uuid": "11.1.1" }
+  }
+}
