@@ -1,7 +1,7 @@
 # AlalayByahe
 A native Android/iPhone commute assistant for Filipino, English and Taglish requests. Local Qwen extracts journey fields; users confirm them; deterministic routing uses documented services, pedestrian links and fare evidence. Scanner/maps are deferred.
 
-**Development status:** real AI, routing and UI adapters are integrated, and a standalone Android test APK has been built. The app has no source-backed release pack yet, so it reports data unavailable. Phone inference, offline operation and iOS signing are not yet verified. The three requested corridors remain targets: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
+**Development status:** real AI, routing and UI adapters are integrated. The bundled transit pack is **LRT-1 stations only** (25 stations, stored value fares, no walking links, no road services). The Android test APK recorded in `docs/evidence/native-artifacts.json` predates it and is stale; rebuild before any device test. Phone inference, offline operation and iOS signing are not yet verified. The three requested corridors remain targets and none is supported end to end: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
 
 ## Get the installed baseline
 
@@ -10,7 +10,6 @@ Use Node 24 and npm 11 with the committed lockfile:
 ```powershell
 git clone https://github.com/arossmanalo/AlalayByahe.git
 Set-Location AlalayByahe
-git switch --track origin/feat/integration/int-001-foundation
 npm ci
 npm run typecheck
 npm test
@@ -53,7 +52,7 @@ No iPhone native build, signing, install or inference has been verified in this 
 
 ## Connect verified data
 
-Member 2 supplies `assets/data/release.json` with actual source-backed coverage. Run `npm run data:validate -- assets/data/release.json --release`. Member 4 then imports that reviewed JSON in `src/application/bundled-pack.ts` and rebuilds.
+Member 2 supplies `assets/data/release.json` with actual source-backed coverage (currently `pack_lrt1`, LRT-1 stations only). Run `npm run data:validate -- assets/data/release.json --release`. `src/application/bundled-pack.ts` imports that reviewed JSON; any pack change is a runtime change and requires a rebuild and a new physical test.
 
 On an empty database, application startup installs the validated bundled release pack transactionally. Existing installed data is retained; updates go through `TransitRepository.replacePack`. Corrupt metadata, indexes, aliases and payloads fail validation. Test fixtures are never loaded into the native composition.
 
