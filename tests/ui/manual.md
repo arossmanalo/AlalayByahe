@@ -59,6 +59,7 @@ Required by the UI-006 finish prompt. Android uses Member 4's APK installed with
 | A-05 | No color-only status | Pass: every tone has a glyph and a written title, and screen readers hear the tone as a word | Not Run | Not Run |
 | A-06 | Keyboard and IME | Partial: place and service search send `autocorrect="off"` and a search return key; scroll-to-dismiss needs a device | Not Run | Not Run |
 | A-07 | Safe areas (notch, gesture bar) | Not applicable | Not Run | Not Run |
+| A-08 | System dark mode: status bar, header and keyboard stay legible now that `app.config.ts` sets `userInterfaceStyle: "light"` | Not applicable | Not Run | Not applicable |
 
 > iOS was descoped on 2026-10-10. The iPhone column is out of scope and will not be run.
 
@@ -73,6 +74,46 @@ The software column runs `tests/ui/real-pack-ui.test.ts`: the real install path,
 | R-03 | Pedro Gil to Vito Cruz as a student | "₱19.00 total (estimated)"; ride fare "₱19.00 (estimated)" with the basis "No student discount is documented…" | Pass after fix (the total was shown as "✓ ₱19.00 total") | Not Run | Not Run |
 | R-04 | Lipa to Candelaria | No stored place; the picker lists the supported coverage; nothing is routed | Pass after fix (coverage was not stated) | Not Run | Not Run |
 | R-05 | Onboard LRT-1 toward Dr. Santos, next stop Vito Cruz, to Baclaran | "Stay on your current vehicle"; fare unknown with "Confirm the fare with the driver or operator."; the warning says vehicle position is not tracked | Pass after fix (read "First ride from Currently onboard; …") | Not Run | Not Run |
+
+### Device session record (release APK)
+
+Fill this in before any Real run (Android) cell above changes. Every row must match `docs/evidence/native-artifacts.json`.
+
+| Field | Round 3 (Oct 10) |
+|---|---|
+| Device and Android version | Not Run: no phone with USB debugging attached to the Member 3 workstation |
+| Font scale | Not Run |
+| Build commit | Not Run: no release APK built from current `main`; the only recorded artifact is `34236a5` (stale) |
+| Artifact file name and SHA-256 | Not Run |
+| Pack version | Expected `lrt1_2026_10_10_1` (SHA-256 `f2499c54…2931`); not seen on a phone |
+| Screenshots | None |
+
+## Demo build
+
+Separate from every release result above. The demo APK (`EXPO_PUBLIC_DEMO_BUILD=1`) loads `assets/demo/demo-pack.json`: real LRT-1, unverified road-route drafts and an invented Luzon network (`docs/evidence/demo-build.md`). Nothing here is release evidence or real coverage.
+
+The software column runs `tests/ui/demo-pack-ui.test.ts`: the demo composition (real install path on Node SQLite, controller and RoutePort with `allowTestFixtures`), then the UI presenters. Only the AI is a test double. It checks the text the screens receive, not what a phone renders.
+
+| ID | Check | Expected on screen | Software (demo pack, Oct 10) | Real run (demo APK) |
+|---|---|---|---|---|
+| DB-01 | Test-pack banner on every screen | "⚑ DEV FIXTURE" over "This transit data is a test fixture, not real transport information." at the top of home, setup, confirm, manual, results, journey, onboard and about | Pass: the banner rule returns the test-pack banner for the demo pack and none for the release pack, and every screen in `app/` renders through `<Screen>`, which draws it | Not Run |
+| DB-02 | Search finds Baguio, Legazpi and Laoag | One "known alias" candidate each: "Baguio City terminal (DEMO)", "Legazpi terminal (DEMO)", "Laoag terminal (DEMO)" | Pass | Not Run |
+| DB-03 | Laoag to Legazpi | Option 1: Bus, then Bus, then Bus, 2 transfers, "Fare: ₱1,662.00 total (estimated)". Option 2: four buses, "Fare: This is not the full total." with "Known subtotal ₱1,469.00 plus 1 ride with unknown fare" | Pass | Not Run |
+| DB-04 | Three-jeepney Lipa to Candelaria (road draft) | Search **"De La Salle"** for the origin and **"Mang Inasal"** for the destination. Jeepney, then Walk, then Jeepney, then Jeepney; 2 transfers; 150 m walking; "First ride from McDonald's near De La Salle Lipa"; "Fare: ₱104.00 total (estimated)" | Pass. Typing "Lipa" or "Candelaria" lists only the invented "(DEMO)" terminals, so the road draft is not reached that way (see the round 3 run log) | Not Run |
+| DB-05 | About says it is a demo | Supported coverage starts with "DEMO BUILD: this pack contains INVENTED routes … Do not rely on it to travel." and the test-pack warning follows | Pass | Not Run |
+| DB-06 | Real LRT-1 inside the demo | Vito Cruz to Baclaran still reads "₱21.00 total (verified)" | Pass | Not Run |
+
+### Running the device walk
+
+For whoever holds the phone. Release first, and record it completely before installing the demo APK. Both builds use the package `ph.alalaybyahe.app`, so the demo APK replaces the installed release app (each keeps its own database). If the two APKs were signed with different keys, uninstall before switching.
+
+1. Check the artifact against the hash Member 4 recorded: `Get-FileHash .\<apk> -Algorithm SHA256` (PowerShell).
+2. `adb devices` must list the phone as `device`, not `unauthorized`. Then `adb install -r .\<apk>`.
+3. Stop Metro and close Expo Go. Force-stop the app, then cold-launch it from the launcher.
+4. Font scale: Settings, Display, font size at the largest, or `adb shell settings put system font_scale 2.0`; reset with `1.0`.
+5. Dark mode: `adb shell cmd uimode night yes`; reset with `no`. Look at the status bar, the header and the keyboard (A-08).
+6. Screenshots without personal data: `adb shell screencap -p /sdcard/ab.png`, then `adb pull /sdcard/ab.png`. Do not redirect `adb exec-out` in PowerShell; it corrupts the PNG.
+7. Keyboard (M-22, A-06): the screen's `automaticallyAdjustKeyboardInsets` and `contentInsetAdjustmentBehavior` act on iOS only. On Android, open the budget field on the manual form and check that the field and "Find verified routes" can still be scrolled above the keyboard.
 
 ## Run log
 
@@ -91,6 +132,17 @@ The software column runs `tests/ui/real-pack-ui.test.ts`: the real install path,
   - Estimated totals shown as if verified.
   - No coverage statement for unmatched places.
   - Onboard engine text shown as a boarding point.
+
+- 2026-10-10, about 03:15–03:35 PHT (round 3), Member 3, branch `feat/ui/ui-006-device-r3` from `main` `69536ea`. **No device run.** Every Real run (Android) and Real run (demo APK) cell stays Not Run:
+  - This workstation has no Android platform-tools (`adb` is not installed) and no phone with USB debugging attached.
+  - Member 4 has not handed over a release or demo APK. `docs/evidence/native-artifacts.json` lists only `34236a5`, which is stale.
+  - So steps 1 to 3 and step 5 of the round 3 prompt (release walk, accessibility on hardware, demo APK checks, the fare comparison with Member 2) did not happen.
+- Done in software instead: `npm run typecheck` clean, `npm test` 496 pass, `npm run data:validate` passes the release pack. `tests/ui/demo-pack-ui.test.ts` adds the software column of the Demo build section (DB-01 to DB-06, all Pass).
+- Defect fixed (in `src/ui/`, with a pure test): the results screen drops engine warnings that only repeat a pack label, but its prefix pattern read `/^coverage:s*/` instead of `/^coverage:\s*/`. A warning such as "Coverage:San Pablo …" lost its first letter and showed the label twice. The engine's "Coverage: " with a space was unaffected, so no current screen showed it.
+- Changed for testability (no behaviour change): the rule for the test-data banner moved from `Screen.tsx` to the pure `src/ui/banner-logic.ts`.
+- Findings for other owners (not fixed here):
+  - **Demo data (Member 2) or place search (Member 4).** In the demo build, typing "Lipa" lists only "Lipa City terminal (DEMO)" and "Candelaria" only "Candelaria terminal (DEMO)". The road-draft stops have no aliases, and `resolveStoredPlaces` returns substring matches only when nothing matches exactly or by alias. A tester who types the town names gets the invented network, not the three-jeepney road draft. Workaround: search "De La Salle" and "Mang Inasal" (DB-04). Fix options: give the draft stops aliases, or list substring matches beside alias matches. Both need the owner's decision.
+  - **Keyboard on Android (device check, M-22 and A-06).** The screen's keyboard props act on iOS only. With edge-to-edge on target SDK 36, whether the window still resizes for the keyboard has to be seen on a phone. No change was made without that evidence.
 
 ## Fixture triggers
 

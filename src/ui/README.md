@@ -107,6 +107,29 @@ Step 5 asks for these to be decided with phone evidence, so they are still open.
 - `app.config.ts`: leave `orientation: "portrait"` as is, unless the team wants rotation; in that case set `"default"`. Until then the rotation check is Not Applicable.
 - Engine text: provide stable codes for `rankReason`, option warnings and error details so they can be localized. Today Filipino users see these details in English.
 
+## UI-006 device verification, round 3 (October 10, 2026)
+
+Branch `feat/ui/ui-006-device-r3` from `main` `69536ea`. Device verification is still **Not Run**. The release walk (D-01 to D-14, M-01 to M-23, R-01 to R-05), accessibility on hardware (A-01 to A-08) and the demo APK checks (DB-01 to DB-06) all need a phone with USB debugging, Android platform-tools and Member 4's APKs. This workstation has none of them, and `docs/evidence/native-artifacts.json` still lists only the stale `34236a5`. No device, OS, build commit, artifact hash or screenshot can be reported.
+
+`app.config.ts` now sets `userInterfaceStyle: "light"`, as proposed above. Whether that fixes the status bar and keyboard in system dark mode is A-08, Not Run.
+
+### Verified in software
+
+- `tests/ui/demo-pack-ui.test.ts` runs the demo build checks on `assets/demo/demo-pack.json` through the demo composition (Node SQLite, controller, RoutePort), then the UI presenters. Only the AI is a test double. DB-01 to DB-06 pass in software: the test-pack banner on every screen, search for Baguio, Legazpi and Laoag, Laoag to Legazpi, the three-jeepney Lipa to Candelaria road draft, the About coverage text, and the real LRT-1 fare inside the demo.
+- `npm run typecheck` is clean, `npm test` runs 496 tests and all pass, and `npm run data:validate` passes the release pack.
+
+### Changed
+
+- **Fixed:** `coverageSummary` stripped the "Coverage:" prefix with `/^coverage:s*/` instead of `/^coverage:\s*/`. A warning with no space after the colon lost a leading "s" and repeated the pack label as a note. The engine's current "Coverage: " form was unaffected. Covered by `tests/ui/journey-presenter.test.ts`.
+- **Refactor:** the banner rule is now the pure `testDataBanner` in `banner-logic.ts`, used by `Screen.tsx`, so the demo test can check it.
+
+### Findings for other owners
+
+- **Demo place search (Member 2 data, Member 4 storage).** "Lipa" and "Candelaria" list only the invented "(DEMO)" terminals. The road-draft stops have no aliases, and alias matches hide substring matches. Testers must search "De La Salle" and "Mang Inasal" to reach the three-jeepney journey (DB-04).
+- **Android keyboard (device check).** `automaticallyAdjustKeyboardInsets` and `contentInsetAdjustmentBehavior` on the screen's ScrollView act on iOS only. Check M-22 and A-06 on an Android 15+ phone before changing anything.
+
+`tests/ui/manual.md` has a device session record to fill in, the Demo build section and the adb steps for the walk.
+
 ## Gaps to resolve with owners
 
 - Model setup cancellation is now supplied as an optional UiServices capability from Member 1's existing AiManager extension. Canonical AiPort remains unchanged; the real setup screen offers cancellation during download/checking.
@@ -120,7 +143,7 @@ Step 5 asks for these to be decided with phone evidence, so they are still open.
 
 ## Tests
 
-Pure logic (`format.ts`, `form-logic.ts`, `journey-presenter.ts`, `onboard-logic.ts`) has no React imports and is covered by `tests/ui/*.test.ts` (node:test). Once the baseline provides `tsx`, run:
+Pure logic (`format.ts`, `form-logic.ts`, `journey-presenter.ts`, `onboard-logic.ts`, `error-logic.ts`, `banner-logic.ts`) has no React imports and is covered by `tests/ui/*.test.ts` (node:test). Once the baseline provides `tsx`, run:
 
 ```bash
 npx tsx --test tests/ui/format.test.ts tests/ui/form-logic.test.ts tests/ui/journey-presenter.test.ts tests/ui/onboard-logic.test.ts
