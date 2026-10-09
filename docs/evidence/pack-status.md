@@ -87,3 +87,21 @@ Loading with `target: "release"` also rejects any pack whose `kind` is not `rele
 | Not in the draft | The SM Lipa jeepney (its boarding dorm is not given), the Wawa jeepney (out of scope by the user's decision: the corridor ends at Puregold San Pablo), the Quiapo/UST/Gil Puyat jeeps (no boarding spot), every return trip, student fares (the reported amounts do not follow one discount ratio), and PITX Gate 9 (the PITX page does not list it). |
 
 To ship it: a teammate reviews each leg with `npx tsx scripts/road-draft-review-sheet.ts`, the evidence of the confirmed legs is raised to `verified`, unconfirmed legs are removed, the version is bumped, and the pack is validated with `--release` and copied to `assets/data/release.json`. Member 4 then rebuilds the native app.
+
+## Pack freeze
+
+**Frozen on 2026-10-10 02:38 +08:00** by the user's instruction ("ok freeze"), recorded by Member 2.
+
+| Field | Value |
+|---|---|
+| Frozen file | `assets/data/release.json` |
+| Pack | `pack_lrt1`, version `lrt1_2026_10_10_1` |
+| Content SHA-256 (canonical JSON) | `f2499c546a0b8e495ab41062595c55fc21f3c293410744a640147a3cb44c2931` |
+| Coverage | LRT-1 stations only (25 stations, stored value fares, no walking links, no road services) |
+| Validation | `data:validate --release`: 0 errors, 0 warnings |
+
+Assumed with the freeze (the user said "ok freeze" after these were stated): **no road route is in the shipped app**, and the Luzon demo pack stays a laptop and test tool, not a phone build.
+
+Not frozen and not shipped: `data/candidates/roads-draft.json` (unverified road routes), `tests/fixtures/luzon-demo-pack.json` (synthetic demo data), `tests/fixtures/transit-pack.json` (synthetic fixture).
+
+Rules while frozen: no change to `assets/data/release.json` or `src/application/bundled-pack.ts`'s import of it, unless a fact is found wrong. A correction means a new version number, a fresh review, a Member 4 rebuild, and repeating the physical tests that depended on the earlier build. Adding road routes later is a new pack version with the same consequences.
