@@ -122,6 +122,10 @@ const NUMBER_WORDS = [
   "isa", "isang", "dalawa", "dalawang", "tatlo", "tatlong", "apat", "lima", "limang", "anim", "pito",
   "walo", "siyam", "sampu", "sampung", "daan", "raan", "libo", "one", "two", "three", "four", "five",
   "six", "seven", "eight", "nine", "ten", "hundred", "thousand", "half", "kalahati", "kalahating",
+  // Spanish-derived numerals common in peso amounts.
+  "uno", "dos", "tres", "kwatro", "singko", "sais", "siyete", "otso", "nuwebe", "diyes", "onse", "dose",
+  "bente", "beinte", "trenta", "kwarenta", "singkwenta", "sisenta", "setenta", "otsenta", "nobenta",
+  "siyento", "mil",
 ];
 
 /** Peso amounts written in the message, in whole pesos. */
