@@ -12,17 +12,17 @@ Owner: Member 1 with Member 4. **Status: Not Run.** No installed build has run a
 
 1. Stop Metro on the laptop. Unplug USB. Turn on airplane mode, and also turn off Wi‑Fi and Bluetooth.
 2. Force-quit the app (Android: swipe away from recents; iPhone: swipe up). Relaunch it from the home screen.
-3. Type a **fresh** query that is not in the corpus and has not been tried before, e.g. a new Taglish sentence naming two places.
+3. Type a **fresh** query that is not in the corpus and has not been tried before, e.g. a new Taglish sentence naming two LRT-1 stations (such as "Paano pumunta mula Vito Cruz papuntang Baclaran?").
 4. Expect the confirmation screen to show origin/destination/preferences extracted by the local model, labelled "Read by AI on this phone (qwen2.5-0.5b-q4_k_m)".
 5. Record the query text, the extracted fields, the elapsed time and a screen recording or screenshots. Then submit a second fresh query to show it was not a one-off.
 6. **Clarification check:** submit "Pauwi na ako." Expect a request to choose home or a destination, not a guessed place.
 7. **Model-absent check** (optional, separate install or after clearing app data): offline first launch must offer setup and manual planning, and must not claim the AI is ready.
 
-Route results also need the verified transit pack (Member 2 / Member 4). Until a reviewed release pack is bundled, this proof covers **extraction feeding the confirmation screen**, not a complete journey.
+The reviewed LRT-1 pack is now bundled on `main` (stations only). A fresh query naming two LRT-1 stations can therefore show extraction → confirmation → a real journey. Any other place should give "No verified complete journey available", which is still a valid offline AI result, because extraction ran on the phone.
 
 ## Results
 
 | Device (anonymized) | OS | Build (commit) | Airplane / radios off | Metro / USB | Fresh query | Extraction shown | Elapsed ms | Clarification | Result |
 |---|---|---|---|---|---|---|---|---|---|
-| Android primary | — | — | — | — | — | — | — | — | **Not Run** |
+| Honor X9b 5G (ALI-NX1) | Android 15 | — | — | — | — | — | — | — | **Not Run** |
 | iPhone 14 Pro | — | — | — | — | — | — | — | — | **Not Run** |
