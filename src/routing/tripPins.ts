@@ -41,6 +41,8 @@ export interface TripPins {
   pins: TripPin[];
   /** The final drop-off pin, the default alert target. Null when its coordinate is missing. */
   dropoff: TripPin | null;
+  /** Where the final ride is boarded (a board or transfer pin). Used to size alert distances to the ride. */
+  finalRideBoard: TripPin | null;
   bounds: TripBounds | null;
   missingCoordinate: string[];
 }
@@ -92,9 +94,11 @@ export function buildTripPins(option: JourneyOption, pack: TransitPack): TripPin
   });
 
   let dropoff: TripPin | null = null;
+  let finalRideBoard: TripPin | null = null;
   if (rides.length > 0) {
     const last = rides[rides.length - 1]!;
     dropoff = pins.find((p) => p.stopId === last.alightStopId && (p.kind === "alight" || p.kind === "transfer")) ?? null;
+    finalRideBoard = pins.find((p) => p.stopId === last.boardStopId) ?? null;
   }
 
   option.legs.forEach((leg, index) => {
@@ -144,7 +148,7 @@ export function buildTripPins(option: JourneyOption, pack: TransitPack): TripPin
       }
     : null;
 
-  return { optionId: option.id, legs: lines, pins, dropoff, bounds, missingCoordinate: [...new Set(missing)] };
+  return { optionId: option.id, legs: lines, pins, dropoff, finalRideBoard, bounds, missingCoordinate: [...new Set(missing)] };
 }
 
 /** Convenience for the UI: pins for one option of a result (default: the first). Null if out of range. */

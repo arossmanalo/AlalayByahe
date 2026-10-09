@@ -3,7 +3,8 @@ import { readFileSync } from "node:fs";
 import { describe, it } from "node:test";
 import type { JourneyOption, Point, TransitPack } from "../../src/contracts/index";
 import { validatePack } from "../../src/data/validatePack";
-import { createDropoffWatcher, type DropoffWatcher, type LocationFix } from "../../src/routing/dropoffProximity";
+import { aerialMeters } from "../../src/data/geo";
+import { createDropoffWatcher, MIN_ALERT_RIDE_METERS, thresholdsForRide, type DropoffWatcher, type LocationFix } from "../../src/routing/dropoffProximity";
 import { planRoute } from "../../src/routing/routePort";
 import { buildTripPins, buildTripPinsForResult } from "../../src/routing/tripPins";
 import { NOW, prefs } from "./helpers";
@@ -178,6 +179,31 @@ describe("drop-off proximity", () => {
   });
 });
 
+describe("thresholds sized to the ride", () => {
+  it("offers no alert for rides shorter than 300 m or for invalid lengths", () => {
+    assert.equal(MIN_ALERT_RIDE_METERS, 300);
+    for (const m of [0, 100, 299, -5, Number.NaN, Number.POSITIVE_INFINITY]) assert.equal(thresholdsForRide(m), null);
+  });
+  it("scales to a quarter and a half of the ride within the defaults, and warn stays below the ride", () => {
+    assert.deepEqual(thresholdsForRide(300), { radiusMeters: 100, warnMeters: 200 });
+    assert.deepEqual(thresholdsForRide(600), { radiusMeters: 150, warnMeters: 300 });
+    assert.deepEqual(thresholdsForRide(1000), { radiusMeters: 250, warnMeters: 500 });
+    assert.deepEqual(thresholdsForRide(5000), { radiusMeters: 400, warnMeters: 800 });
+    for (let m = 300; m <= 6000; m += 7) {
+      const t = thresholdsForRide(m)!;
+      assert.ok(t.warnMeters < m && t.warnMeters >= t.radiusMeters, `ride ${m}`);
+      assert.ok(createDropoffWatcher({ target: TARGET, ...t }).ok, `valid options for ${m}`);
+    }
+  });
+  it("a short ride does not fire at the boarding stop with sized thresholds, but would with the defaults", () => {
+    const board = north(450); // a 450 m ride ending at TARGET
+    const sized = make(thresholdsForRide(450)!);
+    assert.equal(sized.update({ ...fix(450), latitude: board.latitude }).event, undefined);
+    const defaults = make();
+    assert.equal(defaults.update({ ...fix(450), latitude: board.latitude }).event, "approaching");
+  });
+});
+
 // ---------------------------------------------------------------- pins
 
 const releasePack = (): TransitPack => {
@@ -217,6 +243,8 @@ describe("trip pins on the release pack", () => {
     assert.deepEqual(pins.pins.map((p) => [p.kind, p.stopId]), [["board", "stop_lrt1_vito_cruz"], ["alight", "stop_lrt1_baclaran"]]);
     assert.ok(pins.pins.every((p) => p.verification === "verified"));
     assert.equal(pins.dropoff?.stopId, "stop_lrt1_baclaran");
+    assert.equal(pins.finalRideBoard?.stopId, "stop_lrt1_vito_cruz");
+    assert.ok(thresholdsForRide(aerialMeters(pins.finalRideBoard!.point, pins.dropoff!.point)), "the 3.5 km ride gets an alert");
     assert.deepEqual(pins.dropoff?.point, { latitude: 14.5339, longitude: 120.998 });
     assert.deepEqual(pins.missingCoordinate, []);
     assert.equal(pins.legs.length, 1);

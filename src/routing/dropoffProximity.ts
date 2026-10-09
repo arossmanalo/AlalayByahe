@@ -149,3 +149,23 @@ export function createDropoffWatcher(options: DropoffWatcherOptions): Result<Dro
 
   return { ok: true, value: { update, reset } };
 }
+
+/** A final ride shorter than this (straight-line meters) cannot be given a useful alert: it would fire at boarding. */
+export const MIN_ALERT_RIDE_METERS = 300;
+
+export interface AlertThresholds { radiusMeters: number; warnMeters: number }
+
+/**
+ * Sizes the alert distances to the final ride so a short ride does not trigger at the boarding stop.
+ * radius = a quarter of the ride, warn = half of it, clamped to 100..400 m and 200..800 m. The warn
+ * distance is always shorter than the ride, so the boarding stop itself is outside it. Returns null
+ * when the ride is too short (or the length is not a finite number): offer no alert rather than a bad one.
+ * The fractions and clamps are untested proposals until walked with a phone.
+ */
+export function thresholdsForRide(rideMeters: number): AlertThresholds | null {
+  if (!Number.isFinite(rideMeters) || rideMeters < MIN_ALERT_RIDE_METERS) return null;
+  const clamp = (n: number, lo: number, hi: number): number => Math.min(hi, Math.max(lo, n));
+  const radiusMeters = clamp(Math.round(rideMeters * 0.25), 100, DEFAULT_RADIUS_METERS);
+  const warnMeters = clamp(Math.round(rideMeters * 0.5), 200, DEFAULT_WARN_METERS);
+  return { radiusMeters, warnMeters: Math.max(warnMeters, radiusMeters) };
+}
