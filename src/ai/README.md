@@ -2,7 +2,7 @@
 
 Phone-local Taglish/Filipino/English intent extraction for AlalayByahe, implementing `AiPort` from shared contract v1.0. The model interprets language only. It never produces routes, stops, fares or instructions, and its output is validated before anyone sees it.
 
-**Status (2026-10-09, branch `feat/ai/ai-001-ai-004`):** pure logic and native adapters are written, typechecked against the real pinned package typings and covered by Node tests using fake adapters. **No physical-device run has happened yet.** Native inference, real downloads, Hermes hashing speed and offline behavior are still unproven (see `docs/evidence/native-gate.md`).
+**Status (2026-10-10, branch `feat/ai/ai-005-006`):** logic and native adapters are integrated in the app, typechecked and covered by Node tests with fake adapters (80 AI tests). On-device tooling for the remaining gates is ready: `diagnostics.ts` + `app/dev-ai.tsx` (probe, 42-case corpus benchmark, lifecycle checks). **No physical-device run has happened yet.** AI-001 Not Run (no phone connected, no current APK), AI-005 Not Run, AI-006 Not Run. Evidence: `docs/evidence/native-gate.md`, `ai-benchmarks.md`, `offline-ai.md`.
 
 ## Files
 
@@ -20,11 +20,15 @@ Phone-local Taglish/Filipino/English intent extraction for AlalayByahe, implemen
 | `llamaRnRuntime.ts` | AI-001 | llama.rn 0.12.9 adapter: `initLlama`, `completion` with `response_format: json_schema`, `stopCompletion`, `release` | llama.rn |
 | `manager.ts` | AI-004 | `AiPort` implementation: one context, one active completion, queryId correlation, timeout/cancel with awaited native stop | no |
 | `nativeProbe.ts` | AI-001 | One-shot load → schema-constrained completion → release report for the native gate | no |
-| `evaluation.ts` | AI-003/005 | Held-out corpus scoring (exact critical slots, silent role swaps, median/p95) and `runCorpus` | no |
+| `evaluation.ts` | AI-003/005 | Held-out corpus scoring (exact critical slots, silent role swaps, cold vs warm median/p95) and `runCorpus` | no |
+| `corpus.json`, `corpus.ts` | AI-003/005 | 42 held-out cases (v2) and typed loader; evaluation inputs, not transit data | no |
+| `diagnostics.ts` | AI-001/004/005 | Device runners: probe (releases/reloads the app model), corpus benchmark with raw output for misses, lifecycle checks | no |
 | `index.ts` | — | Pure exports (safe in Node tests) | no |
 | `phone.ts` | — | Native wiring: `createPhoneAi()` | yes |
 
-Tests: `tests/ai/*.test.ts` (75 tests) and `tests/ai/corpus.json` (26 held-out cases). `tests/ai/fakes.ts` is a **DEV FIXTURE**: fake runtime and in-memory files. Passing tests prove the logic and lifecycle rules, not native inference.
+The development-only screen `app/dev-ai.tsx` (deep link `alalaybyahe://dev-ai`) drives `diagnostics.ts` on a phone. It is enabled in development builds, and in release builds only when built with `EXPO_PUBLIC_AI_DIAGNOSTICS=1`. Reports are shown on screen and logged with `[AI-DIAG]`; nothing is uploaded or persisted. `AiManager.observeCompletions` exposes raw completion results to this screen only.
+
+Tests: `tests/ai/*.test.ts` (80 tests). `tests/ai/fakes.ts` is a **DEV FIXTURE**: fake runtime and in-memory files. Passing tests prove the logic and lifecycle rules, not native inference.
 
 ## Integration (Member 4)
 
@@ -81,11 +85,12 @@ Native config needed at INT-001 (Member 4 owns; I have not edited it):
 
 ## Running checks
 
-After INT-001 provides `package.json`/`tsconfig.json`:
-
 ```bash
+npm run typecheck
 npx tsx --test tests/ai/*.test.ts
 ```
+
+On Windows, run `npm ci` from PowerShell or cmd, not Git Bash. llama.rn's postinstall calls `tar`, and Git Bash's GNU tar fails on `C:` paths.
 
 Before INT-001 these were run from tooling installed outside the repo, so no repo dependency files changed. That means tsx 4.23.15, typescript 6.0.3, llama.rn 0.12.9, expo-file-system 57.0.7 and @noble/hashes 2.4.0 in a scratch folder, plus a strict scratch tsconfig with `paths` pointing at those typings.
 
