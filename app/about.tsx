@@ -2,6 +2,7 @@
 import { Body, Card, Heading, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
 import { formatDate } from "../src/ui/format";
+import { CoverageList } from "../src/ui/readiness";
 import { useReadiness, useUi } from "../src/ui/services";
 
 export default function AboutScreen() {
@@ -14,6 +15,7 @@ export default function AboutScreen() {
     <Screen title={t.aboutTitle}>
       <Card>
         <Body>{t.aboutWhat}</Body>
+        <Body>{t.aboutCoverageNote}</Body>
         <Body>{t.aboutAi}</Body>
         <Body>{t.aboutRoutes}</Body>
         <Body>{t.aboutTracking}</Body>
@@ -24,11 +26,7 @@ export default function AboutScreen() {
 
       <Card>
         <Heading level={2}>{t.coverageHeading}</Heading>
-        {loaded && loaded.coverageLabels.length > 0 ? (
-          loaded.coverageLabels.map((label) => <Body key={label}>• {label}</Body>)
-        ) : (
-          <Body>{t.coverageNone}</Body>
-        )}
+        <CoverageList labels={loaded?.coverageLabels ?? []} />
         {loaded ? <Small>{t.dataVersion(loaded.version, formatDate(loaded.createdAt))}</Small> : null}
         {loaded?.kind === "test_fixture" ? <Body>{t.testPackWarning}</Body> : null}
       </Card>

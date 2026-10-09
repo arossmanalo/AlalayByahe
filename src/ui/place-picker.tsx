@@ -103,6 +103,8 @@ export function PlacePicker({
         value={query}
         onChangeText={setQuery}
         onSubmitEditing={() => void runSearch()}
+        autoCorrect={false}
+        returnKeyType="search"
       />
       <AppButton
         label={search.status === "searching" ? t.searching : t.searchButton}

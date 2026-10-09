@@ -1,39 +1,23 @@
 // Member 3 (UI-003): option summary card and honest fare presentation.
+import { View } from "react-native";
 import type { FareQuote, JourneyOption } from "../contracts";
-import { AppButton, Body, Card, Heading, LegBadge, Notice, Row, Small, StatusPill } from "./components/primitives";
+import { AppButton, Body, Card, Heading, LabeledStatus, LegBadge, Notice, Row, Small, StatusPill } from "./components/primitives";
 import { formatCentavosRange, formatMeters } from "./format";
-import { fareDisplay, firstRide, legSequence } from "./journey-presenter";
+import { fareText, firstRide, legSequence } from "./journey-presenter";
 import { useUi } from "./services";
 
 /** Option-level fare: a partial subtotal is always labeled as not the full total. */
 export function FareSummary({ fare }: { fare: JourneyOption["fare"] }) {
   const { t } = useUi();
-  const d = fareDisplay(fare);
-  switch (d.kind) {
-    case "complete":
-      return (
-        <Row>
-          <Small>{t.fareLabel}:</Small>
-          <StatusPill tone="success" label={t.fareCompleteRange(formatCentavosRange(d.minCentavos, d.maxCentavos))} />
-        </Row>
-      );
-    case "partial": {
-      const subtotal = formatCentavosRange(d.knownMinCentavos, d.knownMaxCentavos);
-      return (
-        <Notice tone="warning" title={`${t.fareLabel}: ${t.fareNotTotal}`}>
-          <Body>
-            {d.unknownRideLegs > 0 ? t.farePartial(subtotal, d.unknownRideLegs) : `${subtotal}`}
-          </Body>
-        </Notice>
-      );
-    }
-    case "unknown":
-      return (
-        <Notice tone="warning" title={`${t.fareLabel}: ${t.fareUnknown}`}>
-          {d.unknownRideLegs > 0 ? <Body>{t.fareUnknownLegs(d.unknownRideLegs)}</Body> : null}
-        </Notice>
-      );
-  }
+  const text = fareText(fare, t);
+  if (text.kind === "complete") return <LabeledStatus label={text.label} tone="success" value={text.value} />;
+  return (
+    <Notice tone="warning" title={text.title}>
+      {text.lines.map((line) => (
+        <Body key={line}>{line}</Body>
+      ))}
+    </Notice>
+  );
 }
 
 /** Per-ride fare quote with reliability and basis. Unknown is never rendered as an amount. */
@@ -45,13 +29,11 @@ export function LegFare({ fare }: { fare: FareQuote }) {
       : null;
   return (
     <>
-      <Row>
-        <Small>{t.fareLabel}:</Small>
-        <StatusPill
-          tone={amount === null ? "warning" : fare.status === "verified" ? "success" : "info"}
-          label={amount === null ? t.fareUnknown : `${amount} (${t.fareReliability[fare.status]})`}
-        />
-      </Row>
+      <LabeledStatus
+        label={t.fareLabel}
+        tone={amount === null ? "warning" : fare.status === "verified" ? "success" : "info"}
+        value={amount === null ? t.fareUnknown : `${amount} (${t.fareReliability[fare.status]})`}
+      />
       {fare.basis ? <Small>{t.fareBasis(fare.basis)}</Small> : null}
     </>
   );
@@ -60,15 +42,21 @@ export function LegFare({ fare }: { fare: FareQuote }) {
 export function LegSequence({ option }: { option: JourneyOption }) {
   const { t } = useUi();
   const seq = legSequence(option);
+  const names = seq.map((kind) => (kind === "walk" ? t.walkName : t.modeNames[kind]));
+  // Read as one sentence ("Walk, then LRT, then Walk") instead of badges and arrow glyphs.
   return (
-    <Row>
-      {seq.map((kind, i) => (
-        <Row key={i} wrap={false}>
-          <LegBadge kind={kind} label={kind === "walk" ? t.walkName : t.modeNames[kind]} />
-          {i < seq.length - 1 ? <Small>→</Small> : null}
+    <View accessible accessibilityLabel={t.legSequenceA11y(names)}>
+      <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
+        <Row>
+          {seq.map((kind, i) => (
+            <Row key={i} wrap={false}>
+              <LegBadge kind={kind} label={names[i]!} />
+              {i < seq.length - 1 ? <Small>→</Small> : null}
+            </Row>
+          ))}
         </Row>
-      ))}
-    </Row>
+      </View>
+    </View>
   );
 }
 

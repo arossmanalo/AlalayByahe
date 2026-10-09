@@ -33,7 +33,7 @@ export interface PromptExample {
   output: RawIntent;
 }
 
-// Prompt examples are excluded from the held-out corpus (tests/ai/corpus.json).
+// Prompt examples are excluded from the held-out corpus (src/ai/corpus.json).
 export const PROMPT_EXAMPLES: PromptExample[] = [
   {
     text: "Galing Tanauan ako, papuntang Batangas City. Ayoko ng tricycle, max 300 m lakad.",

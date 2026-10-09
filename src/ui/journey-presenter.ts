@@ -1,6 +1,8 @@
 // Member 3 (UI-003): pure presentation logic for RouteResult. No React or native imports.
 // The UI only reorganizes engine output; it never adds a route fact, step or peso amount.
 import type { Evidence, JourneyOption, Mode, RideLeg, RouteRequest, WalkLeg } from "../contracts";
+import { formatCentavosRange } from "./format";
+import type { Strings } from "./i18n";
 
 export type FareDisplay =
   | { kind: "complete"; minCentavos: number; maxCentavos: number }
@@ -26,6 +28,57 @@ export function fareDisplay(fare: JourneyOption["fare"]): FareDisplay {
     knownMaxCentavos: fare.knownMaxCentavos,
     unknownRideLegs: unknown,
   };
+}
+
+export type FareText =
+  | { kind: "complete"; label: string; value: string }
+  | { kind: "partial" | "unknown"; title: string; lines: string[] };
+
+/**
+ * Wording for an option fare. Only a complete fare is called a total; a partial subtotal is always
+ * titled "not the full total", and any unknown ride fare tells the user to confirm it (EC-051, EC-057).
+ */
+export function fareText(fare: JourneyOption["fare"], t: Strings): FareText {
+  const d = fareDisplay(fare);
+  switch (d.kind) {
+    case "complete":
+      return { kind: "complete", label: t.fareLabel, value: t.fareCompleteRange(formatCentavosRange(d.minCentavos, d.maxCentavos)) };
+    case "partial": {
+      const subtotal = formatCentavosRange(d.knownMinCentavos, d.knownMaxCentavos);
+      return {
+        kind: "partial",
+        title: `${t.fareLabel}: ${t.fareNotTotal}`,
+        lines:
+          d.unknownRideLegs > 0
+            ? [t.farePartial(subtotal, d.unknownRideLegs), t.fareConfirmWithOperator]
+            : [t.fareKnownSubtotal(subtotal)],
+      };
+    }
+    case "unknown":
+      return {
+        kind: "unknown",
+        title: `${t.fareLabel}: ${t.fareUnknown}`,
+        lines: [...(d.unknownRideLegs > 0 ? [t.fareUnknownLegs(d.unknownRideLegs)] : []), t.fareConfirmWithOperator],
+      };
+  }
+}
+
+export interface CoverageSummary {
+  /** The loaded pack's coverage labels: the only coverage the app may claim. */
+  labels: string[];
+  /** Engine coverage warnings that add something beyond those labels. */
+  notes: string[];
+}
+
+/**
+ * Coverage shown on the results screen, for successes and failures alike. Engine warnings that
+ * only repeat a pack label ("Coverage: <label>") are dropped so the subset is stated once.
+ */
+export function coverageSummary(packLabels: readonly string[], coverageWarnings: readonly string[]): CoverageSummary {
+  const labels = [...new Set(packLabels.map((l) => l.trim()).filter((l) => l !== ""))];
+  const known = new Set(labels.map((l) => l.toLowerCase()));
+  const notes = coverageWarnings.filter((w) => !known.has(w.replace(/^coverage:s*/i, "").trim().toLowerCase()));
+  return { labels, notes: [...new Set(notes)] };
 }
 
 export type OptionIssue =

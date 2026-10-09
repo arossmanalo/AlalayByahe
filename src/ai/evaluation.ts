@@ -105,6 +105,10 @@ export interface RunRecord {
   elapsedMs: number | null;
   score: CaseScore | null;
   intent: RawIntent | null;
+  /** First completion after model load; reported apart from warm latency. */
+  cold: boolean;
+  /** queryId used for this case, to correlate with raw completion output. */
+  queryId: string;
 }
 
 export interface RunSummary {
@@ -117,7 +121,9 @@ export interface RunSummary {
   silentWrongRoles: string[];
   clarificationMisses: string[];
   errors: Record<string, number>;
+  /** Warm runs only. */
   elapsedMs: { samples: number; median: number | null; p95: number | null };
+  coldElapsedMs: number[];
   misses: string[];
 }
 
@@ -136,7 +142,8 @@ export function summarize(records: RunRecord[]): RunSummary {
   }
   const errors: Record<string, number> = {};
   for (const r of records) if (r.errorCode) errors[r.errorCode] = (errors[r.errorCode] ?? 0) + 1;
-  const times = records.flatMap((r) => (r.ok && r.elapsedMs !== null ? [r.elapsedMs] : []));
+  const times = records.flatMap((r) => (r.ok && !r.cold && r.elapsedMs !== null ? [r.elapsedMs] : []));
+  const coldTimes = records.flatMap((r) => (r.ok && r.cold && r.elapsedMs !== null ? [r.elapsedMs] : []));
   const exact = records.filter((r) => r.score?.exact).length;
   return {
     cases: records.length,
@@ -148,32 +155,48 @@ export function summarize(records: RunRecord[]): RunSummary {
     clarificationMisses: records.filter((r) => r.score?.clarificationMissed).map((r) => r.id),
     errors,
     elapsedMs: { samples: times.length, median: percentile(times, 50), p95: percentile(times, 95) },
+    coldElapsedMs: coldTimes,
     misses: records.filter((r) => !r.score?.exact).map((r) => r.id),
   };
 }
 
+export interface RunCorpusOptions {
+  /** Set when the model was loaded just before this run, so case 1 is a cold start. */
+  firstIsCold?: boolean;
+  onRecord?: (record: RunRecord, index: number, total: number) => void;
+}
+
 /** Runs the corpus sequentially through a real AiPort (device benchmark, AI-005). */
-export async function runCorpus(ai: AiPort, cases: CorpusCase[], queryIdPrefix: string): Promise<RunRecord[]> {
+export async function runCorpus(
+  ai: AiPort,
+  cases: CorpusCase[],
+  queryIdPrefix: string,
+  options: RunCorpusOptions = {},
+): Promise<RunRecord[]> {
   const records: RunRecord[] = [];
-  for (const testCase of cases) {
+  for (const [index, testCase] of cases.entries()) {
+    const queryId = `${queryIdPrefix}_${testCase.id}`;
+    const cold = options.firstIsCold === true && index === 0;
     const result = await ai.extract({
-      queryId: `${queryIdPrefix}_${testCase.id}`,
+      queryId,
       text: testCase.text,
       locale: testCase.locale,
       knownPlaceLabels: testCase.knownPlaceLabels,
     });
-    if (result.ok) {
-      records.push({
-        id: testCase.id,
-        ok: true,
-        errorCode: null,
-        elapsedMs: result.value.elapsedMs,
-        score: scoreCase(testCase, result.value.intent),
-        intent: result.value.intent,
-      });
-    } else {
-      records.push({ id: testCase.id, ok: false, errorCode: result.error.code, elapsedMs: null, score: null, intent: null });
-    }
+    const record: RunRecord = result.ok
+      ? {
+          id: testCase.id,
+          ok: true,
+          errorCode: null,
+          elapsedMs: result.value.elapsedMs,
+          score: scoreCase(testCase, result.value.intent),
+          intent: result.value.intent,
+          cold,
+          queryId,
+        }
+      : { id: testCase.id, ok: false, errorCode: result.error.code, elapsedMs: null, score: null, intent: null, cold, queryId };
+    records.push(record);
+    options.onRecord?.(record, index, cases.length);
   }
   return records;
 }

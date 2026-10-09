@@ -5,6 +5,7 @@ import type { RouteRequest } from "../src/contracts";
 import { AppButton, Body, Heading, Notice } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
 import { ErrorCard } from "../src/ui/error-card";
+import { shouldShowError } from "../src/ui/error-logic";
 import {
   DEFAULT_PREFERENCES,
   formToPreferences,
@@ -68,7 +69,7 @@ export default function OnboardScreen() {
       onboard,
     };
     const result = await planRoute(request, "manual");
-    if (result.ok || result.error.code !== "CANCELLED") router.push("/results");
+    if (result.ok || shouldShowError(result.error)) router.push("/results");
   };
 
   const ready = selection.direction !== null && selection.nextStop !== null && selection.confirmed;

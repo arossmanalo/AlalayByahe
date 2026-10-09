@@ -1,49 +1,49 @@
 # AI-001 Native Inference Gate — evidence log
 
-Owner: Member 1. Gate M1. **Status: Blocked / Not Run.** No phone has run llama.rn inference for this project yet. Nothing below is a pass.
+Owner: Member 1. Gate M1. **Status: Blocked / Not Run** (rechecked 2026-10-10 on branch `feat/ai/ai-005-006`). No phone has run llama.rn inference for this project yet. Nothing below is a pass.
 
-## Blockers (as of 2026-10-09 ~22:30 PHT)
+## Current blockers
 
-| Blocker | Evidence | Next owner / action |
+| Blocker | Evidence (2026-10-10) | Next owner / action |
 |---|---|---|
-| No app scaffold (INT-001) | `main` holds only `README.md`, `AGENTS.md`, `docs/planning/`; no `package.json`, `app.config.ts` or native folders | Member 4: scaffold Expo 57 app, install the pins, add the llama.rn plugin, then rebase this branch |
-| ~~No Android toolchain on Member 1's Windows laptop~~ **Resolved 2026-10-09 ~23:10** | Installed in `%LOCALAPPDATA%\Android\Sdk` (ANDROID_HOME set): cmdline-tools 23.0, platform-tools 37.0.1 (adb 1.0.41), platforms;android-36 r2, build-tools 36.0.0, ndk 27.1.12297006, cmake 3.22.1 — the versions RN 0.86.3 `libs.versions.toml` expects. JDK 21.0.7 present. Only the toolchain is verified; no Gradle build has run | — |
-| No Android phone connected | `adb devices` lists none | Member 1: enable Developer options + USB debugging on the Android phone, connect it and accept the RSA prompt |
-| iOS needs a Mac | Windows host cannot run Xcode | Member with the Mac (Xcode 26.6, Personal Team) builds and installs on iPhone 14 Pro |
-| Model file not yet on a phone | The 491,400,032-byte GGUF has not been downloaded in this session | Download on the phone via `ai.ensureModel` (AI-002), or preload the pinned file into the app's `Documents/models/` folder; `initialize()` will rehash it |
+| No Android phone connected to Member 1's laptop | `adb devices -l` lists no devices | Member 1: enable Developer options + USB debugging, connect the phone, accept the RSA prompt |
+| No current APK on Member 1's laptop | No `alalaybyahe*.apk` or `.native-builds/` under Downloads, Desktop, Documents, projects or source. The recorded APK (`34236a5`) is stale for current runtime sources (`npm run release:check`), and the diagnostics screen added on this branch needs a new build anyway | Member 4: build from `feat/ai/ai-005-006` (see "Build for the device session" below), or Member 1 builds locally from a short no-space checkout |
+| iOS needs the Mac | Windows cannot build iOS | Member with the Mac (Xcode 26.6, Personal Team) |
+| Model not on any phone | Never downloaded on a device | Done in step 3 below through the app's setup screen |
 
-## What is ready for the gate
+Resolved earlier: app scaffold and real native ports (INT-001, merged); Android SDK/NDK/CMake on Member 1's laptop (2026-10-09). `npm ci` on Windows must run from **PowerShell or cmd**, not Git Bash: llama.rn's postinstall calls `tar`, and Git Bash's GNU tar fails on `C:\` paths (`Cannot connect to C: resolve failed`).
 
-Member 4 integration update: scaffold/lockfile and real native ports now exist on feat/integration/int-001-foundation. The Member 4 Windows host has Android SDK/NDK/CMake; its actual native build attempts are in [builds.md](builds.md). The earlier blocker table describes Member 1's original host/checkpoint. Physical inference on either platform remains Not Run.
+## What is ready
 
-- `src/ai/llamaRnRuntime.ts` — adapter written against the **installed** llama.rn 0.12.9 typings (`initLlama`, `LlamaContext.completion` with `response_format: { type: "json_schema", json_schema: { strict: true, schema } }`, `stopCompletion`, `release`, `BuildInfo.number`). It typechecks under TypeScript 6.0.3 strict mode.
-- `src/ai/nativeProbe.ts` — `runNativeProbe({ runtime, store, platformLabel, text })` verifies the model (marker or full SHA256), loads it, runs one fresh schema-constrained completion, parses and validates it, and releases. It returns raw text, completion flags, load/completion/verification times and the runtime/model labels.
-- Pinned llama.rn facts read from the installed package: `BuildInfo.number = 10256`, commit `6c8dcaa`. The postinstall downloads prebuilt Android JNI libs and the iOS xcframework (SHA-pinned). The Expo plugin options are `enableEntitlements`, `entitlementsProfile`, `forceCxx20`, `enableOpenCL`, `enableOpenCLAndHexagon`. Default Android ABIs are `x86_64,arm64-v8a`.
+- `src/ai/llamaRnRuntime.ts`: llama.rn 0.12.9 adapter (`initLlama`, `completion` with `response_format: json_schema`, `stopCompletion`, `release`, `BuildInfo.number = 10256`).
+- `src/ai/nativeProbe.ts`: one-shot verify → load → schema-constrained completion → parse/validate → release. Returns raw text, flags and timings.
+- `src/ai/diagnostics.ts` + **`app/dev-ai.tsx`**: development-only screen that runs the probe (AI-001), the 42-case corpus benchmark (AI-005) and on-device lifecycle checks (AI-004). It keeps one native context at a time: it releases the app's model before the probe and reloads it afterwards. Reports are shown on screen and written to the device log with the tag `[AI-DIAG]`; nothing is uploaded or stored. It is enabled in development builds, and in a release build only if `EXPO_PUBLIC_AI_DIAGNOSTICS=1` was set at build time. It is not linked from product screens.
 
-## Procedure (run once per platform)
+## Build for the device session
 
-1. Member 4 finishes INT-001. Add `["llama.rn", { enableEntitlements: false }]` to plugins, and do not pass `--ignore-scripts` during install.
-2. Build a dev client or release build and install it on the physical phone (no simulator, no Expo Go).
-3. Get the verified model onto the phone with `createPhoneAi().ensureModel(...)` over Wi‑Fi, or preload the pinned file.
-4. From a development-only button handler (not render), run:
-   ```ts
-   import { runNativeProbe } from "../src/ai";
-   import { createPhoneModelStore, createPhoneRuntime } from "../src/ai/phone";
-   const report = await runNativeProbe({
-     runtime: createPhoneRuntime(),
-     store: createPhoneModelStore(),
-     platformLabel: "Android 15 / Realme 10 Pro+ 5G", // anonymized, no serials/IMEI
-     text: "<type a fresh query on the device>",
-   });
-   console.log(JSON.stringify(report, null, 2));
-   ```
-5. Paste the report below, removing nothing except personal data. If `report.error` is set or `parsed.ok` is false, the gate **fails** for that platform. Record the exact error.
+Member 4's procedure in `README.md` ("Android build on Windows"), from branch `feat/ai/ai-005-006`. Use a short physical checkout without spaces, and short SDK/Gradle cache paths. Use a release build so JS runs without Metro, and enable diagnostics for this benchmark APK:
+
+```powershell
+$env:EXPO_PUBLIC_AI_DIAGNOSTICS = "1"
+npm run build:android:foundation
+```
+
+Do not distribute that APK. The AI-006 offline proof and release evidence should use a build **without** the flag.
+
+## Procedure per phone
+
+1. `adb install -r <apk>`. Record APK filename, SHA-256 and source commit.
+2. Record free storage before setup: `adb shell df -h /data`.
+3. **Model setup** (AI-002 on device): on Wi‑Fi, open Setup, tap download, then record start/end time, bytes, the hash result shown, and free storage afterwards. Then `adb shell am force-stop ph.alalaybyahe.app`, relaunch, and confirm the model shows ready without downloading again.
+4. Open diagnostics: `adb shell am start -a android.intent.action.VIEW -d "alalaybyahe://dev-ai"`. Enter an anonymized device label (no serials or IMEI).
+5. **Probe:** type a fresh query on the phone and tap *Run native probe*. Capture the report with `adb logcat -d -s ReactNativeJS | findstr AI-DIAG`.
+6. If `probe.error` is set, or `probe.parsed.ok` is false, the gate **fails** for this platform. Record the exact error.
 
 ## Results
 
-| Platform (anonymized) | OS | Build type | Install | Model verified | Load ms | Completion ms | Valid JSON | Result |
+| Platform (anonymized) | OS | Build (commit, type) | Install | Model setup (bytes / hash / time) | Load ms | Completion ms | Valid JSON | Result |
 |---|---|---|---|---|---|---|---|---|
 | iPhone 14 Pro | — | — | Not Run | Not Run | — | — | — | **Not Run** |
 | Android (Realme 10 Pro+ 5G / Honor X9b / Huawei) | — | — | Not Run | Not Run | — | — | — | **Not Run** |
 
-Phone-local inference must not be claimed until both rows show a real pass with the raw report attached.
+Phone-local inference must not be claimed until a row shows a real pass with the raw report attached. iOS stays Not Run without the Mac build.

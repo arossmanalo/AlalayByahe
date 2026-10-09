@@ -33,7 +33,14 @@ export function OnboardForm({
       <Card>
         <Heading level={2}>{t.onboardService}</Heading>
         <Small>{t.onboardServiceHint}</Small>
-        <LabeledInput label={t.searchButton} value={filter} onChangeText={setFilter} />
+        <LabeledInput
+          label={t.searchServices}
+          hint={t.searchServicesHint}
+          value={filter}
+          onChangeText={setFilter}
+          autoCorrect={false}
+          returnKeyType="search"
+        />
         {pack.services.length === 0 ? <Body>{t.noServices}</Body> : null}
         {services.map((s) => (
           <ChoiceChip
