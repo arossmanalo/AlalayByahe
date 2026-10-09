@@ -13,7 +13,6 @@ import {
 } from "react";
 import type {
   AiPort,
-  AppError,
   JourneyController,
   JourneyDraft,
   ModelManifest,
@@ -24,6 +23,7 @@ import type {
   TransitPack,
   TransitRepository,
 } from "../contracts";
+import { supersededError } from "./error-logic";
 import { MAX_QUERY_CHARS, newQueryId } from "./form-logic";
 import { strings, type Strings, type UiLanguage } from "./i18n";
 
@@ -66,10 +66,6 @@ const EMPTY_SESSION: JourneySession = {
 };
 
 const KNOWN_PLACE_LABEL_LIMIT = 30; // contract §4: place labels max 30
-
-function staleError(): { ok: false; error: AppError } {
-  return { ok: false, error: { code: "CANCELLED", message: "Superseded by a newer request.", retryable: true } };
-}
 
 interface UiContextValue {
   services: UiServices;
@@ -187,7 +183,7 @@ export function UiProvider({
 
   const interpret = useCallback(
     async (text: string): Promise<Result<JourneyDraft>> => {
-      if (activeQueryId.current) return staleError();
+      if (activeQueryId.current) return supersededError();
       if (text.length > MAX_QUERY_CHARS) {
         return { ok: false, error: { code: "INVALID_INPUT", message: "Query too long.", retryable: false } };
       }
@@ -200,7 +196,7 @@ export function UiProvider({
         locale: "taglish",
         knownPlaceLabels,
       });
-      if (activeQueryId.current !== queryId) return staleError();
+      if (activeQueryId.current !== queryId) return supersededError();
       activeQueryId.current = null;
       setSession((s) => ({
         ...s,
@@ -219,14 +215,14 @@ export function UiProvider({
 
   const planRoute = useCallback(
     async (request: RouteRequest, via: RouteVia): Promise<Result<RouteResult>> => {
-      if (activeQueryId.current) return staleError();
+      if (activeQueryId.current) return supersededError();
       activeQueryId.current = request.queryId;
       setSession((s) => ({ ...s, pending: { queryId: request.queryId, kind: "route" } }));
       const result =
         via === "manual"
           ? await services.controller.submitManual(request)
           : await services.controller.submitConfirmed(request);
-      if (activeQueryId.current !== request.queryId) return staleError();
+      if (activeQueryId.current !== request.queryId) return supersededError();
       activeQueryId.current = null;
       setSession((s) => ({ ...s, pending: null, request, result, via }));
       return result;
