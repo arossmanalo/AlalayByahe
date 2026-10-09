@@ -35,6 +35,8 @@ export interface UiServices {
   kind: "real" | "dev_fixture";
   /** Demo build only: hides the per-screen test-pack banner (the About screen still states the data is a sample). */
   hideTestPackBanner?: boolean;
+  /** Demo build only: allow the stop alert on unverified sample locations (the card says so). */
+  allowUnverifiedAlerts?: boolean;
   controller: JourneyController;
   ai: Pick<AiPort, "getState" | "ensureModel" | "initialize">;
   repository: Pick<TransitRepository, "getPack" | "resolvePlace">;

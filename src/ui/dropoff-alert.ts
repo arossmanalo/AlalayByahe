@@ -53,6 +53,8 @@ export interface AlertTarget {
   stopId: string;
   name: string;
   point: Point;
+  /** False for demo or other unverified locations (only shown when the build allows it). */
+  verified?: boolean;
   /** Distances sized to the final ride; undefined means the watcher defaults apply (board point unknown). */
   thresholds?: AlertThresholds;
 }
@@ -71,21 +73,28 @@ function finiteCoordinate(p: Point | undefined): p is Point {
  * coordinates. Demo or other unverified data never gets an alert (Member 2's rule).
  * Replace with Member 2's tripPins final `alight` pin once ALERT-002 merges.
  */
-export function alertTargetFor(option: JourneyOption, pack: TransitPack | null): TargetResult {
+export function alertTargetFor(
+  option: JourneyOption,
+  pack: TransitPack | null,
+  options: { allowUnverified?: boolean } = {},
+): TargetResult {
   const rides = option.legs.filter((leg): leg is RideLeg => leg.kind === "ride");
   const last = rides[rides.length - 1];
   if (!last) return { ok: false, reason: "no_ride" };
-  const stop = pack?.stops.find((s) => s.id === last.alightStopId);
+  if (!pack) return { ok: false, reason: "no_coordinate" };
+  const stop = pack.stops.find((s) => s.id === last.alightStopId);
   if (!stop || !finiteCoordinate(stop.point)) return { ok: false, reason: "no_coordinate" };
-  if (pack?.kind !== "release" || stop.evidence.reliability !== "verified") return { ok: false, reason: "unverified" };
+  const verified = pack?.kind === "release" && stop.evidence.reliability === "verified";
+  // Only the demo build passes allowUnverified, to show the alert on its sample locations.
+  if (!verified && !options.allowUnverified) return { ok: false, reason: "unverified" };
   // Size the alert to the final ride so a short ride cannot fire at the boarding stop.
   const board = pack.stops.find((x) => x.id === last.boardStopId);
   if (board && finiteCoordinate(board.point)) {
     const thresholds = thresholdsForRide(aerialMeters(board.point, stop.point));
     if (!thresholds) return { ok: false, reason: "too_short" };
-    return { ok: true, target: { stopId: stop.id, name: last.alightLabel, point: stop.point, thresholds } };
+    return { ok: true, target: { stopId: stop.id, name: last.alightLabel, point: stop.point, thresholds, verified } };
   }
-  return { ok: true, target: { stopId: stop.id, name: last.alightLabel, point: stop.point } };
+  return { ok: true, target: { stopId: stop.id, name: last.alightLabel, point: stop.point, verified } };
 }
 
 // ---- Alert status (state machine) ----

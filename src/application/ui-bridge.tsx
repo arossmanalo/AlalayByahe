@@ -17,7 +17,7 @@ function SyncPackAfterBoot() {
 export function NativeUiBridge({ children }: PropsWithChildren) {
   const { services } = useApplication();
   const ui = useMemo<UiServices>(() => ({
-    kind: "real", hideTestPackBanner: DEMO_BUILD, controller: services.controller, ai: services.ai,
+    kind: "real", hideTestPackBanner: DEMO_BUILD, allowUnverifiedAlerts: DEMO_BUILD, controller: services.controller, ai: services.ai,
     repository: services.repository, modelManifest: MODEL_MANIFEST,
     onlineHelpersEnabled: APP_LIMITS.enableOnlineHelpers,
     cancelModelSetup: services.cancelModelSetup,

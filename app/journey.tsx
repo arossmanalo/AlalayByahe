@@ -1,13 +1,16 @@
 // Member 3 (UI-003, ALERT-003): full journey detail: diagram, ordered steps, fares, sources, warnings
 // and the optional near-drop-off alert.
 import { useLocalSearchParams, useRouter } from "expo-router";
+import { useState } from "react";
+import type { Point } from "../src/contracts";
 import { AppButton, Body, Heading, Notice, Small } from "../src/ui/components/primitives";
 import { Screen } from "../src/ui/components/Screen";
 import { DropoffAlertCard } from "../src/ui/dropoff-alert-card";
 import { FareSummary, LegSequence } from "../src/ui/journey-card";
 import { optionIssues } from "../src/ui/journey-presenter";
 import { JourneySteps, RouteDiagram } from "../src/ui/journey-steps";
-import { useJourneySession, useUi } from "../src/ui/services";
+import { useJourneySession, useReadiness, useUi } from "../src/ui/services";
+import { TripMap } from "../src/ui/trip-map";
 import { TripSummaryCard } from "../src/ui/trip-summary";
 
 export default function JourneyScreen() {
@@ -15,6 +18,9 @@ export default function JourneyScreen() {
   const { optionId } = useLocalSearchParams<{ optionId?: string }>();
   const { t } = useUi();
   const { session } = useJourneySession();
+  const { pack } = useReadiness();
+  const loadedPack = pack.status === "loaded" && pack.result.ok ? pack.result.value : null;
+  const [position, setPosition] = useState<Point | null>(null);
   const options = session.result?.ok ? session.result.value.options : [];
   const index = options.findIndex((o) => o.id === optionId);
   const option = index >= 0 ? options[index] : null;
@@ -49,7 +55,9 @@ export default function JourneyScreen() {
         <Body>{t.noTracking}</Body>
       </Notice>
 
-      <DropoffAlertCard option={option} />
+      <DropoffAlertCard option={option} onPosition={setPosition} />
+
+      {loadedPack ? <TripMap option={option} pack={loadedPack} position={position} /> : null}
 
       {option.warnings.length > 0 ? (
         <Notice tone="warning" title={t.warningsHeading}>
