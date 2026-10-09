@@ -1,5 +1,7 @@
 # Edge-Case Matrix
 
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
+
 This matrix includes every category required by the pasted master prompt. Severity: Critical = possible fabricated/unsafe physical guidance or false core proof; High = core correctness/recovery; Medium = usability. P0 applies to release; scanner P1 cases apply only if scanner is enabled. Test IDs are planned cases, **not executed passes**. User text is suggested copy, localized in implementation. Normal cases need not display extra warnings.
 
 ## A. Natural language

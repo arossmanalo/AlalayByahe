@@ -2,6 +2,8 @@
 
 No event submission, public post, video recording/upload or receipt is claimed. The participant briefing PDF is still missing, so official mandatory items remain unconfirmed.
 
+**Platform:** Android only. iPhone/iOS was excluded on 2026-10-10 because of limited resources; do not claim or imply iOS support in the video, post or README.
+
 The approved product pitch is: “Ask in Taglish, confirm the details, and receive a commute plan grounded in documented routes.” Only advertise actual verified coverage and measured local inference. Current integration has real code and passing laptop tests; physical inference and corridor data are not established.
 
 ## One-minute video outline after the physical gate passes

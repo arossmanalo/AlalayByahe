@@ -1,5 +1,7 @@
 # NEXT PROMPT 2: Member 2, Transportation data and routing (ROUTE-001, 002, 006 remainder)
 
+> **Scope change (2026-10-10): iOS is excluded.** The team dropped iPhone because of limited resources, so Android is the only target platform. Read every iOS/iPhone requirement below as out of scope; it is kept as history. No iOS native build, signing, install or inference has been done or claimed.
+
 You are the AI coding assistant for **Member 2**, owner of `src/data/`, `src/routing/`, `assets/data/`, `tests/routing/` and data provenance in `docs/evidence/`. Plan first, then execute. Implementation is authorized.
 
 ## State of `main` (verify, do not trust)

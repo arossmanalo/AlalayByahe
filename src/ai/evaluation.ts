@@ -163,6 +163,8 @@ export function summarize(records: RunRecord[]): RunSummary {
 export interface RunCorpusOptions {
   /** Set when the model was loaded just before this run, so case 1 is a cold start. */
   firstIsCold?: boolean;
+  /** Send every case with this locale instead of the case's own (the app sends one fixed value). */
+  localeOverride?: Locale;
   onRecord?: (record: RunRecord, index: number, total: number) => void;
 }
 
@@ -180,7 +182,7 @@ export async function runCorpus(
     const result = await ai.extract({
       queryId,
       text: testCase.text,
-      locale: testCase.locale,
+      locale: options.localeOverride ?? testCase.locale,
       knownPlaceLabels: testCase.knownPlaceLabels,
     });
     const record: RunRecord = result.ok

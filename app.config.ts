@@ -6,7 +6,7 @@ const config: ExpoConfig = {
   version: "0.1.0",
   scheme: "alalaybyahe",
   orientation: "portrait",
-  userInterfaceStyle: "automatic",
+  userInterfaceStyle: "light",
   platforms: ["android", "ios"],
   updates: { enabled: false },
   android: { package: "ph.alalaybyahe.app", allowBackup: false },

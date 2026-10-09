@@ -20,7 +20,7 @@ Inspect the actual workspace, Git state, installed dependencies and available de
 
 ## Product requirements
 
-AlalayByahe is a standalone native Android and iPhone commute assistant. Users ask in Filipino, English or Taglish and receive a grounded journey.
+AlalayByahe is a standalone native Android commute assistant (iPhone/iOS was excluded on 2026-10-10 because of limited resources; do not build, sign or claim iOS). Users ask in Filipino, English or Taglish and receive a grounded journey.
 
 - Meaningful intent extraction runs locally on the phone.
 - Route search, fare calculation and instruction rendering use deterministic logic and source-backed local data.
@@ -96,7 +96,7 @@ Run checks appropriate to the actual changes and available project scripts. Do n
 
 Application verification requires meaningful pure-module tests, type checks, pack validation and physical-device checks where applicable. Mocked native adapters cannot prove native inference, signing, SQLite persistence or device performance.
 
-Before claiming offline phone-local functionality, test an installed release on Android and iPhone: stop Metro, disconnect USB/laptop bridges, disable radios, force-quit, relaunch and enter a fresh query. Verify persisted resources and real extraction feeding real routing.
+Before claiming offline phone-local functionality, test an installed release on Android: stop Metro, disconnect USB/laptop bridges, disable radios, force-quit, relaunch and enter a fresh query. Verify persisted resources and real extraction feeding real routing.
 
 Record actual devices, OS, runtime/model/pack versions, sample counts, timings, errors and limitations. Proposed targets are not benchmarks. Report Pass, Fail, Not Run or Deferred honestly.
 

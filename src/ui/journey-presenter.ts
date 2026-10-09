@@ -1,6 +1,6 @@
 // Member 3 (UI-003): pure presentation logic for RouteResult. No React or native imports.
 // The UI only reorganizes engine output; it never adds a route fact, step or peso amount.
-import type { Evidence, JourneyOption, Mode, RideLeg, RouteRequest, WalkLeg } from "../contracts";
+import type { Evidence, JourneyLeg, JourneyOption, Mode, RideLeg, RouteRequest, WalkLeg } from "../contracts";
 import { formatCentavosRange } from "./format";
 import type { Strings } from "./i18n";
 
@@ -31,18 +31,31 @@ export function fareDisplay(fare: JourneyOption["fare"]): FareDisplay {
 }
 
 export type FareText =
-  | { kind: "complete"; label: string; value: string }
+  | { kind: "complete"; label: string; value: string; reliability: "verified" | "estimated" }
   | { kind: "partial" | "unknown"; title: string; lines: string[] };
 
 /**
- * Wording for an option fare. Only a complete fare is called a total; a partial subtotal is always
- * titled "not the full total", and any unknown ride fare tells the user to confirm it (EC-051, EC-057).
+ * A complete total is "verified" only when every ride fare is verified. One estimated ride fare,
+ * such as the regular fare shown to a student when no discount is documented, makes the total an estimate.
  */
-export function fareText(fare: JourneyOption["fare"], t: Strings): FareText {
-  const d = fareDisplay(fare);
+export function totalReliability(legs: readonly JourneyLeg[]): "verified" | "estimated" {
+  const rides = legs.filter((leg): leg is RideLeg => leg.kind === "ride");
+  return rides.length > 0 && rides.every((leg) => leg.fare.status === "verified") ? "verified" : "estimated";
+}
+
+/**
+ * Wording for an option fare. Only a complete fare is called a total, and it says whether it is
+ * verified or estimated; a partial subtotal is always titled "not the full total", and any unknown
+ * ride fare tells the user to confirm it (EC-051, EC-057).
+ */
+export function fareText(option: Pick<JourneyOption, "fare" | "legs">, t: Strings): FareText {
+  const d = fareDisplay(option.fare);
   switch (d.kind) {
-    case "complete":
-      return { kind: "complete", label: t.fareLabel, value: t.fareCompleteRange(formatCentavosRange(d.minCentavos, d.maxCentavos)) };
+    case "complete": {
+      const reliability = totalReliability(option.legs);
+      const total = t.fareCompleteRange(formatCentavosRange(d.minCentavos, d.maxCentavos));
+      return { kind: "complete", label: t.fareLabel, value: `${total} (${t.fareReliability[reliability]})`, reliability };
+    }
     case "partial": {
       const subtotal = formatCentavosRange(d.knownMinCentavos, d.knownMaxCentavos);
       return {
@@ -182,6 +195,13 @@ export function legSequence(option: JourneyOption): LegKind[] {
 export function firstRide(option: JourneyOption): RideLeg | null {
   for (const leg of option.legs) if (leg.kind === "ride") return leg;
   return null;
+}
+
+/** Results-card line for the first ride. A ride the user is already on is "stay on", not a boarding point. */
+export function firstRideLine(option: JourneyOption, t: Strings): string | null {
+  const ride = firstRide(option);
+  if (!ride) return null;
+  return ride.alreadyOnboard ? t.stayOnboard : t.boardFirst(ride.boardLabel);
 }
 
 /** Unique source IDs across legs, leg fares and the option fare, in first-seen order. */
