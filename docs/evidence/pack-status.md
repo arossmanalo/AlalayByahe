@@ -6,7 +6,7 @@ Last updated: 2026-10-09 (Member 2). Everything below was checked against the wo
 
 **There is no release pack.** `assets/data/release.json` does not exist, on purpose.
 
-There is an **unreviewed candidate**: `data/candidates/lrt1-candidate.json`, LRT-1 Dr. Santos to Central Terminal (14 stations, ride legs and stored value fares only). Its evidence is `estimated` because no second teammate has checked it, so `npm run data:validate -- data/candidates/lrt1-candidate.json` reports 45 release-gate errors, all of them "must be verified". That refusal is intended.
+There is an **unreviewed candidate**: `data/candidates/lrt1-candidate.json`, LRT-1 Dr. Santos to Fernando Poe Jr. (all 25 stations, ride legs and stored value fares only). Its evidence is `estimated` because no second teammate has checked it, so `npm run data:validate -- data/candidates/lrt1-candidate.json` reports 78 release-gate errors, all of them "must be verified". That refusal is intended.
 
 ROUTE-001 (the corridor evidence and source register) has not been executed: `docs/evidence/sources.md` and
 `docs/evidence/corridor-status.md` do not exist. No ride, stop, boarding permission, walking path or fare has been

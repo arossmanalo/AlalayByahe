@@ -11,7 +11,7 @@ import type { Evidence, FarePolicy, TransitPack } from "../src/contracts/index";
  * pack is correctly rejected for release until a reviewer checks each transcription against
  * its source and the reliability is raised. Run: tsx scripts/build-lrt1-candidate.ts
  *
- * Scope: LRT-1 stations Dr. Santos to Central Terminal only, ride legs and stored value
+ * Scope: all 25 LRT-1 stations Dr. Santos to Fernando Poe Jr., ride legs and stored value
  * fares between them. No walking links, no road services. It covers none of the three
  * target corridors end to end.
  */
@@ -37,12 +37,25 @@ const STATIONS: Station[] = [
   { key: "pedro_gil", name: "Pedro Gil Station", aliases: ["Pedro Gil", "LRT Pedro Gil"], lat: 14.57663, lon: 120.98799, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 40 m." },
   { key: "un_avenue", name: "UN Avenue Station", aliases: ["UN Avenue", "UN Ave", "United Nations", "LRT United Nations"], lat: 14.58249, lon: 120.98466, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 50 m. The LRMC matrix says UN Avenue; Wikipedia and OSM say United Nations." },
   { key: "central", name: "Central Terminal Station", aliases: ["Central", "Central Terminal", "LRT Central"], lat: 14.5929, lon: 120.98162, coordSources: ["source_wikipedia_station_coordinates"], coordNote: "Wikipedia point only; no OSM cross-check was returned." },
+  { key: "carriedo", name: "Carriedo Station", aliases: ["Carriedo", "LRT Carriedo"], lat: 14.599, lon: 120.98136, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 10 m." },
+  { key: "doroteo_jose", name: "Doroteo Jose Station", aliases: ["Doroteo Jose", "D. Jose", "LRT Doroteo Jose"], lat: 14.605475, lon: 120.98207, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 40 m. The LRMC matrix says D. Jose." },
+  { key: "bambang", name: "Bambang Station", aliases: ["Bambang", "LRT Bambang"], lat: 14.61111, lon: 120.9825, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 50 m." },
+  { key: "tayuman", name: "Tayuman Station", aliases: ["Tayuman", "LRT Tayuman"], lat: 14.616794, lon: 120.98276, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 30 m." },
+  { key: "blumentritt", name: "Blumentritt Station", aliases: ["Blumentritt", "LRT Blumentritt"], lat: 14.622728, lon: 120.98289, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 10 m." },
+  { key: "abad_santos", name: "Abad Santos Station", aliases: ["Abad Santos", "LRT Abad Santos"], lat: 14.630617, lon: 120.98141, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 20 m." },
+  { key: "r_papa", name: "R. Papa Station", aliases: ["R. Papa", "LRT R. Papa"], lat: 14.636086, lon: 120.98231, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 30 m." },
+  { key: "fifth_avenue", name: "5th Avenue Station", aliases: ["5th Avenue", "Fifth Avenue", "LRT 5th Avenue"], lat: 14.644475, lon: 120.98358, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 30 m." },
+  { key: "monumento", name: "Monumento Station", aliases: ["Monumento", "LRT Monumento"], lat: 14.654094, lon: 120.98391, coordSources: ["source_wikipedia_station_coordinates", "source_osm_nominatim"], coordNote: "Wikipedia point; agrees with OSM within about 30 m." },
+  { key: "balintawak", name: "Balintawak Station", aliases: ["Balintawak", "LRT Balintawak"], lat: 14.657344, lon: 121.00396, coordSources: ["source_wikipedia_station_coordinates"], coordNote: "Wikipedia point only; no OSM cross-check was returned." },
+  { key: "fernando_poe_jr", name: "Fernando Poe Jr. Station", aliases: ["Fernando Poe Jr.", "FPJ", "Roosevelt", "LRT Fernando Poe Jr."], lat: 14.657494, lon: 121.02121, coordSources: ["source_wikipedia_station_coordinates"], coordNote: "Wikipedia point only; no OSM cross-check was returned. Formerly Roosevelt station per Wikipedia." },
 ];
 
 // Stored value fares in pesos, transcribed from the LRMC "New LRT-1 Stored Value Fare Matrix"
-// (effective April 2, 2025). Rows and columns follow STATIONS. Every pair was read twice,
-// once in each triangle, and the script asserts the two readings agree.
-const SVC_PESOS: number[][] = [
+// (effective April 2, 2025), read in four blocks. Rows and columns follow STATIONS.
+// The matrix is symmetric, so the upper-right block (read from the top rows) and the
+// lower-left block (read from the bottom rows) are independent readings of the same
+// numbers; the script asserts they agree before anything is written.
+const TOP_LEFT: number[][] = [ // stations 1-14 by 1-14
   [16, 19, 20, 22, 23, 26, 27, 28, 29, 31, 32, 33, 34, 36],
   [19, 16, 18, 20, 21, 23, 24, 26, 27, 28, 29, 31, 32, 33],
   [20, 18, 16, 18, 19, 22, 22, 24, 25, 27, 28, 29, 30, 32],
@@ -58,9 +71,57 @@ const SVC_PESOS: number[][] = [
   [34, 32, 30, 28, 27, 25, 24, 22, 21, 20, 19, 17, 16, 18],
   [36, 33, 32, 30, 29, 27, 26, 24, 23, 22, 20, 19, 18, 16],
 ];
+const TOP_RIGHT: number[][] = [ // stations 1-14 by 15-25 (Carriedo to Fernando Poe Jr.)
+  [37, 38, 39, 40, 41, 42, 43, 45, 46, 49, 52],
+  [35, 36, 36, 37, 38, 40, 41, 42, 44, 47, 50],
+  [33, 34, 35, 36, 37, 38, 39, 40, 42, 45, 48],
+  [31, 32, 33, 34, 35, 36, 37, 38, 40, 43, 46],
+  [30, 31, 32, 33, 34, 35, 36, 37, 39, 42, 45],
+  [28, 29, 30, 30, 31, 33, 34, 35, 37, 40, 43],
+  [27, 28, 29, 30, 31, 32, 33, 34, 36, 39, 42],
+  [25, 26, 27, 28, 29, 30, 31, 33, 34, 38, 40],
+  [24, 25, 26, 27, 28, 29, 30, 32, 33, 37, 39],
+  [23, 24, 25, 25, 26, 28, 29, 30, 32, 35, 38],
+  [21, 22, 23, 24, 25, 27, 28, 29, 31, 34, 37],
+  [20, 21, 22, 23, 24, 25, 26, 28, 29, 33, 35],
+  [19, 20, 21, 22, 23, 24, 25, 27, 28, 32, 34],
+  [17, 18, 19, 20, 21, 23, 23, 25, 27, 30, 33],
+];
+const BOTTOM_LEFT: number[][] = [ // stations 15-25 by 1-14, read separately from the bottom rows
+  [37, 35, 33, 31, 30, 28, 27, 25, 24, 23, 21, 20, 19, 17],
+  [38, 36, 34, 32, 31, 29, 28, 26, 25, 24, 22, 21, 20, 18],
+  [39, 36, 35, 33, 32, 30, 29, 27, 26, 25, 23, 22, 21, 19],
+  [40, 37, 36, 34, 33, 30, 30, 28, 27, 25, 24, 23, 22, 20],
+  [41, 38, 37, 35, 34, 31, 31, 29, 28, 26, 25, 24, 23, 21],
+  [42, 40, 38, 36, 35, 33, 32, 30, 29, 28, 27, 25, 24, 23],
+  [43, 41, 39, 37, 36, 34, 33, 31, 30, 29, 28, 26, 25, 23],
+  [45, 42, 40, 38, 37, 35, 34, 33, 32, 30, 29, 28, 27, 25],
+  [46, 44, 42, 40, 39, 37, 36, 34, 33, 32, 31, 29, 28, 27],
+  [49, 47, 45, 43, 42, 40, 39, 38, 37, 35, 34, 33, 32, 30],
+  [52, 50, 48, 46, 45, 43, 42, 40, 39, 38, 37, 35, 34, 33],
+];
+const BOTTOM_RIGHT: number[][] = [ // stations 15-25 by 15-25
+  [16, 17, 18, 19, 20, 21, 22, 24, 25, 29, 31],
+  [17, 16, 17, 18, 19, 20, 21, 23, 24, 28, 30],
+  [18, 17, 16, 17, 18, 20, 20, 22, 23, 27, 30],
+  [19, 18, 17, 16, 17, 19, 20, 21, 23, 26, 29],
+  [20, 19, 18, 17, 16, 18, 19, 20, 22, 25, 28],
+  [21, 20, 20, 19, 18, 16, 17, 19, 20, 24, 26],
+  [22, 21, 20, 20, 19, 17, 16, 18, 19, 23, 25],
+  [24, 23, 22, 21, 20, 19, 18, 16, 18, 21, 24],
+  [25, 24, 23, 23, 22, 20, 19, 18, 16, 20, 22],
+  [29, 28, 27, 26, 25, 24, 23, 21, 20, 16, 19],
+  [31, 30, 30, 29, 28, 26, 25, 24, 22, 19, 16],
+];
+
+const SVC_PESOS: number[][] = [
+  ...TOP_LEFT.map((row, i) => [...row, ...(TOP_RIGHT[i] as number[])]),
+  ...BOTTOM_LEFT.map((row, i) => [...row, ...(BOTTOM_RIGHT[i] as number[])]),
+];
 
 for (let i = 0; i < STATIONS.length; i++) {
   if ((SVC_PESOS[i] ?? []).length !== STATIONS.length) throw new Error(`matrix row ${i} has the wrong length`);
+  if (SVC_PESOS[i]![i] !== 16) throw new Error(`matrix diagonal at ${i} should be the 16 peso minimum`);
   for (let j = 0; j < STATIONS.length; j++) {
     if (SVC_PESOS[i]![j] !== SVC_PESOS[j]![i]) throw new Error(`matrix is not symmetric at ${i},${j}`);
   }
@@ -89,15 +150,15 @@ const pack: TransitPack = {
   kind: "release",
   createdAt: CHECKED_AT,
   coverageLabels: [
-    "LRT-1 only: Dr. Santos to Central Terminal, rides and stored value fares. Unreviewed candidate. No road services, no walking links, no target corridor covered end to end.",
+    "LRT-1 only: Dr. Santos to Fernando Poe Jr. (25 stations), rides and stored value fares. Unreviewed candidate. No road services, no walking links, no target corridor covered end to end.",
   ],
   sources: [
     {
       id: "source_lrmc_svc_matrix_2025_04_02", title: "New LRT-1 Stored Value Fare Matrix, effective April 2, 2025",
       url: "https://i0.wp.com/lrmc.ph/wp-content/uploads/2025/03/New-SJT-fare-matrix-effective-April-2-2025-1.png",
       publisher: "Light Rail Manila Corporation (LRMC)", retrievedAt: CHECKED_AT,
-      usageBasis: "Operator publication read on screen and transcribed for 14 stations. The image titled Stored Value is served at the file name containing SJT; file names on the LRMC site are swapped, so the title inside the image was used.",
-      factsSupported: ["Station order south to north", "Stored value fare for each station pair among the 14 stations", "Both directions served between every pair"],
+      usageBasis: "Operator publication read on screen and transcribed for all 25 stations. The image titled Stored Value is served at the file name containing SJT; file names on the LRMC site are swapped, so the title inside the image was used.",
+      factsSupported: ["Station order south to north", "Stored value fare for each station pair among the 25 stations", "Both directions served between every pair"],
       checkedBy: "Member 2 (unreviewed)",
     },
     {

@@ -9,7 +9,7 @@ import { NOW, prefs, rides, trace } from "./helpers";
 
 /**
  * Tests for data/candidates/lrt1-candidate.json: an UNREVIEWED transcription of the LRMC
- * stored value fare matrix for LRT-1, Dr. Santos to Central Terminal. It is not a release
+ * stored value fare matrix for LRT-1, all 25 stations. It is not a release
  * pack and not an advertised coverage claim. These tests check that the transcription is
  * internally consistent and that it is correctly refused for release until a second
  * teammate has verified it.
@@ -21,6 +21,8 @@ const raw = JSON.parse(readFileSync(CANDIDATE_PATH, "utf8")) as Record<string, a
 const ORDER = [
   "dr_santos", "ninoy_aquino_avenue", "pitx", "mia_road", "redemptorist_aseana", "baclaran", "edsa",
   "libertad", "gil_puyat", "vito_cruz", "quirino", "pedro_gil", "un_avenue", "central",
+  "carriedo", "doroteo_jose", "bambang", "tayuman", "blumentritt", "abad_santos", "r_papa",
+  "fifth_avenue", "monumento", "balintawak", "fernando_poe_jr",
 ];
 const place = (k: string): string => `place_lrt1_${k}`;
 const stop = (k: string): string => `stop_lrt1_${k}`;
@@ -84,7 +86,12 @@ describe("LRT-1 candidate pack (unreviewed transcription)", () => {
   it("lists the stations in the order of the official matrix and in increasing latitude, south to north", () => {
     assert.deepEqual(raw["places"].map((p: any) => p.id), ORDER.map(place));
     const lat = raw["places"].map((p: any) => p.point.latitude as number);
-    for (let i = 1; i < lat.length; i++) assert.ok(lat[i]! > lat[i - 1]!, `station ${i} is not north of station ${i - 1}`);
+    // Balintawak and Fernando Poe Jr. are almost due east of each other on EDSA, so only
+    // require the line never to turn back south by more than a rounding error.
+    for (let i = 1; i < lat.length; i++) assert.ok(lat[i]! > lat[i - 1]! - 0.001, `station ${i} is south of station ${i - 1}`);
+    for (let i = 1; i < lat.length - 1; i++) assert.ok(lat[i]! > lat[i - 1]!, `station ${i} is not north of station ${i - 1}`);
+    const lon = raw["places"].map((p: any) => p.point.longitude as number);
+    assert.ok(lon[24]! > lon[23]! && lon[23]! > lon[22]!, "the line turns east after Monumento");
   });
 
   it("does not reuse a coordinate across stations (the Wikipedia Baclaran point duplicated EDSA)", () => {
@@ -92,7 +99,7 @@ describe("LRT-1 candidate pack (unreviewed transcription)", () => {
     assert.equal(new Set(keys).size, keys.length);
   });
 
-  it("has a fare for every ordered pair, symmetric, between 16 and 36 pesos", () => {
+  it("has a fare for every ordered pair, symmetric, between 16 and 52 pesos", () => {
     const matrix = raw["fares"][0].matrix as { fromStopId: string; toStopId: string; centavos: number }[];
     assert.equal(matrix.length, ORDER.length * (ORDER.length - 1));
     const byPair = new Map(matrix.map((m) => [`${m.fromStopId}>${m.toStopId}`, m.centavos]));
@@ -101,7 +108,7 @@ describe("LRT-1 candidate pack (unreviewed transcription)", () => {
         if (a === b) continue;
         const forward = byPair.get(`${stop(a)}>${stop(b)}`);
         assert.equal(forward, byPair.get(`${stop(b)}>${stop(a)}`), `${a}<->${b} must be symmetric`);
-        assert.ok(forward !== undefined && forward >= 1600 && forward <= 3600 && forward % 100 === 0, `${a}>${b} fare ${forward}`);
+        assert.ok(forward !== undefined && forward >= 1600 && forward <= 5200 && forward % 100 === 0, `${a}>${b} fare ${forward}`);
       }
     }
   });
@@ -122,6 +129,9 @@ describe("LRT-1 candidate pack (unreviewed transcription)", () => {
     const spot: [string, string, number][] = [
       ["vito_cruz", "gil_puyat", 1800], ["vito_cruz", "edsa", 2000], ["vito_cruz", "baclaran", 2100],
       ["baclaran", "quirino", 2200], ["dr_santos", "central", 3600], ["pedro_gil", "un_avenue", 1700],
+      ["dr_santos", "fernando_poe_jr", 5200], ["monumento", "balintawak", 2000], ["blumentritt", "tayuman", 1700],
+      ["central", "carriedo", 1700], ["vito_cruz", "doroteo_jose", 2400], ["edsa", "balintawak", 3900],
+      ["balintawak", "fernando_poe_jr", 1900], ["abad_santos", "r_papa", 1700],
       ["libertad", "gil_puyat", 1700], ["pitx", "ninoy_aquino_avenue", 1800],
     ];
     for (const [a, b, centavos] of spot) {
@@ -168,12 +178,31 @@ describe("planning on the verified-in-memory copy", () => {
     }
   });
 
-  it("spans the whole modelled line in one ride", () => {
-    const r = plan("dr_santos", "central");
-    assert.equal(r.ok, true);
-    if (!r.ok) return;
-    assert.equal(r.value.options[0]!.fare.knownMinCentavos, 3600);
-    assert.equal(rides(r.value.options[0]!).length, 1);
+  it("spans the whole line in one ride, both ways, at the same documented fare", () => {
+    for (const [a, b] of [["dr_santos", "fernando_poe_jr"], ["fernando_poe_jr", "dr_santos"]] as const) {
+      const r = plan(a, b);
+      assert.equal(r.ok, true);
+      if (!r.ok) return;
+      assert.equal(r.value.options[0]!.fare.knownMinCentavos, 5200);
+      assert.equal(rides(r.value.options[0]!).length, 1);
+      assert.equal(r.value.options[0]!.transfers, 0);
+    }
+  });
+
+  it("every station can reach every other station directly with its own matrix fare", () => {
+    const matrix = pack.fares[0]!.matrix!;
+    for (const a of ORDER) {
+      for (const b of ORDER) {
+        if (a === b) continue;
+        const r = plan(a, b);
+        assert.equal(r.ok, true, `${a} to ${b}`);
+        if (!r.ok) return;
+        const expected = matrix.find((m) => m.fromStopId === stop(a) && m.toStopId === stop(b))!.centavos;
+        assert.equal(r.value.options[0]!.fare.knownMinCentavos, expected, `${a} to ${b}`);
+        assert.equal(r.value.options[0]!.fare.status, "complete");
+        assert.equal(r.value.options[0]!.transfers, 0);
+      }
+    }
   });
 
   it("does not claim a discount the data does not document", () => {
