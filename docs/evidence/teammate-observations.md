@@ -91,3 +91,17 @@ Still teammate-reported, unreviewed, and not in any pack.
 1. "The Tiaong jeep terminal is the same as the intersection": do you mean the jeep from Lipa ends at the Tiaong intersection, and the Candelaria jeep boards there? Then where is the **Lipa-side** terminal where the Tiaong jeep starts?
 2. Please send the Google Maps image for the Tiaong intersection, or confirm that the coordinates are the pin to use.
 3. Which Pedro Gil stop does the "Buendia" bus drop at (on Taft Avenue by the LRT station, or on Pedro Gil Street)?
+
+## Lipa to Candelaria, leg 1 pins received 2026-10-10 (third message from the user)
+
+| Point | GPS |
+|---|---|
+| Boarding: McDonald's near De La Salle Lipa ("MCDO La Salle") | 13.941340, 121.149253 |
+| Jeep drop-off: Lipa town proper, specific area | 13.939738, 121.161626 |
+| End of the walk: terminal of the Tiaong jeep (Lipa side) | 13.940246, 121.162833 |
+
+The user states this is the only possible route from Lipa to Candelaria. That statement is recorded but unverified, and the app never claims a route is the only one; it shows only journeys that are verified.
+
+Checks on the pins (straight-line distances, for sanity only, never used as a walking distance): jeep leg about 1,340 m; walk about 142 m. A real walking distance cannot be shorter than 142 m.
+
+Leg 1 now lacks only: the jeep's signboard text and direction as seen (the user earlier reported "Lipa Palengke"), the date and recorder, the **measured walking distance and turn-by-turn steps** from the drop-off to the terminal (a Google Maps walking route reading would do, if named as the source), the terminal's name, and a second checker. The Tiaong jeep (leg 2) still needs its boarding spot at the terminal and the signboard text.
