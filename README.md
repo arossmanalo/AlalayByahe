@@ -25,6 +25,9 @@ An Android commute assistant for Filipino, English and Taglish requests. A small
 | Model download and SHA-256 on a phone | Not Run |
 | Phone-local extraction into real routing | Not Run |
 | Offline proof (airplane mode, fresh query) | Not Run |
+| AI trip summary (chat and manual trips) | Checks and fallback tested in Node with a fake model; on a phone Not Run |
+| Demo build: every pair of demo places plans | Verified in software (all 6,480 ordered pairs); on a phone Not Run |
+| Near-stop alert with real GPS, optional map request | Not Run |
 | iOS | Out of scope |
 
 ## Get the installed baseline
@@ -80,7 +83,7 @@ No iOS native build, signing, install or inference has been done. Earlier iOS He
 |---|---|---|---|
 | **Release** | no flags | Frozen pack `lrt1_2026_10_10_1` (LRT-1 stations only) | The only build recorded as release evidence |
 | Benchmark | `EXPO_PUBLIC_AI_DIAGNOSTICS=1` | Release pack plus the on-device AI diagnostics screen | Not release evidence |
-| Demo | `EXPO_PUBLIC_DEMO_BUILD=1` | Release pack plus **unverified** road-route drafts and an **invented** Luzon network, own database, test-data banner on every screen | Not release evidence; never present as real coverage |
+| Demo | `EXPO_PUBLIC_DEMO_BUILD=1` | Release pack plus **unverified** road-route drafts, an **invented** Luzon network and invented "DEMO connector" links so every pair of demo places plans; own database. The per-screen test-data banner is hidden in this build; About and the coverage notes on every result still say it is a demonstration network | Not release evidence; never present as real coverage |
 
 All three share one package name, so installing one replaces another. Build each from a clean state (Metro caches the flag): [runbook](docs/evidence/android-build-runbook.md), [handoff for whoever builds](docs/evidence/apk-build-handoff.md) and `scripts/build-all-apks.ps1`. After building, check each APK with `npx tsx scripts/check-bundle-clean.ts <apk> --expect release` (or `--expect demo`). Phone steps and the evidence form: [phone test script](#phone-test-script-android).
 
@@ -112,7 +115,7 @@ How to use it: do the step, look at the phone, write **Pass**, **Fail** or **Not
 |---|---|---|---|---|
 | P-01 | On the build machine run `Get-FileHash <release apk> -Algorithm SHA256`. Compare with the entry in `docs/evidence/native-artifacts.json`. | The two hashes are identical and the entry is labelled `release`. If not, stop. | Session record | Not Run |
 | P-02 | `adb devices`, then `adb install -r <release apk>`. | `Success`. Then `adb shell pm path ph.alalaybyahe.app` and `adb pull <that path> installed.apk`; `Get-FileHash installed.apk` equals the P-01 hash. | Session record | Not Run |
-| P-03 | Open the app from the launcher. | The Home screen appears. About shows coverage "LRT-1 only" and **no** test-data banner on any screen. If a banner or a Luzon place appears, this is the demo build: stop. | Notes | Not Run |
+| P-03 | Open the app from the launcher. | The Home screen appears. About shows coverage "LRT-1 only" and **no** test-data banner on any screen. If a Luzon place appears, this is the demo build: stop. | Notes | Not Run |
 
 ### B. Cold launch without Metro or USB
 
@@ -221,7 +224,9 @@ An Android commute assistant for Filipino, English and Taglish requests. A small
 
 ### What the language model does and does not do
 
-- It runs **on the phone** through llama.rn 0.12.9. It only extracts fields (origin, destination, mode limits, walking limits, budget, priority). It never supplies routes, stops, directions, walking paths, fares or instructions.
+- It runs **on the phone** through llama.rn 0.12.9. It extracts fields (origin, destination, mode limits, walking limits, budget, priority) and, for a route the engine has already planned, writes a short **trip summary**. It never supplies routes, stops, directions, walking paths, fares or instructions.
+- **Trip summary** (approved exception to the "no model-written travel text" rule, contract §4 amendment): the model gets only that route's verified facts. Its text is shown only if it contains no number, fare, time, speed or "live" claim that is not in the facts and names the first boarding stop and the final stop in order; otherwise a plain summary from the route data is shown and labelled "the AI was not used". The numbered steps stay on screen and remain the authority. A typed trip and a manually picked trip get the same summary.
+- Spelling hints sent to the model are the stored places the request mentions, not a fixed list, so every stored place is treated alike.
 - Its output is parsed and validated; truncated or malformed output is rejected. Every extracted field is shown for confirmation before any route is planned. A language model can still mis-read roles or places; that is why confirmation is mandatory.
 - Model: Qwen2.5-0.5B-Instruct, Q4_K_M, Apache-2.0, revision `9217f5db79a29953eb74d5343926648285ec7e67`, 491,400,032 bytes, SHA-256 `74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db`. The weights are not in the repository or the APK.
 - **Phone inference has not been verified.** Accuracy, speed and memory on a phone are unmeasured. Tests in the repository use a fake runtime.
@@ -230,9 +235,10 @@ An Android commute assistant for Filipino, English and Taglish requests. A small
 
 | Item | Detail |
 |---|---|
-| Typed request | Stays on the device. There is no cloud AI endpoint and no analytics. The app contains no `fetch`, XHR or WebSocket calls. |
+| Typed request | Stays on the device. There is no cloud AI endpoint and no analytics. The app contains no `fetch`, XHR or WebSocket calls; the only network requests are the model download and the optional map picture below. |
 | Model download | One explicit tap on "Download and set up" downloads the model file from the pinned Hugging Face URL to private app storage, checks size and SHA-256, and only then uses it. Hugging Face can see the phone's IP address and the request. |
-| Location | The app does not use location. |
+| Location | Used only by the optional near-stop alert ("Notify me"), in the foreground, after the user starts it and grants permission. The position stays on the phone, except when the optional map picture is shown while an alert runs (see below). |
+| Optional map picture | Off unless the APK was built with `EXPO_PUBLIC_GEOAPIFY_KEY`. Nothing is requested until the user taps "Show map (uses internet)". The request sends the trip's stop coordinates, and the phone's position while an alert runs, to Geoapify (free tier, attribution shown). **A key set at build time is embedded in the APK**, which contract §8 says provider keys must not be; leave it unset for the release build until it goes through a proxy. |
 | Online address and walking helpers | **Off by default** (`enableOnlineHelpers: false`) and not wired to any provider. If ever enabled they would need an explicit user action and would send only a selected address or coordinates, never the typed conversation. |
 | Build time (not in the app) | The demo build's walking distances were computed by the team on a public Valhalla routing server (FOSSGIS) over OpenStreetMap data, and place coordinates came from Nominatim, while building the data, not from the phone. |
 
@@ -244,7 +250,7 @@ No paid service is used and no paid tier or automatic upgrade exists.
 |---|---|---|
 | **Release** (the only build recorded as release evidence) | `pack_lrt1`, version `lrt1_2026_10_10_1`, SHA-256 `f2499c546a0b8e495ab41062595c55fc21f3c293410744a640147a3cb44c2931`: LRT-1 only, 25 stations, ride legs in both directions and stored-value fares between every pair. **No walking links, no entrances, no road services.** | Transcription independently reviewed on 2026-10-10 (routing facts `verified`). Station coordinates are `estimated` (approximate). |
 | Benchmark | The release pack plus the on-device AI diagnostics screen (`EXPO_PUBLIC_AI_DIAGNOSTICS=1`) | Not release evidence |
-| **Demo** | The release pack plus **unverified** road-route drafts from teammate reports and an **invented** Luzon network of 45 places and 33 lines, loaded into a separate database, with a test-data banner on every screen | Not release evidence. Never present as real coverage. |
+| **Demo** | The release pack plus **unverified** road-route drafts from teammate reports, an **invented** Luzon network of 45 places and 33 lines, and invented "DEMO connector" links (9 short walks, 3 sample lines) so all 6,480 ordered pairs of demo places plan; separate database. The per-screen banner is hidden; About and the coverage notes say it is a demonstration network | Not release evidence. Never present as real coverage. |
 
 ### Sources and attribution
 
@@ -254,6 +260,7 @@ No paid service is used and no paid tier or automatic upgrade exists.
 | Station coordinates | Wikipedia station articles (MediaWiki API) and OpenStreetMap via Nominatim | Wikipedia: CC BY-SA 4.0. OpenStreetMap data: ODbL 1.0, **© OpenStreetMap contributors**. Approximate points, not entrances. |
 | Demo walks and demo place pins | Valhalla routing on OpenStreetMap data (FOSSGIS server), Nominatim | ODbL 1.0, **© OpenStreetMap contributors**. Computed, not walked. |
 | Language model | Qwen2.5-0.5B-Instruct-GGUF by the Qwen team | Apache-2.0 |
+| Optional map picture | Geoapify Static Maps (only if built with a key and the user taps Show map) | Free tier; attribution shown under the map: Geoapify, OpenMapTiles, © OpenStreetMap contributors |
 | Runtime and libraries | llama.rn 0.12.9, React Native 0.86.3, Expo 57.0.27, expo-sqlite, expo-router, expo-file-system, React 19.2.3, @noble/hashes 2.4.0 | MIT (read from the installed `package.json` files) |
 
 ### Known limitations (state these plainly)
@@ -264,7 +271,8 @@ No paid service is used and no paid tier or automatic upgrade exists.
 - Fares are stored-value fares. Unknown fares are shown as unknown, never zero; a partial subtotal is labelled as not the full total. No student/senior/PWD discount is documented, so the regular fare is shown as an estimate.
 - Offline use depends on the model and data being set up first (one-time download). New addresses and uncached walking paths are not supported offline.
 - Android only. iOS was never built or tested.
-- **Not yet verified on any phone:** local inference, offline operation, SQLite persistence, cold launch, memory and speed.
+- **Not yet verified on any phone:** local inference, the AI trip summary's quality and speed, the near-stop alert with real GPS, the optional map request, offline operation, SQLite persistence, cold launch, memory and speed.
+- The demo build's connectors and road drafts are invented or unverified; demo journeys are samples, not travel advice.
 - 19 high npm advisories remain in build tooling (`braces`, `node-forge`) with no published fix; they are not in the app bundle. See `docs/evidence/dependency-advisories.md`.
 
 ### AI-assisted development disclosure
