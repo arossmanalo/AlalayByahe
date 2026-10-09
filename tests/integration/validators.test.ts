@@ -38,6 +38,16 @@ test("onboard origin must be the manually confirmed next legal stop", () => {
   assert.equal(errorCode(validateRouteRequest(req, data)), "INVALID_INPUT");
   req.origin = request(data, "b").origin; assert.equal(validateRouteRequest(req, data).ok, true);
 });
+test("confirmed onboard origin may use that stop's documented point", () => {
+  const data = structuredClone(pack()), req = request(data, "b");
+  const stop = data.stops.find(s => s.id === "stop_test_b_bus")!;
+  stop.point.longitude += 0.0001;
+  req.origin.point = { ...stop.point };
+  req.onboard = { directionId: "dir_test_bus", confirmedNextStopId: stop.id, confirmedAt: "2026-10-09T21:00:00+08:00" };
+  assert.equal(validateRouteRequest(req, data).ok, true);
+  req.origin.point.longitude += 0.001;
+  assert.equal(errorCode(validateRouteRequest(req, data)), "INVALID_INPUT");
+});
 test("real routing output passes the shared output boundary", () => {
   const data = pack(), req = request(data), out = value(planRoute(req, data, { now: () => NOW }));
   assert.equal(validateRouteResult(out, req, data).ok, true);

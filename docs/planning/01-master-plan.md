@@ -1,7 +1,7 @@
 # AlalayByahe — Implementation Planning Package
-**Revision 1.0 · 9 October 2026 · planning only**
+**Revision 1.0 · 9 October 2026 · implementation approved**
 
-The grilling decisions are confirmed. This package is ready for team review; production implementation waits for approval. No native builds, model inference, route-data validation or performance benchmarks have been executed. The workspace was empty and had no connected Git repository during planning.
+The grilling decisions and implementation are approved. The repository is connected, and Member 4 has integrated the native scaffold, contracts, storage, controller and three members' implementations. Current evidence is in docs/evidence/integration.md. Physical inference, verified corridor coverage and iOS native signing remain unproven. The workspace was empty and unconnected when this plan was originally written.
 
 ## Part 1 — Executive Technical Assessment
 Build a standalone Android/iOS commute assistant that interprets a short Filipino, English or Taglish request **on the phone**, then computes a journey from a locally stored, source-backed transit graph. Show origin/destination confirmation, boarding point, service direction, dropoff, transfers, walking links and honest fare status.
@@ -60,7 +60,7 @@ The user accepted smaller verified demo coverage if necessary. Keep all three as
 | expo-build-properties | 57.0.22 | Native build configuration |
 | expo-dev-client | 57.0.19 | Development only; demo uses installed release build |
 | llama.rn | 0.12.9 | Native llama.cpp inference |
-| TypeScript / @types/react | 6.0.3 / 19.2.2 | Expo template aligned type checks |
+| TypeScript / @types/react | 6.0.3 / 19.2.4 | Installed Expo-compatible type checks |
 | tsx | 4.23.15 | Pure TypeScript tests with Node node:test |
 | @noble/hashes | 2.4.0 | Incremental SHA256, MIT |
 
@@ -296,7 +296,7 @@ Do not add complexity merely for a score. The defensible distinction is useful l
 ## Part 17 — Submission Readiness Checklist
 Owner Member 4, with source/AI disclosures from Members 1–2 and demo UI from Member 3. Repo, README, exact installation/dev/release steps, license/attribution, model manifest, supported coverage, offline boundary, tested-device table and measured limitations; ~1 minute video; user-authored posting/submission actions; verify receipt and GitHub visibility before internal deadline. [Complete checklist](06-acceptance-and-demo.md).
 
-Standing instruction: commit/push changes when a repository is connected. This workspace has no repository, so these planning files cannot yet be committed to GitHub. During implementation, create/connect the team repository, then commit task-owned changes and verify push. Do not claim remote completion without Git evidence.
+Standing instruction: commit/push task-owned changes and verify the remote SHA. The repository is connected to https://github.com/arossmanalo/AlalayByahe.git. Member 4 uses feat/integration/int-001-foundation in an isolated checkout; preserve other members' branches and never force-push shared main.
 
 ## Part 18 — Final Recommendation
 Use native Expo/RN with llama.rn and Qwen2.5 0.5B Q4_K_M; download once, verify/store privately, extract strict JSON locally, validate/confirm places and preferences, compute directed journey/fare from SQLite, render deterministic instructions. Validate signed native inference and data availability first.

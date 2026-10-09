@@ -34,7 +34,7 @@ Screens live in `app/` (except `app/_layout.tsx`, owned by Member 4). Components
    }
    ```
 
-   Screens set their own titles with `<Stack.Screen options={{ title }} />`.
+   Screens set their own titles with `<Stack.Screen options={{ title }} />`. This is now mounted by NativeUiBridge inside Member 4's ApplicationProvider; use the actual app/_layout.tsx composition.
 
 3. Expo-required peers used by the UI: `expo-router` and `react-native-safe-area-context` (`useSafeAreaInsets`). No other packages are imported.
 
@@ -43,12 +43,12 @@ Screens live in `app/` (except `app/_layout.tsx`, owned by Member 4). Components
 - `ai.getState()` is synchronous and cheap. The provider polls it once per second so boot-time initialization by the app layer shows up without a subscription API.
 - `ai.ensureModel()` runs only from the explicit "Download and set up" button. Progress is the normalized 0–1 value from the contract. `initialize()` is called afterwards only if the state is not already `ready`.
 - `repository.getPack()` is loaded once at mount. The UI uses it for coverage labels, source titles, onboard service/direction/stop lists and up to 30 `knownPlaceLabels`.
-- `controller.interpret()` is called with `locale: "taglish"` and a fresh `queryId`. Every route submission uses a new `queryId`; results for a superseded ID are dropped.
+- `controller.interpret()` is called with `locale: "taglish"` and a fresh `queryId`. AI confirmation/edits retain that draft's query ID; manual submissions create a fresh ID. Results for a superseded job are dropped.
 - Manual and onboard trips call `submitManual`. Confirmed AI drafts call `submitConfirmed`.
 
 ## Gaps to resolve with owners
 
-- `AiPort` has no download-cancel method, so the setup screen offers retry but not cancel (UI-004 asks for both). Member 1/4 decide whether to add one in a contract version bump.
+- Model setup cancellation is now supplied as an optional UiServices capability from Member 1's existing AiManager extension. Canonical AiPort remains unchanged; the real setup screen offers cancellation during download/checking.
 - Onboard: the origin endpoint for an onboard request is the confirmed next stop's place (`stop.placeId`, `stop.label`, `stop.point`). Member 2 should confirm this is the origin ROUTE-005 expects alongside `OnboardContext`.
 - `ExtractInput.locale` is fixed to `"taglish"` because the UI cannot know the query language. Member 1 may prefer another value.
 - The UI language toggle (English/Filipino) is session-only. Persisting it needs storage owned by Member 4.

@@ -2,7 +2,7 @@ $ErrorActionPreference = 'Stop'
 if (-not $env:ANDROID_HOME) { throw 'Set ANDROID_HOME to your Android SDK. On this host use D:\AlalaySdk.' }
 $projectRoot = Split-Path -Parent $PSScriptRoot
 # Paths containing spaces caused Windows CMake link/regeneration failures on the
-# observed host. Run this checkout through its short junction (D:\AlalayBuild).
+# observed host. Use a short physical checkout; a junction was insufficient.
 if ($projectRoot.Contains(' ')) {
   throw 'Use a short project path without spaces. See README: Android build on Windows.'
 }

@@ -13,6 +13,8 @@ Owner: Member 1. Gate M1. **Status: Blocked / Not Run.** No phone has run llama.
 
 ## What is ready for the gate
 
+Member 4 integration update: scaffold/lockfile and real native ports now exist on feat/integration/int-001-foundation. The Member 4 Windows host has Android SDK/NDK/CMake; its actual native build attempts are in [builds.md](builds.md). The earlier blocker table describes Member 1's original host/checkpoint. Physical inference on either platform remains Not Run.
+
 - `src/ai/llamaRnRuntime.ts` — adapter written against the **installed** llama.rn 0.12.9 typings (`initLlama`, `LlamaContext.completion` with `response_format: { type: "json_schema", json_schema: { strict: true, schema } }`, `stopCompletion`, `release`, `BuildInfo.number`). It typechecks under TypeScript 6.0.3 strict mode.
 - `src/ai/nativeProbe.ts` — `runNativeProbe({ runtime, store, platformLabel, text })` verifies the model (marker or full SHA256), loads it, runs one fresh schema-constrained completion, parses and validates it, and releases. It returns raw text, completion flags, load/completion/verification times and the runtime/model labels.
 - Pinned llama.rn facts read from the installed package: `BuildInfo.number = 10256`, commit `6c8dcaa`. The postinstall downloads prebuilt Android JNI libs and the iOS xcframework (SHA-pinned). The Expo plugin options are `enableEntitlements`, `entitlementsProfile`, `forceCxx20`, `enableOpenCL`, `enableOpenCLAndHexagon`. Default Android ABIs are `x86_64,arm64-v8a`.
