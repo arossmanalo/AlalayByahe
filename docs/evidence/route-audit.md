@@ -37,6 +37,22 @@ The only data with an operator source is **LRT-1 station-to-station travel, 25 s
 | Dr. Santos to Fernando Poe Jr. and back | P52 | 5200 both ways |
 | Student fare, Vito Cruz to Baclaran | No discount documented in the data | 2100, status `estimated`, basis says no discount is documented |
 
+## Software run through the UI's presentation code (2026-10-10)
+
+`tests/integration/release-pack-ui-text.test.ts` plans real journeys on the bundled pack and prints them with Member 3's own pure code (`journey-presenter.ts`, `i18n.ts`). It checks what the screens would show; it does not render a screen.
+
+| Journey | Printed fare (English / Filipino) | Steps | Matches the LRMC matrix |
+|---|---|---|---|
+| Vito Cruz to Baclaran | "₱21.00 total" / "₱21.00 kabuuan" | 1 ride, headsign Dr. Santos, board "Vito Cruz (LRT-1 platform)", alight "Baclaran (LRT-1 platform)", no walk, no issues | Yes (P21) |
+| EDSA (Taft) to Vito Cruz | "₱20.00 total" | 1 ride, headsign Fernando Poe Jr. | Yes (P20) |
+| Vito Cruz to EDSA (Taft) | "₱20.00 total" | 1 ride, headsign Dr. Santos | Yes (P20) |
+| Dr. Santos to Fernando Poe Jr., and back | "₱52.00 total" | 1 ride each way, 0 transfers | Yes (P52) |
+| Pedro Gil to Vito Cruz, student | "₱19.00 total" | ride basis says "No student discount is documented"; option warnings say some fares are estimates | Yes (P19 stored value); **headline still says "total"** |
+
+Other checks in that file: the coverage summary states the pack's "LRT-1 only" label once and keeps the engine's "not live availability" note; no printed text in either language claims live, fastest or guaranteed service.
+
+**Observation for Member 3:** an estimated but complete fare (the student case) is headlined "₱19.00 total". The estimate is disclosed in the per-ride basis and the warnings, but a reviewer may prefer the headline to say "estimated" too. That is a copy decision for Member 3; the engine's data is correct.
+
 ## What is not audited
 
 - No physical check of any station, entrance, platform or walking path. Walking links to and from stations do not exist in the data, so the app cannot yet plan "my place to the station" or "station to my destination".
