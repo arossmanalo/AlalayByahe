@@ -1,7 +1,7 @@
 import { readFileSync } from "node:fs";
 
 /**
- * Prints a checklist for the independent reviewer of data/candidates/lrt1-candidate.json.
+ * Prints a checklist for the independent reviewer of assets/data/release.json.
  * Usage: npx tsx scripts/lrt1-review-sheet.ts [seed]
  * The reviewer compares each printed value with the official LRMC stored value matrix image
  * (the image titled "New LRT-1 Stored Value Fare Matrix", served at the file name containing SJT).
@@ -13,7 +13,7 @@ interface PackLike {
   directions: { id: string; headsign: string }[];
 }
 
-const pack = JSON.parse(readFileSync("data/candidates/lrt1-candidate.json", "utf8")) as PackLike;
+const pack = JSON.parse(readFileSync("assets/data/release.json", "utf8")) as PackLike;
 const seed = Number(process.argv[2] ?? 20261010);
 
 let state = seed >>> 0;

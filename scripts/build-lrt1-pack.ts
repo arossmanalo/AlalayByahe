@@ -3,21 +3,22 @@ import { dirname } from "node:path";
 import type { Evidence, FarePolicy, TransitPack } from "../src/contracts/index";
 
 /**
- * Builds data/candidates/lrt1-candidate.json (ROUTE-002 follow-up, ROUTE-001 evidence).
+ * Builds assets/data/release.json (ROUTE-001/002): the LRT-1 station-to-station pack.
  *
- * This is a CANDIDATE, not a release pack. Every fact below was transcribed by Member 2
- * on 2026-10-09 and has NOT been checked by a second teammate, so all evidence is marked
- * "estimated". The release gate requires routing facts to be "verified", which means this
- * pack is correctly rejected for release until a reviewer checks each transcription against
- * its source and the reliability is raised. Run: tsx scripts/build-lrt1-candidate.ts
+ * Source: the official LRMC "New LRT-1 Stored Value Fare Matrix" (effective April 2, 2025),
+ * transcribed by Member 2's assistant and independently reviewed by Aryl Manalo on 2026-10-10
+ * (station order, the full Vito Cruz and EDSA rows, 24 sampled pairs including the corners,
+ * five map coordinates and the two direction headsigns; all matched). The build also refuses
+ * to write unless all 600 ordered pairs agree across mirrored readings.
  *
- * Scope: all 25 LRT-1 stations Dr. Santos to Fernando Poe Jr., ride legs and stored value
- * fares between them. No walking links, no road services. It covers none of the three
- * target corridors end to end.
+ * Scope: all 25 LRT-1 stations Dr. Santos to Fernando Poe Jr., ride legs and stored value fares
+ * only. No walking links, no road services; it covers none of the three target corridors end
+ * to end. Station coordinates are approximate and stay "estimated". Run: tsx scripts/build-lrt1-pack.ts
  */
 
-const OUTPUT = "data/candidates/lrt1-candidate.json";
-const CHECKED_AT = "2026-10-09T23:00:00+08:00";
+const OUTPUT = "assets/data/release.json";
+const CHECKED_AT = "2026-10-10T00:41:24+08:00";
+const REVIEWER = "Aryl Manalo";
 
 interface Station { key: string; name: string; aliases: string[]; lat: number; lon: number; coordSources: string[]; coordNote: string }
 
@@ -127,8 +128,8 @@ for (let i = 0; i < STATIONS.length; i++) {
   }
 }
 
-const ev = (sourceIds: string[], note: string): Evidence => ({ sourceIds, checkedAt: CHECKED_AT, reliability: "estimated", note });
-const UNREVIEWED = "Transcribed by Member 2; not yet checked by a second teammate.";
+const ev = (sourceIds: string[], note: string, reliability: Evidence["reliability"] = "verified"): Evidence => ({ sourceIds, checkedAt: CHECKED_AT, reliability, note });
+const REVIEWED = `Transcribed by Member 2's assistant; checked by ${REVIEWER} on 2026-10-10 against the LRMC image (station order, full Vito Cruz and EDSA rows, 24 sampled pairs); all 600 pairs also agree across mirrored readings.`;
 
 const placeId = (k: string): string => `place_lrt1_${k}`;
 const stopId = (k: string): string => `stop_lrt1_${k}`;
@@ -141,52 +142,52 @@ STATIONS.forEach((a, i) => STATIONS.forEach((b, j) => {
 }));
 
 const lrmcSource = ["source_lrmc_svc_matrix_2025_04_02"];
-const routeEvidence = ev(lrmcSource, `Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. ${UNREVIEWED}`);
+const routeEvidence = ev(lrmcSource, `Station order is the row order of the LRMC fare matrix; a fare exists for every ordered pair, which implies boarding and alighting at each station in both directions. ${REVIEWED}`);
 
 const pack: TransitPack = {
   schemaVersion: "1.0",
-  packId: "pack_lrt1_candidate",
-  version: "lrt1_candidate_2026_10_09_1",
+  packId: "pack_lrt1",
+  version: "lrt1_2026_10_10_1",
   kind: "release",
   createdAt: CHECKED_AT,
   coverageLabels: [
-    "LRT-1 only: Dr. Santos to Fernando Poe Jr. (25 stations), rides and stored value fares. Unreviewed candidate. No road services, no walking links, no target corridor covered end to end.",
+    "LRT-1 only: Dr. Santos to Fernando Poe Jr. (25 stations), rides and stored value fares. Reviewed 2026-10-10. No road services, no walking links, no target corridor covered end to end.",
   ],
   sources: [
     {
       id: "source_lrmc_svc_matrix_2025_04_02", title: "New LRT-1 Stored Value Fare Matrix, effective April 2, 2025",
       url: "https://i0.wp.com/lrmc.ph/wp-content/uploads/2025/03/New-SJT-fare-matrix-effective-April-2-2025-1.png",
       publisher: "Light Rail Manila Corporation (LRMC)", retrievedAt: CHECKED_AT,
-      usageBasis: "Operator publication read on screen and transcribed for all 25 stations. The image titled Stored Value is served at the file name containing SJT; file names on the LRMC site are swapped, so the title inside the image was used.",
+      usageBasis: "Operator publication read on screen, transcribed for all 25 stations, and reviewed by a teammate. The image titled Stored Value is served at the file name containing SJT; file names on the LRMC site are swapped, so the title inside the image was used.",
       factsSupported: ["Station order south to north", "Stored value fare for each station pair among the 25 stations", "Both directions served between every pair"],
-      checkedBy: "Member 2 (unreviewed)",
+      checkedBy: `Member 2 assistant; reviewed by ${REVIEWER}, 2026-10-10`,
     },
     {
       id: "source_wikipedia_lrt1", title: "LRT Line 1 (Metro Manila)", url: "https://en.wikipedia.org/wiki/LRT_Line_1_(Metro_Manila)",
       publisher: "Wikipedia contributors", retrievedAt: CHECKED_AT,
       usageBasis: "CC BY-SA 4.0. Used only to cross-check station names, terminals and the Taft Avenue name for EDSA station.",
       factsSupported: ["Terminals Dr. Santos and Fernando Poe Jr.", "EDSA station is also called Taft Avenue"],
-      checkedBy: "Member 2 (unreviewed)",
+      checkedBy: `Member 2 assistant; reviewed by ${REVIEWER}, 2026-10-10`,
     },
     {
       id: "source_wikipedia_station_coordinates", title: "Wikipedia station articles (coordinates via MediaWiki API)", url: "https://en.wikipedia.org/wiki/LRT_Line_1_(Metro_Manila)",
       publisher: "Wikipedia contributors", retrievedAt: CHECKED_AT,
       usageBasis: "CC BY-SA 4.0. Approximate station coordinates only. The Baclaran value duplicates the EDSA value, which is wrong, so it was not used.",
       factsSupported: ["Approximate station coordinates"],
-      checkedBy: "Member 2 (unreviewed)",
+      checkedBy: `Member 2 assistant; five coordinates reviewed by ${REVIEWER}, 2026-10-10`,
     },
     {
       id: "source_osm_nominatim", title: "OpenStreetMap via Nominatim search", url: "https://nominatim.openstreetmap.org/",
       publisher: "OpenStreetMap contributors", retrievedAt: CHECKED_AT,
       usageBasis: "ODbL 1.0, attribution required: Data (c) OpenStreetMap contributors. Used to cross-check station coordinates and the Buendia name; nodes are bus stops beside the stations, not platforms.",
       factsSupported: ["Approximate station coordinates", "Gil Puyat station is also called Buendia"],
-      checkedBy: "Member 2 (unreviewed)",
+      checkedBy: `Member 2 assistant; five coordinates reviewed by ${REVIEWER}, 2026-10-10`,
     },
   ],
   places: STATIONS.map((s) => ({
     id: placeId(s.key), name: s.name, aliases: s.aliases, kind: "station" as const, locality: "Metro Manila",
     point: { latitude: s.lat, longitude: s.lon },
-    evidence: ev(s.coordSources, `${s.coordNote} Approximate; not a surveyed entrance. ${UNREVIEWED}`),
+    evidence: ev(s.coordSources, `${s.coordNote} Approximate; not a surveyed entrance. Baclaran, EDSA, Vito Cruz, Pedro Gil and Fernando Poe Jr. were checked on a map by ${REVIEWER}; the other stations were not.`, "estimated"),
   })),
   stops: STATIONS.map((s) => ({
     id: stopId(s.key), placeId: placeId(s.key), label: `${s.name.replace(" Station", "")} (LRT-1 platform)`,
@@ -199,12 +200,12 @@ const pack: TransitPack = {
     {
       id: northbound, serviceId: "service_lrt1", headsign: "Fernando Poe Jr.", availability: "documented",
       availabilityNote: "Documented only by the fare matrix. Operating hours and disruptions are not recorded; not live availability.",
-      evidence: ev(["source_lrmc_svc_matrix_2025_04_02", "source_wikipedia_lrt1"], `Headsign from the northern terminal named by Wikipedia. ${UNREVIEWED}`),
+      evidence: ev(["source_lrmc_svc_matrix_2025_04_02", "source_wikipedia_lrt1"], `Headsign from the northern terminal named by Wikipedia. ${REVIEWED}`),
     },
     {
       id: southbound, serviceId: "service_lrt1", headsign: "Dr. Santos", availability: "documented",
       availabilityNote: "Documented only by the fare matrix. Operating hours and disruptions are not recorded; not live availability.",
-      evidence: ev(["source_lrmc_svc_matrix_2025_04_02", "source_wikipedia_lrt1"], `Headsign from the southern terminal named by Wikipedia. ${UNREVIEWED}`),
+      evidence: ev(["source_lrmc_svc_matrix_2025_04_02", "source_wikipedia_lrt1"], `Headsign from the southern terminal named by Wikipedia. ${REVIEWED}`),
     },
   ],
   routeStops: [
@@ -220,7 +221,7 @@ const pack: TransitPack = {
   walkLinks: [],
   fares: [{
     id: "fare_lrt1_svc_2025_04_02", serviceId: "service_lrt1", kind: "matrix", validFrom: "2025-04-02",
-    evidence: ev(lrmcSource, `Stored value card fares only. Single journey fares are a different table and are not included. ${UNREVIEWED}`),
+    evidence: ev(lrmcSource, `Stored value card fares only. Single journey fares are a different table and are not included. ${REVIEWED}`),
     matrix,
   }],
 };
