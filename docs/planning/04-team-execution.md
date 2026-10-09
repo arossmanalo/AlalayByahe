@@ -81,10 +81,10 @@ All statuses currently **Not Started**. At a 9:30 PM implementation start, four 
 
 | Task ID | Owner | Task | Priority | Dependencies | Status | Estimated Time | Integration Checkpoint |
 |---|---|---|---|---|---|---|---|
-| AI-001 | Member 1 | Prove real native inference on both platforms | P0 | INT-001; may use small local development probe before final UI. | Not Started | 90–120 min shared with INT-001; early gate | M1 |
-| AI-002 | Member 1 | Implement verified model acquisition and readiness | P0 | AI-001, INT-001; storage adapter cooperation. | Not Started | 60–90 min plus network transfer | M2 |
-| AI-003 | Member 1 | Implement structured Taglish extraction | P0 | AI-001; shared validators INT-001; AI-002 for installed runtime. | Not Started | 90 min | M2 |
-| AI-004 | Member 1 | Add cancellation and lifecycle safety | P0 | AI-003; INT-003 orchestration integration. | Not Started | 45–60 min | M3 |
+| AI-001 | Member 1 | Prove real native inference on both platforms | P0 | INT-001; may use small local development probe before final UI. | Blocked — adapter + probe written (`feat/ai/ai-001-ai-004`); awaits INT-001 scaffold and Android SDK/Mac build; device run Not Run ([evidence](../evidence/native-gate.md)) | 90–120 min shared with INT-001; early gate | M1 |
+| AI-002 | Member 1 | Implement verified model acquisition and readiness | P0 | AI-001, INT-001; storage adapter cooperation. | Ready for Integration — store + Expo adapter typechecked; fake-adapter tests pass; real download/restart Not Run | 60–90 min plus network transfer | M2 |
+| AI-003 | Member 1 | Implement structured Taglish extraction | P0 | AI-001; shared validators INT-001; AI-002 for installed runtime. | Ready for Integration — prompt/schema/validation + 26-case held-out corpus; device accuracy Not Run ([evidence](../evidence/taglish-cases.md)) | 90 min | M2 |
+| AI-004 | Member 1 | Add cancellation and lifecycle safety | P0 | AI-003; INT-003 orchestration integration. | Ready for Integration — AiPort manager; fake-runtime lifecycle tests pass; physical cancel/background Not Run | 45–60 min | M3 |
 | AI-005 | Member 1 | Measure accuracy, speed and memory; choose final model | P0 | AI-002–AI-004; native builds INT-005. | Not Started | 60–90 min; optional upgrade adds transfer/validation time | M4 |
 | AI-006 | Member 1 | Prove offline AI and hand off | P0 | AI-004, INT-003, INT-005, ROUTE-006. | Not Started | 45–60 min | M4 |
 | AI-101 | Member 1 | Prototype local signboard OCR only after P0 | P1 | All P0 integrated and tested; Member 4 approval before feature freeze. | Not Started | 2–4h; outside baseline, likely cut | Optional |
