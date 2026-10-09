@@ -54,7 +54,7 @@ flowchart LR
 Native runtime proof and real data are independent critical prerequisites. UI mocks let layout proceed, but do not shorten the proof path. User integration ownership requires frequent small merges rather than a final giant merge.
 
 ## GitHub workflow
-The planning workspace has no Git repository. On implementation approval Member 4 creates/connects the team repository, sets remote, confirms auth and publishes one baseline; teammates clone it. Do not claim commits/push/public status before checking actual Git/GitHub evidence.
+The repository is connected to https://github.com/arossmanalo/AlalayByahe.git. Member 4's installed baseline and integration are published on feat/integration/int-001-foundation. Work in isolated checkouts; the original checkout is concurrently used by Member 2. Remote publication is confirmed only by matching commit SHA.
 
 Branches: `feat/ai/<task-id>`, `feat/routes/<task-id>`, `feat/ui/<task-id>`, `feat/integration/<task-id>`. Use lowercase IDs in branch names. Small related tasks may share a feature branch if dependencies are clear. Main remains deployable after each merge.
 
@@ -77,37 +77,37 @@ Blocker report: task ID; exact error/evidence; what was tried; affected contract
 Dependency injection selects fixtures only in test/development. Release validator/build check rejects fixture pack/provider imports. Mock shape must exactly satisfy v1.0. Record failed/untested real dependencies rather than present a mock as success.
 
 ## Central dashboard
-All statuses currently **Not Started**. At a 9:30 PM implementation start, four members have at most 34 team-hours through the 6 AM release gate, before toolchain delays/context switching; the 27–36 person-hour estimate therefore requires cutting P1 and resolving early gates quickly. Allowed statuses: Not Started, In Progress, Blocked, Ready for Integration, Integrated, Tested, Complete. “Complete” requires evidence and merged/tested integration, not only code authored.
+Implementation is in progress. Pure source integration is distinct from physical release acceptance and transport evidence. Allowed statuses: Not Started, In Progress, Blocked, Ready for Integration, Integrated, Tested, Complete. “Complete” requires evidence and merged/tested integration, not only code authored. P1 remains deferred while physical/data gates fail.
 
 | Task ID | Owner | Task | Priority | Dependencies | Status | Estimated Time | Integration Checkpoint |
 |---|---|---|---|---|---|---|---|
-| AI-001 | Member 1 | Prove real native inference on both platforms | P0 | INT-001; may use small local development probe before final UI. | Not Started | 90–120 min shared with INT-001; early gate | M1 |
-| AI-002 | Member 1 | Implement verified model acquisition and readiness | P0 | AI-001, INT-001; storage adapter cooperation. | Not Started | 60–90 min plus network transfer | M2 |
-| AI-003 | Member 1 | Implement structured Taglish extraction | P0 | AI-001; shared validators INT-001; AI-002 for installed runtime. | Not Started | 90 min | M2 |
-| AI-004 | Member 1 | Add cancellation and lifecycle safety | P0 | AI-003; INT-003 orchestration integration. | Not Started | 45–60 min | M3 |
+| AI-001 | Member 1 | Prove real native inference on both platforms | P0 | INT-001; may use small local development probe before final UI. | Blocked: scaffold and real ports now integrated; physical inference Not Run; see docs/evidence/builds.md and native-gate.md | 90–120 min shared with INT-001; early gate | M1 |
+| AI-002 | Member 1 | Implement verified model acquisition and readiness | P0 | AI-001, INT-001; storage adapter cooperation. | Integrated: real model store/download/readiness wired; native download/hash/restart Not Run | 60–90 min plus network transfer | M2 |
+| AI-003 | Member 1 | Implement structured Taglish extraction | P0 | AI-001; shared validators INT-001; AI-002 for installed runtime. | Integrated: actual native AiPort connected; simulated extraction tests pass; device corpus accuracy Not Run | 90 min | M2 |
+| AI-004 | Member 1 | Add cancellation and lifecycle safety | P0 | AI-003; INT-003 orchestration integration. | Integrated: manager cancellation plus controller correlation/setup cancel wired; physical lifecycle Not Run | 45–60 min | M3 |
 | AI-005 | Member 1 | Measure accuracy, speed and memory; choose final model | P0 | AI-002–AI-004; native builds INT-005. | Not Started | 60–90 min; optional upgrade adds transfer/validation time | M4 |
 | AI-006 | Member 1 | Prove offline AI and hand off | P0 | AI-004, INT-003, INT-005, ROUTE-006. | Not Started | 45–60 min | M4 |
 | AI-101 | Member 1 | Prototype local signboard OCR only after P0 | P1 | All P0 integrated and tested; Member 4 approval before feature freeze. | Not Started | 2–4h; outside baseline, likely cut | Optional |
-| ROUTE-001 | Member 2 | Establish corridor evidence and source register | P0 | None; start parallel with native gate. | Not Started | 120 min first pass; continue only useful verification | M1 |
-| ROUTE-002 | Member 2 | Build and validate separate release/test packs | P0 | ROUTE-001 for release evidence; INT-001 schema; INT-002 import collaboration. | Not Started | 60–90 min plus verification gaps | M2 |
-| ROUTE-003 | Member 2 | Implement directed multimodal journey search | P0 | ROUTE-002 test pack; INT-001 interfaces. | Not Started | 90–120 min | M2 |
-| ROUTE-004 | Member 2 | Implement fare calculation and honest ranking | P0 | ROUTE-002, ROUTE-003. | Not Started | 45–60 min | M3 |
-| ROUTE-005 | Member 2 | Add manual onboard downstream transfer planning | P0 | ROUTE-003, ROUTE-004; frozen OnboardContext; UI can develop in parallel. | Not Started | 60 min | M3 |
+| ROUTE-001 | Member 2 | Establish corridor evidence and source register | P0 | None; start parallel with native gate. | In Progress: first pass done, no corridor verified; official LRT-1 fare/route data is image-only and unread; no road-service evidence found (`docs/evidence/sources.md`, `corridor-status.md`) | 120 min first pass; continue only useful verification | M1 |
+| ROUTE-002 | Member 2 | Build and validate separate release/test packs | P0 | ROUTE-001 for release evidence; INT-001 schema; INT-002 import collaboration. | In Progress: validator/fixture integrated; release pack still blocked on source evidence | 60–90 min plus verification gaps | M2 |
+| ROUTE-003 | Member 2 | Implement directed multimodal journey search | P0 | ROUTE-002 test pack; INT-001 interfaces. | Integrated: real RoutePort wired; routing/integration tests pass on synthetic graphs only | 90–120 min | M2 |
+| ROUTE-004 | Member 2 | Implement fare calculation and honest ranking | P0 | ROUTE-002, ROUTE-003. | Integrated: fares/ranking tests pass; payable-share discount semantics confirmed by Member 4 | 45–60 min | M3 |
+| ROUTE-005 | Member 2 | Add manual onboard downstream transfer planning | P0 | ROUTE-003, ROUTE-004; frozen OnboardContext; UI can develop in parallel. | Integrated: real downstream onboard search wired; physical transport validation Not Run | 60 min | M3 |
 | ROUTE-006 | Member 2 | Audit real routes and integration correctness | P0 | ROUTE-002–ROUTE-005; INT-003; sources complete for supported subset. | Not Started | 60–90 min | M4 |
 | ROUTE-101 | Member 2 | Expand verified dataset after core freeze only by approval | P1 | ROUTE-006 and user-approved time available before freeze. | Not Started | Variable, 60–120 min per bounded addition | Optional |
-| UI-001 | Member 3 | Build native shell and accessible visual system | P0 | INT-001; contract frozen. | Not Started | 45–60 min | M1 |
-| UI-002 | Member 3 | Build text/manual entry and confirmation | P0 | UI-001; contract; mock repository/controller permitted until INT-003. | Not Started | 60–75 min | M2 |
-| UI-003 | Member 3 | Render grounded options and step instructions | P0 | UI-001; contract; ROUTE-003/004 later integration. | Not Started | 75–90 min | M3 |
-| UI-004 | Member 3 | Implement setup, offline and recovery states | P0 | UI-001; AI-002; INT-002/003. | Not Started | 45–60 min | M3 |
-| UI-005 | Member 3 | Build manual onboard replan flow | P0 | UI-002/003; ROUTE-005. | Not Started | 45–60 min | M3 |
+| UI-001 | Member 3 | Build native shell and accessible visual system | P0 | INT-001; contract frozen. | Integrated: native screen shell connected through NativeUiBridge; physical UX Not Run | 45–60 min | M1 |
+| UI-002 | Member 3 | Build text/manual entry and confirmation | P0 | UI-001; contract; mock repository/controller permitted until INT-003. | Integrated: real controller/manual confirmation; draft correlation and explicit edits fixed | 60–75 min | M2 |
+| UI-003 | Member 3 | Render grounded options and step instructions | P0 | UI-001; contract; ROUTE-003/004 later integration. | Integrated: real result presentation; physical route/data validation pending | 75–90 min | M3 |
+| UI-004 | Member 3 | Implement setup, offline and recovery states | P0 | UI-001; AI-002; INT-002/003. | Integrated: model setup/retry/cancel and separate data readiness; physical setup Not Run | 45–60 min | M3 |
+| UI-005 | Member 3 | Build manual onboard replan flow | P0 | UI-002/003; ROUTE-005. | Integrated: manually confirmed next stop and real onboard RoutePort; physical checks pending | 45–60 min | M3 |
 | UI-006 | Member 3 | Verify native UX and integrate real adapters | P0 | UI-002–UI-005; INT-003/005; AI-006; ROUTE-006. | Not Started | 60–90 min | M4 |
 | UI-101 | Member 3 | Add optional map/scanner screens after core | P1 | All UI P0; AI-101 real OCR; Member 4 approval before freeze. | Not Started | 90–180 min; outside baseline | Optional |
-| INT-001 | Member 4 (user) | Bootstrap repo, contracts and native toolchains | P0 | Plan implementation approval; repo availability/credentials required for remote. | Not Started | 75–120 min; first gate | M1 |
-| INT-002 | Member 4 (user) | Implement durable local storage and pack import | P0 | INT-001; ROUTE-002 test pack initially. | Not Started | 60–90 min | M2 |
-| INT-003 | Member 4 (user) | Wire AI, place confirmation and deterministic routing | P0 | INT-001/002; AI-003; ROUTE-003; UI-002; mock adapters only development. | Not Started | 90–120 min | M2/M3 |
-| INT-004 | Member 4 (user) | Gate optional zero-cost address and walking helpers | P1 | INT-003 stable; free account/key/no-card terms verified; user authorizes external deployment when ready. | Not Started | 45–90 min; cut if core late | Optional |
-| INT-005 | Member 4 (user) | Build standalone Android and Personal Team iOS releases | P0 | INT-001; AI-001 gate; INT-003 real wiring. | Not Started | 75–120 min plus build time | M3/M4 |
-| INT-006 | Member 4 (user) | Run integration, offline and regression gates | P0 | INT-003/005; AI-006; ROUTE-006; UI-006. | Not Started | 90–120 min; starts incrementally at M2 | M4 |
-| INT-007 | Member 4 (user) | Package documentation, video and submission evidence | P0 | INT-006; actual briefing verification; user controls accounts/submission. | Not Started | 60–90 min; finish by 08:30 | M5 |
+| INT-001 | Member 4 (user) | Bootstrap repo, contracts and native toolchains | P0 | Plan implementation approval; repo availability/credentials required for remote. | Integrated: locked baseline/contracts/Expo Doctor 21/21; Android build evidence and Mac path documented | 75–120 min; first gate | M1 |
+| INT-002 | Member 4 (user) | Implement durable local storage and pack import | P0 | INT-001; ROUTE-002 test pack initially. | Integrated: real SQLite adapter/import; Node SQLite persistence/rollback pass; native storage Not Run | 60–90 min | M2 |
+| INT-003 | Member 4 (user) | Wire AI, place confirmation and deterministic routing | P0 | INT-001/002; AI-003; ROUTE-003; UI-002; mock adapters only development. | Integrated: real AI/routing/UI composition; phone query with verified pack still blocked | 90–120 min | M2/M3 |
+| INT-004 | Member 4 (user) | Gate optional zero-cost address and walking helpers | P1 | INT-003 stable; free account/key/no-card terms verified; user authorizes external deployment when ready. | Not Started: P1 deferred; optional helpers explicitly disabled | 45–90 min; cut if core late | Optional |
+| INT-005 | Member 4 (user) | Build standalone Android and Personal Team iOS releases | P0 | INT-001; AI-001 gate; INT-003 real wiring. | In Progress: standalone Android APK built/signature/hash checked; physical Android install and Mac/iPhone native build pending | 75–120 min plus build time | M3/M4 |
+| INT-006 | Member 4 (user) | Run integration, offline and regression gates | P0 | INT-003/005; AI-006; ROUTE-006; UI-006. | In Progress: full pure tests/typecheck/data guards pass; physical offline/release gates remain blocked | 90–120 min; starts incrementally at M2 | M4 |
+| INT-007 | Member 4 (user) | Package documentation, video and submission evidence | P0 | INT-006; actual briefing verification; user controls accounts/submission. | In Progress: README/evidence/submission draft prepared; video/rules/receipt pending | 60–90 min; finish by 08:30 | M5 |
 
 Phases: M1 = base/native/data feasibility; M2 = real vertical slice; M3 = essential behaviors; M4 = integrated release correctness; M5 = evidence/submission. Update status after each actual checkpoint, attach commit and evidence link. Never mark blocked tasks as passed due to deadline.

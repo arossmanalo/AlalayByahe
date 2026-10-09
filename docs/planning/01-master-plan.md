@@ -1,7 +1,7 @@
 # AlalayByahe — Implementation Planning Package
-**Revision 1.0 · 9 October 2026 · planning only**
+**Revision 1.0 · 9 October 2026 · implementation approved**
 
-The grilling decisions are confirmed. This package is ready for team review; production implementation waits for approval. No native builds, model inference, route-data validation or performance benchmarks have been executed. The workspace was empty and had no connected Git repository during planning.
+The grilling decisions and implementation are approved. The repository is connected, and Member 4 has integrated the native scaffold, contracts, storage, controller and three members' implementations. Current evidence is in docs/evidence/integration.md. Physical inference, verified corridor coverage and iOS native signing remain unproven. The workspace was empty and unconnected when this plan was originally written.
 
 ## Part 1 — Executive Technical Assessment
 Build a standalone Android/iOS commute assistant that interprets a short Filipino, English or Taglish request **on the phone**, then computes a journey from a locally stored, source-backed transit graph. Show origin/destination confirmation, boarding point, service direction, dropoff, transfers, walking links and honest fare status.
@@ -60,7 +60,7 @@ The user accepted smaller verified demo coverage if necessary. Keep all three as
 | expo-build-properties | 57.0.22 | Native build configuration |
 | expo-dev-client | 57.0.19 | Development only; demo uses installed release build |
 | llama.rn | 0.12.9 | Native llama.cpp inference |
-| TypeScript / @types/react | 6.0.3 / 19.2.2 | Expo template aligned type checks |
+| TypeScript / @types/react | 6.0.3 / 19.2.4 | Installed Expo-compatible type checks |
 | tsx | 4.23.15 | Pure TypeScript tests with Node node:test |
 | @noble/hashes | 2.4.0 | Incremental SHA256, MIT |
 
@@ -94,7 +94,7 @@ File bytes are not runtime RAM. Peak memory, cold initialization, Taglish accura
 Sources: [0.5B publisher revision](https://huggingface.co/Qwen/Qwen2.5-0.5B-Instruct-GGUF/commit/9217f5db79a29953eb74d5343926648285ec7e67), [1.5B publisher revision](https://huggingface.co/Qwen/Qwen2.5-1.5B-Instruct-GGUF/tree/91cad51170dc346986eccefdc2dd33a9da36ead9).
 
 ### Actual environment and device limits
-Windows laptop: i5-13450HX, RTX4050 Laptop ~6 GB VRAM, 23.71 GiB physical RAM; Node/npm/Git and JDK 17 installed. Android Studio/SDK present but NDK/cmake/cmdline-tools absent at inspected SDK; exact compileSDK36 must be installed/verified. No working Python or preinstalled model/runtime was established. Laptop free RAM changes; measure it before inference.
+Windows laptop: i5-13450HX, RTX4050 Laptop ~6 GB VRAM, 23.71 GiB physical RAM. Current Android build uses Node 24.14.0/npm 11.9.0, Android Studio JBR 21.0.10, SDK 36, NDK 27.1.12297006 and CMake 3.22.1. The initial inspection's missing SDK components were provisioned during the actual build; standalone Android compilation now passes. See docs/evidence/builds.md for path/temp fixes and remaining phone gates. No preinstalled model was established. Laptop free RAM changes; measure it before inference.
 
 User reports Mac with Xcode 26.6, no paid Apple Developer membership. Expo 57 documentation requires Xcode 26.4+ and iOS16.4+. [Apple Personal Team](https://developer.apple.com/help/account/basics/about-your-developer-account) permits local device testing with seven-day provisioning; this does not supply TestFlight/App Store distribution. Verify device trust/developer mode/signing immediately. Build and install Release with bundled JS; Expo Go and a Metro-dependent development build are not the demo.
 
@@ -296,7 +296,7 @@ Do not add complexity merely for a score. The defensible distinction is useful l
 ## Part 17 — Submission Readiness Checklist
 Owner Member 4, with source/AI disclosures from Members 1–2 and demo UI from Member 3. Repo, README, exact installation/dev/release steps, license/attribution, model manifest, supported coverage, offline boundary, tested-device table and measured limitations; ~1 minute video; user-authored posting/submission actions; verify receipt and GitHub visibility before internal deadline. [Complete checklist](06-acceptance-and-demo.md).
 
-Standing instruction: commit/push changes when a repository is connected. This workspace has no repository, so these planning files cannot yet be committed to GitHub. During implementation, create/connect the team repository, then commit task-owned changes and verify push. Do not claim remote completion without Git evidence.
+Standing instruction: commit/push task-owned changes and verify the remote SHA. The repository is connected to https://github.com/arossmanalo/AlalayByahe.git. Member 4 uses feat/integration/int-001-foundation in an isolated checkout; preserve other members' branches and never force-push shared main.
 
 ## Part 18 — Final Recommendation
 Use native Expo/RN with llama.rn and Qwen2.5 0.5B Q4_K_M; download once, verify/store privately, extract strict JSON locally, validate/confirm places and preferences, compute directed journey/fare from SQLite, render deterministic instructions. Validate signed native inference and data availability first.

@@ -1,0 +1,35 @@
+import type { ExpoConfig } from "expo/config";
+
+const config: ExpoConfig = {
+  name: "AlalayByahe",
+  slug: "alalaybyahe",
+  version: "0.1.0",
+  scheme: "alalaybyahe",
+  orientation: "portrait",
+  userInterfaceStyle: "automatic",
+  platforms: ["android", "ios"],
+  updates: { enabled: false },
+  android: { package: "ph.alalaybyahe.app", allowBackup: false },
+  ios: {
+    bundleIdentifier: "ph.alalaybyahe.app",
+    supportsTablet: false,
+    infoPlist: {
+      NSLocationWhenInUseUsageDescription:
+        "Use your location to choose a starting point when you request it.",
+    },
+  },
+  plugins: [
+    "expo-router",
+    "expo-sqlite",
+    ["expo-build-properties", {
+      android: { compileSdkVersion: 36, targetSdkVersion: 36 },
+      ios: { deploymentTarget: "16.4" },
+    }],
+    ["llama.rn", {
+      enableEntitlements: false,
+      enableOpenCLAndHexagon: false,
+      forceCxx20: true,
+    }],
+  ],
+};
+export default config;

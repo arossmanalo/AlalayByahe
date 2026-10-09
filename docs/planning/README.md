@@ -1,6 +1,6 @@
 # AlalayByahe Planning Package
 
-**Status: complete planning proposal; production implementation awaits approval.**
+**Status: implementation approved; integrated native source is available on feat/integration/int-001-foundation.**
 
 Start with [Master plan — 18 requested parts and 8 delegation deliverables](01-master-plan.md).
 
@@ -23,8 +23,8 @@ Copy the entire relevant file into that member's AI assistant. Each includes sec
 ## Review before implementation
 The agreed product is native Android/iPhone, phone-local Qwen extraction, deterministic verified routing, truthful fares, manual onboard replanning and offline stored-place journeys after setup. Scanner/maps are optional. Arbitrary new addresses/walk paths may require optional connectivity.
 
-Important gates: Expo 57+llama.rn compatibility and free iOS signing need actual native tests; all three corridor targets need real source-backed end-to-end data. No implementation, benchmark, verified corridor pack, deployment or submission has been performed. The missing participant briefing PDF leaves some pasted event rules unconfirmed. Treat Oct 10,10 AM Manila as the conservative internal deadline.
+Important gates: actual phone-local inference, iOS signing, physical offline testing and source-backed corridor data. The scaffold and real ports are implemented; see [integration evidence](../evidence/integration.md). No verified corridor or submission is claimed. The missing participant briefing PDF leaves some pasted event rules unconfirmed. Treat Oct 10,10 AM Manila as the conservative internal deadline.
 
-No Git repository is connected to this workspace, so no commit/push could be performed for these planning documents. Once connected, the user's standing commit/push instruction applies to task-owned changes.
+The repository is connected to GitHub. The user's standing commit/push instruction applies to task-owned changes.
 
-This package creates planning Markdown only. It does not create production application files.
+Planning files describe the agreed scope; executable source, lockfile and checks now live alongside them.
