@@ -46,6 +46,41 @@ Screens live in `app/` (except `app/_layout.tsx`, owned by Member 4). Components
 - `controller.interpret()` is called with `locale: "taglish"` and a fresh `queryId`. AI confirmation/edits retain that draft's query ID; manual submissions create a fresh ID. Results for a superseded job are dropped.
 - Manual and onboard trips call `submitManual`. Confirmed AI drafts call `submitConfirmed`.
 
+## UI-006 status (October 10, 2026)
+
+Branch `feat/ui/ui-006`. Physical-device verification is **Not Run**. The Member 3 workstation used for this pass has no Android SDK or ADB, no phone attached, and no copy of Member 4's rebuilt APK. No iPhone build exists. Install, cold launch, the per-flow device walk, TalkBack/VoiceOver, 200% text scaling, IME behaviour and safe areas on hardware still need a device session. [tests/ui/manual.md](../../tests/ui/manual.md) lists every check with its current status. It also records an October 10 react-native-web walk with the DEV FIXTURE services, which checks layout and flow but not native behaviour.
+
+Changed in `src/ui/` and `app/`. These are verified by `npm run typecheck` and the pure tests in `tests/ui/` only, not on a device:
+
+- **Coverage.** The results screen states the loaded pack's `coverageLabels` under "Supported coverage" on every outcome, including errors, with "Only trips within this coverage can be planned." An unsupported corridor shows "No verified complete journey available." beside the subset that is supported. With no pack loaded it says "No verified coverage is loaded." Engine coverage warnings that only repeat a pack label are dropped (`coverageSummary`). About lists the same labels and says the app plans only covered trips.
+- **AI unavailable.** Home titles the not-ready notice "AI unavailable". The manual trip form shows the same label when the model is not ready.
+- **Copy audit** against the edge-case matrix:
+  - CONSTRAINT_UNSATISFIED no longer claims "a verified journey exists". The controller also returns it for conflicting modes before any search (EC-033).
+  - SEARCH_LIMIT_REACHED says a limit is not proof of no route and suggests a narrower search. It now offers both "Change preferences" and "Change places" (EC-043).
+  - AI_NOT_READY points to setup when connected (EC-085).
+  - CANCELLED says "You can try again" (EC-102).
+  - An unknown ride fare asks the user to confirm it with the driver or operator (EC-051). A partial fare with no unknown legs reads "Known subtotal …" instead of a bare amount (EC-057).
+  - About no longer implies coverage of every mode.
+  - Filipino walking total reads "… na lakad".
+  - `tests/ui/copy.test.ts` rejects fastest, real-time or guarantee claims, and any "live" wording that is not a negation, in both languages.
+- **Cancellation feedback.** A query cancelled by the app (for example, backgrounding) now shows "Cancelled. You can try again." with a retry. The user's own Cancel and superseded jobs stay silent. Recovery rules moved to the pure `error-logic.ts` (re-exported from `error-card.tsx`).
+- **Accessibility:**
+  - Notice titles are announced as "Warning: …" or "Problem: …" instead of glyph names.
+  - Label/status rows are read as one phrase, for example "Local AI: Ready" or "Fare: ₱15.00 (verified)".
+  - The mode sequence is read as "Walk, then LRT, then Walk".
+  - Radio chip groups (language, priority, passenger) are named, and the language chips have a visible label.
+  - Field errors are part of the input's hint, so they are read on focus.
+  - The swap glyph is not read aloud, and the onboard service filter is labelled "Search services".
+  - Place and service search disable autocorrect and use a search return key. Scrolling dismisses the keyboard, because iOS number pads have no return key.
+  - Buttons and chips have a 48 dp minimum width as well as height.
+  - Input and chip borders now meet 3:1 non-text contrast (they were 1.65:1). `tests/ui/contrast.test.ts` checks every color pair the screens draw against WCAG AA.
+
+Proposals for Member 4 (not changed here; owner files):
+
+- `app.config.ts` sets `orientation: "portrait"`, so the "rotate" check cannot run. Screens already apply left and right safe-area insets if rotation is wanted.
+- `app.config.ts` sets `userInterfaceStyle: "automatic"`, but the UI palette is light only. Check status bar, header and keyboard legibility in system dark mode on a device. Use `"light"` until a dark palette exists.
+- Engine text such as error details, `rankReason`, option warnings and coverage notes is English only, so Filipino users see English details. Localizing it needs stable codes from Members 2 and 4.
+
 ## Gaps to resolve with owners
 
 - Model setup cancellation is now supplied as an optional UiServices capability from Member 1's existing AiManager extension. Canonical AiPort remains unchanged; the real setup screen offers cancellation during download/checking.
