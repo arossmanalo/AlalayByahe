@@ -4,7 +4,7 @@ Prepared by Member 2. Nothing here has been sent to anyone. These are drafts for
 
 ## A. Reviewer checklist: LRT-1 candidate pack (needs one registered teammate, about 20 minutes)
 
-Goal: let the evidence in `data/candidates/lrt1-candidate.json` be raised from `estimated` to `verified`.
+Status: **section A was completed on 2026-10-10** by Aryl Manalo; the pack is at `assets/data/release.json`. Kept for any future re-review.
 Reviewer is not the person who transcribed it (Member 2).
 
 Open the official image: <https://i0.wp.com/lrmc.ph/wp-content/uploads/2025/03/New-SJT-fare-matrix-effective-April-2-2025-1.png>
@@ -13,13 +13,13 @@ Open the official image: <https://i0.wp.com/lrmc.ph/wp-content/uploads/2025/03/N
 | # | Check | Where in the repo | Pass? |
 |---|---|---|---|
 | 1 | The image title says Stored Value and "Effective April 2, 2025" | n/a | |
-| 2 | The 25 stations in the image's row order equal the `STATIONS` order in `scripts/build-lrt1-candidate.ts` (Dr. Santos, Ninoy Aquino Avenue, PITX, MIA Road, Redemptorist-Aseana, Baclaran, EDSA, Libertad, Gil Puyat, Vito Cruz, Quirino, Pedro Gil, UN Avenue, Central, Carriedo, D. Jose, Bambang, Tayuman, Blumentritt, Abad Santos, R. Papa, 5th Avenue, Monumento, Balintawak, Fernando Poe Jr.) | `scripts/build-lrt1-candidate.ts` | |
+| 2 | The 25 stations in the image's row order equal the `STATIONS` order in `scripts/build-lrt1-pack.ts` (Dr. Santos, Ninoy Aquino Avenue, PITX, MIA Road, Redemptorist-Aseana, Baclaran, EDSA, Libertad, Gil Puyat, Vito Cruz, Quirino, Pedro Gil, UN Avenue, Central, Carriedo, D. Jose, Bambang, Tayuman, Blumentritt, Abad Santos, R. Papa, 5th Avenue, Monumento, Balintawak, Fernando Poe Jr.) | `scripts/build-lrt1-pack.ts` | |
 | 3 | Check the **Vito Cruz row** and the **EDSA row** cell by cell against `TOP_LEFT`/`TOP_RIGHT` (rows 10 and 7) | same file | |
 | 4 | Check at least 20 other cells at random, including the four corners (Dr. Santos to Fernando Poe Jr. = 52, Dr. Santos to Dr. Santos = 16) | same file | |
 | 5 | Compare the LRMC route map (<https://lrmc.ph/our-business-featured/train-route/>) with the station order, and confirm every station serves both directions | n/a | |
 | 6 | Confirm the stored value card, not single journey tickets, is what you want the app to quote | n/a | |
 | 7 | Open the coordinates of Vito Cruz, EDSA (Taft) and Baclaran on a map. Each must be within about 200 m of the station | `places` in the JSON | |
-| 8 | Run `npm test` and `npx tsx scripts/validate-data.ts data/candidates/lrt1-candidate.json` and note the output | repo root | |
+| 8 | Run `npm test` and `npx tsx scripts/validate-data.ts assets/data/release.json --release` and note the output | repo root | |
 
 Record: reviewer name, date, cells checked, any disagreement. If every row passes, tell Member 2 to regenerate with `verified` evidence
 (`checkedBy` set to the reviewer's name) and run `npx tsx scripts/validate-data.ts --release assets/data/release.json`.

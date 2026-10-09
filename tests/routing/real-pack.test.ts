@@ -8,14 +8,15 @@ import { planRoute } from "../../src/routing/routePort";
 import { NOW, prefs, rides, trace } from "./helpers";
 
 /**
- * Tests for data/candidates/lrt1-candidate.json: an UNREVIEWED transcription of the LRMC
- * stored value fare matrix for LRT-1, all 25 stations. It is not a release
- * pack and not an advertised coverage claim. These tests check that the transcription is
- * internally consistent and that it is correctly refused for release until a second
- * teammate has verified it.
+ * Tests for assets/data/release.json: the LRT-1 station-to-station release pack (all 25 stations,
+ * stored value fares from the LRMC matrix effective April 2, 2025), transcribed by Member 2's
+ * assistant and independently reviewed by Aryl Manalo on 2026-10-10.
+ *
+ * Coverage is LRT-1 stations only. These tests do not establish that any target corridor
+ * (Lipa to Candelaria, Lipa to San Pablo, Candelaria to Vito Cruz/Taft end to end) is supported.
  */
 
-const CANDIDATE_PATH = new URL("../../data/candidates/lrt1-candidate.json", import.meta.url);
+const CANDIDATE_PATH = new URL("../../assets/data/release.json", import.meta.url);
 const raw = JSON.parse(readFileSync(CANDIDATE_PATH, "utf8")) as Record<string, any>;
 
 const ORDER = [
@@ -27,21 +28,18 @@ const ORDER = [
 const place = (k: string): string => `place_lrt1_${k}`;
 const stop = (k: string): string => `stop_lrt1_${k}`;
 
-/**
- * Test-only stand-in for "a second teammate verified every routing fact": raises the
- * routing evidence to verified in memory. Never written to disk.
- */
-function reviewedCopy(): Record<string, any> {
+/** Test-only: the same pack as if nobody had reviewed it (routing evidence downgraded to estimated). */
+function unreviewedCopy(): Record<string, any> {
   const copy = JSON.parse(JSON.stringify(raw)) as Record<string, any>;
   for (const key of ["stops", "services", "directions", "routeStops", "walkLinks", "fares"]) {
-    for (const rec of copy[key]) rec.evidence.reliability = "verified";
+    for (const rec of copy[key]) rec.evidence.reliability = "estimated";
   }
   return copy;
 }
 
-function reviewedPack(): TransitPack {
-  const result = validatePack(reviewedCopy(), { target: "release" });
-  if (!result.ok) throw new Error(`reviewed copy should pass the release gate: ${JSON.stringify(result.error)}`);
+function releasePack(): TransitPack {
+  const result = validatePack(raw, { target: "release" });
+  if (!result.ok) throw new Error(`the release pack must pass the release gate: ${JSON.stringify(result.error)}`);
   return result.value;
 }
 
@@ -52,32 +50,44 @@ const trip = (from: string, to: string, over = {}) => ({
   preferences: prefs(over),
 });
 
-describe("LRT-1 candidate pack (unreviewed transcription)", () => {
-  it("is refused for release only because the facts are not yet verified", () => {
+describe("LRT-1 release pack", () => {
+  it("passes the release gate with no errors and no warnings", () => {
     const report = analyzePack(raw, { target: "release" });
+    assert.deepEqual(report.issues, []);
+    assert.equal(report.ok, true);
+    assert.equal(report.summary?.kind, "release");
+    assert.equal(report.summary?.places, 25);
+  });
+
+  it("is also accepted by the integration layer's validator", () => {
+    assert.equal(validateTransitPack(raw).ok, true);
+  });
+
+  it("would be refused again if its routing evidence were not verified", () => {
+    const report = analyzePack(unreviewedCopy(), { target: "release" });
     assert.equal(report.ok, false);
-    assert.equal(report.pack, null);
     const errors = report.issues.filter((i) => i.severity === "error");
-    assert.ok(errors.length > 0);
-    assert.ok(
-      errors.every((i) => i.code === "release_gate" && /must be verified/.test(i.message)),
-      `unexpected errors:\n${errors.filter((i) => !(i.code === "release_gate" && /must be verified/.test(i.message))).map((i) => `${i.path}: ${i.message}`).join("\n")}`,
-    );
-    assert.deepEqual(report.issues.filter((i) => i.severity === "warning"), []);
+    assert.ok(errors.length > 0 && errors.every((i) => i.code === "release_gate" && /must be verified/.test(i.message)));
+    assert.equal(validateTransitPack(unreviewedCopy()).ok, false);
   });
 
-  it("is also refused by the integration layer's validator for the same reason", () => {
-    assert.equal(validateTransitPack(raw).ok, false);
+  it("names its reviewer and the review date on every routing fact", () => {
+    for (const key of ["stops", "services", "directions", "routeStops", "fares"]) {
+      for (const rec of raw[key]) {
+        assert.equal(rec.evidence.reliability, "verified", `${key} evidence`);
+        assert.match(rec.evidence.note, /checked by Aryl Manalo on 2026-10-10/);
+      }
+    }
+    for (const source of raw["sources"]) assert.match(source.checkedBy, /reviewed by Aryl Manalo/);
   });
 
-  it("passes both validators once the facts are verified", () => {
-    const reviewed = reviewedCopy();
-    assert.equal(validateTransitPack(reviewed).ok, true, "integration validator");
-    assert.equal(analyzePack(reviewed, { target: "release" }).ok, true, "pack validator");
+  it("keeps approximate coordinates marked estimated rather than verified", () => {
+    for (const p of raw["places"]) assert.equal(p.evidence.reliability, "estimated");
   });
 
   it("states its limited coverage and contains no fixture material", () => {
     assert.match(raw["coverageLabels"][0], /LRT-1 only/);
+    assert.match(raw["coverageLabels"][0], /Reviewed 2026-10-10/);
     assert.match(raw["coverageLabels"][0], /no target corridor covered end to end/);
     assert.equal(raw["kind"], "release");
     assert.ok(!/test_|fixture|TEST ONLY/i.test(JSON.stringify(raw).replace(/source_wikipedia_lrt1/g, "")), "no fixture namespace or wording");
@@ -141,8 +151,8 @@ describe("LRT-1 candidate pack (unreviewed transcription)", () => {
   });
 });
 
-describe("planning on the verified-in-memory copy", () => {
-  const pack = reviewedPack();
+describe("planning on the release pack", () => {
+  const pack = releasePack();
   const plan = (from: string, to: string, over = {}) => planRoute(trip(from, to, over), pack, { now: () => NOW });
 
   it("plans Vito Cruz to Baclaran as one southbound ride at the documented fare, with no invented walk", () => {
@@ -227,5 +237,44 @@ describe("planning on the verified-in-memory copy", () => {
     const missing = planRoute({ ...trip("vito_cruz", "baclaran"), destination: { placeId: "place_lipa_terminal", label: "Lipa", point: { latitude: 13.9, longitude: 121.1 }, provenance: "stored" } }, pack, { now: () => NOW });
     assert.equal(missing.ok, false);
     if (!missing.ok) assert.equal(missing.error.code, "PLACE_NOT_FOUND");
+  });
+
+  it("labels every result with the dataset version and the LRT-1-only coverage", () => {
+    const r = plan("vito_cruz", "baclaran");
+    assert.equal(r.ok, true);
+    if (!r.ok) return;
+    assert.equal(r.value.options[0]!.datasetVersion, "lrt1_2026_10_10_1");
+    assert.ok(r.value.coverageWarnings.some((w) => /LRT-1 only/.test(w)));
+    assert.ok(r.value.coverageWarnings.some((w) => /not live availability/.test(w)));
+  });
+
+  it("onboard on a confirmed southbound train continues to the destination and leaves the current fare unknown", () => {
+    const base = trip("vito_cruz", "baclaran");
+    const r = planRoute(
+      { ...base, onboard: { directionId: "dir_lrt1_southbound", confirmedNextStopId: stop("vito_cruz"), confirmedAt: "2026-10-10T01:00:00+08:00" } },
+      pack, { now: () => NOW },
+    );
+    assert.equal(r.ok, true);
+    if (!r.ok) return;
+    const o = r.value.options[0]!;
+    assert.equal(rides(o)[0]!.alreadyOnboard, true);
+    assert.equal(o.fare.status, "unknown");
+    assert.equal(o.transfers, 0);
+  });
+
+  it("never rides backwards: a station already passed is reached only by riding on, getting off and boarding the opposite direction", () => {
+    const base = trip("vito_cruz", "central");
+    const r = planRoute(
+      { ...base, onboard: { directionId: "dir_lrt1_southbound", confirmedNextStopId: stop("vito_cruz"), confirmedAt: "2026-10-10T01:00:00+08:00" } },
+      pack, { now: () => NOW },
+    );
+    assert.equal(r.ok, true);
+    if (!r.ok) return;
+    const legs = rides(r.value.options[0]!);
+    assert.equal(legs.length, 2, "current southbound ride, then a separate northbound boarding");
+    const southOfVitoCruz = ORDER.slice(0, ORDER.indexOf("vito_cruz") + 1).map(stop);
+    assert.ok(southOfVitoCruz.includes(legs[0]!.alightStopId), "the train only goes south, so the turnaround station is the confirmed next stop or one further south");
+    assert.equal(legs[1]!.directionId, "dir_lrt1_northbound");
+    assert.equal(r.value.options[0]!.transfers, 1);
   });
 });
