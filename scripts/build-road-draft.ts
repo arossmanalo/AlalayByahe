@@ -9,8 +9,8 @@ import type { Direction, Evidence, FarePolicy, Place, RouteStop, Service, Source
  * gate refuses this pack on purpose. It becomes shippable only after a second teammate checks
  * each leg and the evidence is raised to "verified". Run: tsx scripts/build-road-draft.ts
  *
- * Not included because the data is incomplete: Lipa to San Pablo (no pins for the SM Lipa
- * jeepney, Puregold or Wawa), the Quiapo/UST/Gil Puyat jeeps (no boarding spot), return trips,
+ * Not included because the data is incomplete: the SM Lipa jeepney and the Wawa jeepney of
+ * the Lipa to San Pablo trip (no boarding spot, no Wawa point), the Quiapo/UST/Gil Puyat jeeps (no boarding spot), return trips,
  * and student fares (reported amounts do not follow one documented ratio).
  */
 
@@ -25,6 +25,7 @@ const JAC = "source_jacliner_routes";
 const PITX = "source_pitx_gates";
 const GREENLINE = "source_greenline_wikipedia";
 const WALKS = "source_valhalla_osm_walks";
+const OSM = "source_osm_nominatim_places";
 
 const ev = (sourceIds: string[], note: string): Evidence => ({ sourceIds, checkedAt: OBSERVED_AT, reliability: "estimated", note });
 const REPORTED = "Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate.";
@@ -59,6 +60,13 @@ const sources: SourceRef[] = [
     checkedBy: "Member 2 assistant; not yet checked by a second teammate",
   },
   {
+    id: OSM, title: "OpenStreetMap place search (Nominatim)", url: "https://nominatim.openstreetmap.org/", publisher: "OpenStreetMap contributors (ODbL 1.0, attribution required)",
+    retrievedAt: OBSERVED_AT,
+    usageBasis: "Used once to find the map point of the named Puregold in San Pablo (Cipriano B. Colago Avenue). The point is an approximate place location, not the jeepney or van drop-off spot. A search for 'Wawa' in Barangay Del Remedio returned no matching place, so no Wawa point is used.",
+    factsSupported: ["Approximate location of Puregold San Pablo"],
+    checkedBy: "Member 2 assistant; not yet checked by a second teammate",
+  },
+  {
     id: WALKS, title: "Pedestrian routes computed on OpenStreetMap data (Valhalla, FOSSGIS server)", url: "https://valhalla1.openstreetmap.de/", publisher: "OpenStreetMap contributors (ODbL 1.0, attribution required)",
     retrievedAt: OBSERVED_AT,
     usageBasis: "Computed walking routes between the reported pins. Not walked by a teammate; ends at the station's approximate map point, not a surveyed entrance.",
@@ -77,6 +85,11 @@ const places: Place[] = [
   place("place_lipa_town_proper", "Lipa town proper (jeep drop)", "Lipa City", 13.939738, 121.161626, "boarding_point", "Drop-off point of the 'Lipa Palengke' jeep."),
   place("place_lipa_tiaong_terminal", "Lipa terminal of the Tiaong jeep", "Lipa City", 13.940246, 121.162833, "terminal", "Where the walk from the town drop ends; start of the Tiaong jeep."),
   place("place_tiaong_intersection", "Tiaong intersection", "Tiaong, Quezon", 13.960353, 121.321225, "boarding_point", "End of the Tiaong jeep; boarding point of the Candelaria jeep."),
+  place("place_lipa_van_terminal", "Lipa van terminal (vans to San Pablo)", "Lipa City", 13.942662, 121.153493, "terminal", "Boarding point of the van to San Pablo."),
+  {
+    ...place("place_san_pablo_puregold", "Puregold San Pablo", "San Pablo City, Laguna", 14.0730005, 121.3161194, "boarding_point", "Where the van is reported to drop; the map point is the store's, not a surveyed drop-off spot."),
+    evidence: ev([TEAM, OSM], `Where the van is reported to drop. The map point is the store's location from OpenStreetMap, not a surveyed drop-off spot. ${REPORTED}`),
+  },
   place("place_candelaria_town_proper", "Candelaria town proper (Mang Inasal stop)", "Candelaria, Quezon", 13.9287883, 121.4240524, "boarding_point", "Candelaria jeep drop; the user confirmed this pin (Google Maps names it Non-Stop Gas Station)."),
   place("place_candelaria_hacienda_inn", "Bus stop in front of Hacienda Inn", "Candelaria, Quezon", 13.92878, 121.425215, "boarding_point", "Boarding stop for the Buendia and PITX buses."),
   place("place_pasay_mixue_gil_puyat", "Mixue Gil Puyat (bus drop)", "Pasay City", 14.555245, 120.997014, "boarding_point", "Drop-off of the Buendia bus, 2008e Taft Ave, Barangay 47, Pasay."),
@@ -99,6 +112,7 @@ interface Line {
 
 const lines: Line[] = [
   { key: "lipa_palengke_jeep", name: "Jeepney Lipa Palengke", mode: "jeepney", headsign: "Lipa Palengke", from: "place_lipa_mcdo_la_salle", to: "place_lipa_town_proper", centavos: 1400, sourceIds: [TEAM], note: "Regular fare P14 as reported (student P12 is not modelled)." },
+  { key: "lipa_san_pablo_van", name: "Van Lipa to San Pablo", mode: "van", headsign: "San Pablo", from: "place_lipa_van_terminal", to: "place_san_pablo_puregold", centavos: 13000, sourceIds: [TEAM], note: "Regular fare P130 as reported; operator and signboard not stated, so 'San Pablo' is inferred from 'van going to San Pablo'. The reported ride is up to Puregold." },
   { key: "tiaong_jeep", name: "Jeepney Tiaong (Bantayan)", mode: "jeepney", headsign: "Tiaong / Bantayan", from: "place_lipa_tiaong_terminal", to: "place_tiaong_intersection", centavos: 6000, sourceIds: [TEAM], note: "One long ride with no intermediate stops recorded. Regular fare P60 (student P50 not modelled)." },
   { key: "candelaria_jeep", name: "Jeepney to Candelaria", mode: "jeepney", headsign: "Candelaria", from: "place_tiaong_intersection", to: "place_candelaria_town_proper", centavos: 3000, sourceIds: [TEAM], note: "Headsign inferred from the report 'goes straight to Candelaria'. Regular fare P30 (student P25 not modelled)." },
   { key: "buendia_bus", name: "Bus Candelaria to Buendia", mode: "bus", headsign: "Buendia", from: "place_candelaria_hacienda_inn", to: "place_pasay_mixue_gil_puyat", centavos: 25000, sourceIds: [TEAM, JAC], note: "Regular fare P250 as reported (student P230 not modelled). JAC Liner/Lucena Lines serve Candelaria and have a Buendia terminal; the operator of the reported bus was not stated." },
@@ -149,7 +163,7 @@ const pack: TransitPack = {
   createdAt: OBSERVED_AT,
   coverageLabels: [
     ...base.coverageLabels,
-    "DRAFT, unverified: Lipa (McDonald's near De La Salle) to Candelaria by three jeepneys, and Candelaria to Vito Cruz by bus plus LRT-1 or by bus via PITX. One direction only; reported by teammates; not independently checked.",
+    "DRAFT, unverified: Lipa (McDonald's near De La Salle) to Candelaria by three jeepneys, and Candelaria to Vito Cruz by bus plus LRT-1 or by bus via PITX, and the Lipa van to Puregold San Pablo. One direction only; reported by teammates; not independently checked.",
   ],
   sources: [...base.sources, ...sources],
   places: [...base.places, ...places],

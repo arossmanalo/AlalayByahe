@@ -49,7 +49,7 @@ describe("road draft pack", () => {
     const report = analyzePack(draft, { target: "release" });
     assert.equal(report.ok, false);
     const errors = report.issues.filter((i) => i.severity === "error");
-    assert.equal(errors.length, 36);
+    assert.equal(errors.length, 42);
     assert.ok(errors.every((i) => i.code === "release_gate" && /must be verified/.test(i.message)));
     assert.deepEqual(report.issues.filter((i) => i.severity === "warning"), []);
   });
@@ -65,10 +65,10 @@ describe("road draft pack", () => {
     for (const s of draft["sources"].slice(lrtOnly["sources"].length)) assert.match(s.checkedBy, /not yet checked|Not yet checked/i);
   });
 
-  it("does not claim Lipa to San Pablo, return trips or student fares", () => {
+  it("does not claim the Wawa jeepney, return trips or student fares", () => {
     const text = JSON.stringify(draft["coverageLabels"]);
     assert.match(text, /DRAFT, unverified/);
-    assert.ok(!draft["places"].some((p: any) => /san pablo|wawa|puregold/i.test(p.name)));
+    assert.ok(!draft["places"].some((p: any) => /wawa/i.test(p.name)), "no Wawa point exists in the data");
     assert.ok(draft["fares"].every((f: any) => !f.discountRules));
   });
 });
@@ -119,9 +119,17 @@ describe("if the road facts were checked (in-memory copy)", () => {
     }
   });
 
-  it("a Lipa to San Pablo trip is not in the data at all", () => {
-    const r = plan("place_lipa_mcdo_la_salle", "place_san_pablo");
-    assert.equal(r.ok, false);
-    if (!r.ok) assert.equal(r.error.code, "PLACE_NOT_FOUND");
+  it("plans the Lipa van to Puregold San Pablo at P130, and has no Wawa jeepney or Lipa dorm to van terminal trip", () => {
+    const r = plan("place_lipa_van_terminal", "place_san_pablo_puregold");
+    assert.equal(r.ok, true);
+    if (r.ok) {
+      assert.equal(rides(r.value.options[0]!)[0]!.mode, "van");
+      assert.equal(r.value.options[0]!.fare.knownMinCentavos, 13000);
+    }
+    const wawa = plan("place_san_pablo_puregold", "place_san_pablo_wawa");
+    assert.equal(wawa.ok, false);
+    if (!wawa.ok) assert.equal(wawa.error.code, "PLACE_NOT_FOUND");
+    const fromMcdo = plan("place_lipa_mcdo_la_salle", "place_san_pablo_puregold");
+    assert.equal(fromMcdo.ok, false, "no verified link from the McDonald's stop to the van terminal");
   });
 });

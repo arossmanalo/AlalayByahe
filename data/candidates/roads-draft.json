@@ -6,7 +6,7 @@
   "createdAt": "2026-10-10T02:30:00+08:00",
   "coverageLabels": [
     "LRT-1 only: Dr. Santos to Fernando Poe Jr. (25 stations), rides and stored value fares. Reviewed 2026-10-10. No road services, no walking links, no target corridor covered end to end.",
-    "DRAFT, unverified: Lipa (McDonald's near De La Salle) to Candelaria by three jeepneys, and Candelaria to Vito Cruz by bus plus LRT-1 or by bus via PITX. One direction only; reported by teammates; not independently checked."
+    "DRAFT, unverified: Lipa (McDonald's near De La Salle) to Candelaria by three jeepneys, and Candelaria to Vito Cruz by bus plus LRT-1 or by bus via PITX, and the Lipa van to Puregold San Pablo. One direction only; reported by teammates; not independently checked."
   ],
   "sources": [
     {
@@ -110,6 +110,18 @@
       "usageBasis": "Secondary source: a Greenline city bus plies SM Fairview to PITX via Taft Ave. and Quezon Ave.",
       "factsSupported": [
         "A Fairview to PITX city bus runs along Taft Avenue"
+      ],
+      "checkedBy": "Member 2 assistant; not yet checked by a second teammate"
+    },
+    {
+      "id": "source_osm_nominatim_places",
+      "title": "OpenStreetMap place search (Nominatim)",
+      "url": "https://nominatim.openstreetmap.org/",
+      "publisher": "OpenStreetMap contributors (ODbL 1.0, attribution required)",
+      "retrievedAt": "2026-10-10T02:30:00+08:00",
+      "usageBasis": "Used once to find the map point of the named Puregold in San Pablo (Cipriano B. Colago Avenue). The point is an approximate place location, not the jeepney or van drop-off spot. A search for 'Wawa' in Barangay Del Remedio returned no matching place, so no Wawa point is used.",
+      "factsSupported": [
+        "Approximate location of Puregold San Pablo"
       ],
       "checkedBy": "Member 2 assistant; not yet checked by a second teammate"
     },
@@ -784,6 +796,45 @@
       }
     },
     {
+      "id": "place_lipa_van_terminal",
+      "name": "Lipa van terminal (vans to San Pablo)",
+      "aliases": [],
+      "kind": "terminal",
+      "locality": "Lipa City",
+      "point": {
+        "latitude": 13.942662,
+        "longitude": 121.153493
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Boarding point of the van to San Pablo. Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "place_san_pablo_puregold",
+      "name": "Puregold San Pablo",
+      "aliases": [],
+      "kind": "boarding_point",
+      "locality": "San Pablo City, Laguna",
+      "point": {
+        "latitude": 14.0730005,
+        "longitude": 121.3161194
+      },
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10",
+          "source_osm_nominatim_places"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Where the van is reported to drop. The map point is the store's location from OpenStreetMap, not a surveyed drop-off spot. Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
       "id": "place_candelaria_town_proper",
       "name": "Candelaria town proper (Mang Inasal stop)",
       "aliases": [],
@@ -1432,6 +1483,44 @@
       }
     },
     {
+      "id": "stop_lipa_van_terminal",
+      "placeId": "place_lipa_van_terminal",
+      "label": "Lipa van terminal (vans to San Pablo)",
+      "point": {
+        "latitude": 13.942662,
+        "longitude": 121.153493
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "stop_san_pablo_puregold",
+      "placeId": "place_san_pablo_puregold",
+      "label": "Puregold San Pablo",
+      "point": {
+        "latitude": 14.0730005,
+        "longitude": 121.3161194
+      },
+      "board": true,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
       "id": "stop_candelaria_town_proper",
       "placeId": "place_candelaria_town_proper",
       "label": "Candelaria town proper (Mang Inasal stop)",
@@ -1560,6 +1649,22 @@
         "checkedAt": "2026-10-10T02:30:00+08:00",
         "reliability": "estimated",
         "note": "Regular fare P14 as reported (student P12 is not modelled). Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "service_lipa_san_pablo_van",
+      "name": "Van Lipa to San Pablo",
+      "mode": "van",
+      "signboardAliases": [
+        "San Pablo"
+      ],
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Regular fare P130 as reported; operator and signboard not stated, so 'San Pablo' is inferred from 'van going to San Pablo'. The reported ride is up to Puregold. Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
       }
     },
     {
@@ -1692,6 +1797,21 @@
         "checkedAt": "2026-10-10T02:30:00+08:00",
         "reliability": "estimated",
         "note": "Regular fare P14 as reported (student P12 is not modelled). Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "dir_lipa_san_pablo_van",
+      "serviceId": "service_lipa_san_pablo_van",
+      "headsign": "San Pablo",
+      "availability": "documented",
+      "availabilityNote": "Reported by teammates; not live availability. Operating hours are not recorded.",
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Regular fare P130 as reported; operator and signboard not stated, so 'San Pablo' is inferred from 'van going to San Pablo'. The reported ride is up to Puregold. Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
       }
     },
     {
@@ -2543,6 +2663,36 @@
       "directionId": "dir_lipa_palengke_jeep",
       "sequence": 2,
       "stopId": "stop_lipa_town_proper",
+      "board": false,
+      "alight": true,
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lipa_san_pablo_van",
+      "sequence": 1,
+      "stopId": "stop_lipa_van_terminal",
+      "board": true,
+      "alight": false,
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
+      "directionId": "dir_lipa_san_pablo_van",
+      "sequence": 2,
+      "stopId": "stop_san_pablo_puregold",
       "board": false,
       "alight": true,
       "evidence": {
@@ -5807,6 +5957,20 @@
         "checkedAt": "2026-10-10T02:30:00+08:00",
         "reliability": "estimated",
         "note": "Regular fare P14 as reported (student P12 is not modelled). Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
+      }
+    },
+    {
+      "id": "fare_lipa_san_pablo_van",
+      "serviceId": "service_lipa_san_pablo_van",
+      "kind": "flat",
+      "flatCentavos": 13000,
+      "evidence": {
+        "sourceIds": [
+          "source_team_reports_2026_10_10"
+        ],
+        "checkedAt": "2026-10-10T02:30:00+08:00",
+        "reliability": "estimated",
+        "note": "Regular fare P130 as reported; operator and signboard not stated, so 'San Pablo' is inferred from 'van going to San Pablo'. The reported ride is up to Puregold. Reported by teammates and relayed by the user; undated, no named recorder, not yet checked by a second teammate."
       }
     },
     {
