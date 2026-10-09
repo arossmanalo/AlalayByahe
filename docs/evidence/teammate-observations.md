@@ -166,3 +166,7 @@ Coordinates below were read from the redirect of each Google Maps short link the
 
 - The "Mang Inasal Stop" short link resolves to the Google Maps place **"Non-Stop Gas Station"** at **13.9287883, 121.4240524**, not to a place named Mang Inasal. It is about 125 m west of the Hacienda Inn stop pin (13.928780, 121.425215). The pin may be beside Mang Inasal, or the wrong place was shared; the user needs to confirm which spot the Candelaria jeep actually stops at. Until then it is recorded as a candidate pin only.
 - "Gate 9" at PITX: reported as the boarding gate for the SM Fairview bus. A web search found no source that names a Gate 9 or says which gate serves Fairview. Public sources describe PITX as having numbered boarding gates and bays, assigned by the terminal and liable to change, with provincial buses sold through route-specific booths. So gate 9 stays an unconfirmed teammate report until someone photographs the gate sign or a PITX source states it. It also needs its own GPS pin (the PITX pin above is the building, not the gate).
+
+## Seventh message from the user, 2026-10-10: confirmation
+
+The user replied "yes its correct" to the Mang Inasal pin question. Recorded as: the Candelaria jeep's stop in the town proper is at **13.9287883, 121.4240524** (the pin that Google Maps names "Non-Stop Gas Station"), as confirmed by the user. The reply did not address PITX gate 9, so gate 9 remains an unconfirmed report with no pin.
