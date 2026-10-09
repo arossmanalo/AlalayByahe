@@ -81,6 +81,32 @@ Proposals for Member 4 (not changed here; owner files):
 - `app.config.ts` sets `userInterfaceStyle: "automatic"`, but the UI palette is light only. Check status bar, header and keyboard legibility in system dark mode on a device. Use `"light"` until a dark palette exists.
 - Engine text such as error details, `rankReason`, option warnings and coverage notes is English only, so Filipino users see English details. Localizing it needs stable codes from Members 2 and 4.
 
+## UI-006 device verification, second pass (October 10, 2026)
+
+Branch `feat/ui/ui-006-device` from `main` `3aabd53`. Device verification is still **Not Run**. It is blocked on prerequisites outside `app/` and `src/ui/`:
+
+- **No APK from current `main`.** The only recorded Android artifact is `34236a5`. It was built before the LRT-1 pack was bundled, and it is on Member 4's machine.
+- **No `adb`.** This workstation has no Android platform-tools. A phone was attached over USB in file-transfer (MTP) mode only, without USB debugging, so nothing was installed.
+- **No iPhone build exists.**
+
+### Verified in software instead
+
+`tests/ui/real-pack-ui.test.ts` runs the walk's journeys on the real bundled pack `lrt1_2026_10_10_1`. Each journey goes through the real install path (Node SQLite, production mode), the controller and RoutePort, then the UI presenters. Only the AI is a test double. This proves the text the screens receive, not what a phone renders.
+
+### Defects found and fixed
+
+- **Estimated totals looked verified.** A student's Pedro Gil to Vito Cruz trip showed "✓ ₱19.00 total" in success styling, although its only ride fare is an estimate because no student discount is documented. A total now says "(verified)" only when every ride fare is verified. This trip reads "₱19.00 total (estimated)" in the info tone, and Vito Cruz to Baclaran reads "₱21.00 total (verified)" (`totalReliability`, `fareText`).
+- **Unsupported places were not explained.** "Lipa" and "Candelaria" match no stored place, and the picker said only "No matching stored place". When the user's words or a search match nothing, the picker now lists the supported coverage (`needsCoverageHint`, EC-011). Nothing is routed.
+- **Onboard results showed engine text as a boarding point.** They read "First ride from Currently onboard; next stop: …". A ride the user is already on now reads "Stay on your current vehicle" (`firstRideLine`).
+
+### Proposals for Member 4 (undecided)
+
+Step 5 asks for these to be decided with phone evidence, so they are still open. These are the exact changes to send if a device shows the defect:
+
+- `app.config.ts`: set `userInterfaceStyle: "light"` if system dark mode makes the header, status bar or keyboard hard to read against the light-only palette.
+- `app.config.ts`: leave `orientation: "portrait"` as is, unless the team wants rotation; in that case set `"default"`. Until then the rotation check is Not Applicable.
+- Engine text: provide stable codes for `rankReason`, option warnings and error details so they can be localized. Today Filipino users see these details in English.
+
 ## Gaps to resolve with owners
 
 - Model setup cancellation is now supplied as an optional UiServices capability from Member 1's existing AiManager extension. Canonical AiPort remains unchanged; the real setup screen offers cancellation during download/checking.

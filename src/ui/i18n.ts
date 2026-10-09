@@ -139,6 +139,7 @@ const en = {
   searchButton: "Search",
   searching: "Searching…",
   noSearchResults: "No stored place matches. Try another name.",
+  placeCoverageNote: "Only stored places within the supported coverage can be chosen:",
   selected: "Selected",
   matchKind: { exact: "exact match", alias: "known alias", fuzzy: "similar name" } as Record<
     "exact" | "alias" | "fuzzy",
@@ -442,6 +443,7 @@ const fil: Strings = {
   searchButton: "Hanapin",
   searching: "Naghahanap…",
   noSearchResults: "Walang tugmang naka-save na lugar. Subukan ang ibang pangalan.",
+  placeCoverageNote: "Mga naka-save na lugar lang sa loob ng suportadong sakop ang mapipili:",
   selected: "Napili",
   matchKind: { exact: "eksaktong tugma", alias: "kilalang ibang tawag", fuzzy: "kahawig na pangalan" },
   swapPlaces: "Pagpalitin ang manggagalingan at pupuntahan",

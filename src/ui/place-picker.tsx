@@ -4,8 +4,9 @@ import { useRef, useState } from "react";
 import type { Place, PlaceCandidate, ResolvedEndpoint, ResolveResult, Result } from "../contracts";
 import { AppButton, Body, Card, ChoiceChip, Heading, LabeledInput, Notice, Small } from "./components/primitives";
 import { ErrorCard } from "./error-card";
-import { endpointFromPlace, placeDisplayName } from "./form-logic";
-import { useUi } from "./services";
+import { endpointFromPlace, needsCoverageHint, placeDisplayName } from "./form-logic";
+import { CoverageList } from "./readiness";
+import { useReadiness, useUi } from "./services";
 
 export interface PlaceSelection {
   endpoint: ResolvedEndpoint;
@@ -62,6 +63,7 @@ export function PlacePicker({
   error?: string | null;
 }) {
   const { t, services } = useUi();
+  const { pack } = useReadiness();
   const [query, setQuery] = useState("");
   const [search, setSearch] = useState<
     { status: "idle" } | { status: "searching" } | { status: "done"; result: Result<ResolveResult> }
@@ -79,6 +81,9 @@ export function PlacePicker({
 
   const selectedId = selected?.endpoint.placeId ?? null;
   const pick = (place: Place) => onSelect(selectionFromPlace(place));
+  const searchCount = search.status === "done" && search.result.ok ? search.result.value.candidates.length : null;
+  const coverageLabels = pack.status === "loaded" && pack.result.ok ? pack.result.value.coverageLabels : [];
+  const showCoverage = needsCoverageHint(showAiText ? aiText : null, candidates.length, searchCount);
 
   return (
     <Card>
@@ -123,6 +128,11 @@ export function PlacePicker({
         ) : (
           <ErrorCard error={search.result.error} handlers={{ retry: () => void runSearch() }} />
         )
+      ) : null}
+      {showCoverage ? (
+        <Notice tone="info" title={t.placeCoverageNote}>
+          <CoverageList labels={coverageLabels} />
+        </Notice>
       ) : null}
     </Card>
   );

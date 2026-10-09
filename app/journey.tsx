@@ -38,7 +38,7 @@ export default function JourneyScreen() {
         </Body>
       ) : null}
       <LegSequence option={option} />
-      <FareSummary fare={option.fare} />
+      <FareSummary option={option} />
 
       <Notice tone="warning" title={t.checkDirection}>
         <Body>{t.confirmServiceFare}</Body>
