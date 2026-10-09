@@ -28,6 +28,11 @@ function createSession(context: LlamaContext): LlamaSession {
       if (released) throw new Error("Llama context already released.");
       const result = await context.completion({
         messages: request.messages,
+        // Required with the Jinja chat template: without it the prompt ends after the
+        // user turn and the model writes "<|im_start|>assistant\n" itself before the
+        // JSON. Measured on Honor X9b (AI-001 probe, 2026-10-10): output rejected as
+        // AI_INVALID_OUTPUT.
+        add_generation_prompt: true,
         n_predict: request.maxTokens,
         temperature: request.temperature,
         seed: request.seed,
