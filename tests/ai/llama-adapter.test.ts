@@ -9,8 +9,9 @@ import { describe, it } from "node:test";
 const source = readFileSync(join(__dirname, "..", "..", "src", "ai", "llamaRnRuntime.ts"), "utf8");
 
 describe("llama.rn adapter settings (source guard)", () => {
-  it("asks the chat template for the assistant header so the model only writes JSON", () => {
+  it("keeps the generation prompt explicit and validates text with the chat header removed", () => {
     assert.match(source, /add_generation_prompt:\s*true/);
+    assert.match(source, /extractCompletionText\(result\.text, result\.content\)/);
   });
 
   it("keeps the canonical JSON schema as the grammar", () => {
