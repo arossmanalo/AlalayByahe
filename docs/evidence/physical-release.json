@@ -43,6 +43,6 @@
       "P-24": "Not Run",
       "P-25": "Not Run"
     },
-    "notes": "Skeleton. Every result is Not Run. Fill only from steps a person witnessed on the release APK. See docs/evidence/physical-test-script.md."
+    "notes": "Skeleton. Every result is Not Run. Fill only from steps a person witnessed on the release APK. See the Phone test script section of the root README.md."
   }
 ]

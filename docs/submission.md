@@ -1,6 +1,6 @@
 # Submission preparation — pending release acceptance
 
-**Draft only.** Nothing has been published, posted, deployed or submitted, no video exists and no receipt exists. The participant briefing PDF is still missing, so official mandatory items remain unconfirmed (see [requirements check](requirements-check.md)). The user decides what is published and submitted.
+**Draft only.** Nothing has been published, posted, deployed or submitted, no video exists and no receipt exists. The participant briefing PDF is still missing, so official mandatory items remain unconfirmed (see the [event requirements check](../README.md#event-requirements-check) in the README). The user decides what is published and submitted.
 
 **Platform:** Android only. iPhone/iOS was excluded on 2026-10-10 because of limited resources; do not claim or imply iOS support in the video, post or README.
 
@@ -38,7 +38,7 @@ Typed request → on-device model (Qwen2.5-0.5B-Instruct, Q4_K_M, Apache-2.0, vi
 | Model accuracy on held-out cases, latency | `docs/evidence/ai-benchmarks.md` | {{Not Run / n cases, x% exact, p95 y ms}} |
 
 ### 5. Limits (say these plainly)
-No target corridor is supported end to end. The release build is LRT-1 stations only, with no walking links, so journeys start and end at stations. No live arrivals, tracking or "fastest" claim. Android only. Phone inference accuracy and speed are {{measured as … / unmeasured}}. Full list: [disclosures](disclosures.md).
+No target corridor is supported end to end. The release build is LRT-1 stations only, with no walking links, so journeys start and end at stations. No live arrivals, tracking or "fastest" claim. Android only. Phone inference accuracy and speed are {{measured as … / unmeasured}}. Full list: [disclosures](../README.md#disclosures-attribution-and-limitations).
 
 ## Video script (about 60 seconds, shows only verified flows)
 
@@ -74,9 +74,9 @@ Do not post. The exact tags, hashtag and format come from the official brief, wh
 
 ## Materials to finish
 
-- Record artifact hash, source commit, pack version, model/runtime and anonymized device evidence in `docs/evidence/physical-release.json` (script: `docs/evidence/physical-test-script.md`).
+- Record artifact hash, source commit, pack version, model/runtime and anonymized device evidence in `docs/evidence/physical-release.json` (script: [Phone test script](../README.md#phone-test-script-android) in the README).
 - Verify the actual event rules against the missing briefing before claiming compliance.
-- Review source/model/dependency attribution and repository visibility (`disclosures.md`).
+- Review source/model/dependency attribution and repository visibility ([README disclosures](../README.md#disclosures-attribution-and-limitations)).
 - Record and inspect the final video; verify its URL.
 - Prepare the public post with only measured claims; publish and submit only when the user authorizes it.
 - Save the actual receipt, link and timestamp after submission.

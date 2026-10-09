@@ -136,7 +136,7 @@ Nothing has been built yet, so these merges invalidated no artifact.
 
 ### Drafts added (no APK needed, none published)
 
-`docs/evidence/physical-test-script.md` and the `physical-release.json` skeleton (all Not Run; a test keeps it that way), `docs/disclosures.md`, README status and disclosures, `docs/submission.md` (outline, shot-by-shot script, fallbacks, post draft), `docs/requirements-check.md`, `docs/evidence/dependency-advisories.md` and `docs/evidence/artifact-record-template.md`.
+the phone test script (now in the root README) and the `physical-release.json` skeleton (all Not Run; a test keeps it that way), the disclosures (now in the root README), README status and disclosures, `docs/submission.md` (outline, shot-by-shot script, fallbacks, post draft), `docs/requirements-check.md`, `docs/evidence/dependency-advisories.md` and `docs/evidence/artifact-record-template.md`.
 
 ### Findings for the user
 
