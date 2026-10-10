@@ -4,7 +4,8 @@
 import { useEffect, useState } from "react";
 import type { JourneyOption, Result, RouteRequest } from "../contracts";
 import type { TripSummary } from "../ai/summary";
-import { Body, Card, Heading, ProgressBar, Small } from "./components/primitives";
+import { StyleSheet, View } from "react-native";
+import { Body, Footnote, ListGroup, ProgressBar } from "./components/primitives";
 import { useUi } from "./services";
 
 const cache = new Map<string, Promise<Result<TripSummary>>>();
@@ -37,23 +38,28 @@ export function TripSummaryCard({ option, request }: { option: JourneyOption; re
 
   if (!summarize || !request) return null;
   return (
-    <Card>
-      <Heading level={2}>{t.summaryHeading}</Heading>
-      {summary === null ? (
-        <>
-          <Small>{t.summaryWriting}</Small>
-          <ProgressBar progress={null} label={t.summaryWriting} />
-        </>
-      ) : (
-        <>
-          <Body>{summary.text}</Body>
-          <Small>
-            {summary.source === "phone_ai" && summary.engine
-              ? t.summaryByAi(summary.engine.modelId)
-              : `${t.summaryFromData}${summary.fallbackReason ? ` ${t.summaryFallback[summary.fallbackReason]}` : ""}`}
-          </Small>
-        </>
-      )}
-    </Card>
+    <ListGroup header={t.summaryHeading}>
+      <View style={styles.block}>
+        {summary === null ? (
+          <>
+            <Footnote>{t.summaryWriting}</Footnote>
+            <ProgressBar progress={null} label={t.summaryWriting} />
+          </>
+        ) : (
+          <>
+            <Body>{summary.text}</Body>
+            <Footnote>
+              {summary.source === "phone_ai" && summary.engine
+                ? t.summaryByAi(summary.engine.modelId)
+                : `${t.summaryFromData}${summary.fallbackReason ? ` ${t.summaryFallback[summary.fallbackReason]}` : ""}`}
+            </Footnote>
+          </>
+        )}
+      </View>
+    </ListGroup>
   );
 }
+
+const styles = StyleSheet.create({
+  block: { paddingHorizontal: 16, paddingVertical: 12, gap: 6 },
+});

@@ -1,13 +1,17 @@
-// Member 3 (UI-003): numbered steps and a route diagram built only from RouteResult fields.
-// Boarding, direction and dropoff are separately labeled so the user can name each one (EC-104).
-import { StyleSheet, Text, View } from "react-native";
-import type { Evidence, JourneyOption, RideLeg, RouteRequest, SourceRef } from "../contracts";
-import { AppButton, Body, Card, Heading, LegBadge, Row, Small } from "./components/primitives";
+// Member 3 (UI-003): ordered steps as a timeline (design artboards "Steps"), built only from RouteResult
+// fields and the pack's stop order. Boarding, direction and drop-off are separately labelled so the user can
+// name each one (EC-104).
+import { useState, type ReactNode } from "react";
+import { Pressable, StyleSheet, Text, View } from "react-native";
+import type { Evidence, JourneyLeg, JourneyOption, RideLeg, RouteRequest, SourceRef, TransitPack } from "../contracts";
+import { Icon } from "./components/icons";
+import { AppButton, badgeLabel, DirectionSign, LegBadge, text } from "./components/primitives";
 import { formatDate, formatMeters } from "./format";
-import { LegFare } from "./journey-card";
+import { legFareLine } from "./journey-card";
 import { journeySteps, type JourneyStep } from "./journey-presenter";
+import { rideStopLabels, stationName } from "./map-geometry";
 import { useReadiness, useUi } from "./services";
-import { colors, legColors, radius, spacing, type } from "./theme";
+import { colors, modeColors, radius, spacing } from "./theme";
 
 /** Source records from the loaded pack, keyed by ID, for readable citations. */
 export function useSources(): Map<string, SourceRef> {
@@ -27,190 +31,235 @@ export function EvidenceLine({ evidence }: { evidence: Evidence }) {
     return s ? `${s.title} (${s.publisher})` : id;
   });
   return (
-    <Small>
+    <Text style={text.footnote}>
       {t.reliabilityLabel(t.fareReliability[evidence.reliability])} · {t.checkedOn(formatDate(evidence.checkedAt))}
       {cited.length > 0 ? ` · ${t.sourcesLabel}: ${cited.join("; ")}` : ""}
       {evidence.note ? ` · ${evidence.note}` : ""}
-    </Small>
+    </Text>
   );
 }
 
-function WalkStepCard({ step }: { step: Extract<JourneyStep, { kind: "walk" }> }) {
-  const { t } = useUi();
-  const { leg, fromLabel, toLabel } = step;
-  return (
-    <Card>
-      <Row>
-        <Heading level={3}>{t.stepN(step.number)}</Heading>
-        <LegBadge kind="walk" label={t.walkName} />
-      </Row>
-      <Body style={styles.strong}>{t.walkStep(formatMeters(leg.meters))}</Body>
-      {fromLabel && toLabel ? <Body>{t.walkFromTo(fromLabel, toLabel)}</Body> : null}
-      {!fromLabel && toLabel ? <Body>{t.walkTo(toLabel)}</Body> : null}
-      {leg.instructions.map((line, i) => (
-        <Body key={i}>
-          {step.number}.{i + 1} {line}
-        </Body>
-      ))}
-      <EvidenceLine evidence={leg.evidence} />
-    </Card>
-  );
+type Segment = "ride" | "walk" | "none";
+
+function segmentOf(leg: JourneyLeg | undefined): { kind: Segment; color: string } {
+  if (!leg) return { kind: "none", color: "transparent" };
+  return leg.kind === "walk" ? { kind: "walk", color: modeColors.walk.line } : { kind: "ride", color: modeColors[leg.mode].line };
 }
 
-function RideStepCard({
-  step,
-  onOnboard,
+function RailPiece({ segment, flex, height }: { segment: { kind: Segment; color: string }; flex?: boolean; height?: number }) {
+  const size = flex ? { flex: 1 } : { height };
+  if (segment.kind === "ride") return <View style={[size, styles.rideRail, { backgroundColor: segment.color }]} />;
+  if (segment.kind === "walk") return <View style={[size, styles.walkRail, { borderColor: segment.color }]} />;
+  return <View style={size} />;
+}
+
+/** One timeline row: the rail on the left (line, marker, line) and the content on the right. */
+function TimelineRow({
+  above,
+  below,
+  marker,
+  children,
 }: {
-  step: Extract<JourneyStep, { kind: "ride" }>;
-  onOnboard?: (leg: RideLeg) => void;
+  above: { kind: Segment; color: string };
+  below: { kind: Segment; color: string };
+  marker: ReactNode | null;
+  children: ReactNode;
 }) {
-  const { t } = useUi();
-  const { leg } = step;
   return (
-    <Card>
-      <Row>
-        <Heading level={3}>{t.stepN(step.number)}</Heading>
-        <LegBadge kind={leg.mode} label={t.modeNames[leg.mode]} />
-      </Row>
-
-      <View style={styles.labelBlock}>
-        <Small>{leg.alreadyOnboard ? t.stayOnboard : t.boardHere}</Small>
-        {!leg.alreadyOnboard ? <Text style={styles.place}>{leg.boardLabel}</Text> : null}
+    <View style={styles.row}>
+      <View style={styles.rail} importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
+        {marker ? (
+          <>
+            <RailPiece segment={above} height={6} />
+            {marker}
+            <RailPiece segment={below} flex />
+          </>
+        ) : (
+          <RailPiece segment={below} flex />
+        )}
       </View>
-
-      <Body>
-        {t.rideOn} {t.modeNames[leg.mode]}: {leg.serviceName}
-      </Body>
-
-      <View style={[styles.signboard, { borderColor: legColors[leg.mode] }]}>
-        <Small>{t.directionSign}</Small>
-        <Text style={styles.signText}>{leg.headsign}</Text>
-      </View>
-
-      <View style={styles.labelBlock}>
-        <Small>{t.getOffHere}</Small>
-        <Text style={styles.place}>{leg.alightLabel}</Text>
-      </View>
-
-      <LegFare fare={leg.fare} />
-      <EvidenceLine evidence={leg.evidence} />
-      {onOnboard && !leg.alreadyOnboard ? (
-        <AppButton label={t.imOnThisVehicle} variant="link" onPress={() => onOnboard(leg)} />
-      ) : null}
-    </Card>
+      <View style={styles.content}>{children}</View>
+    </View>
   );
 }
 
-/** Vertical overview. Hidden from screen readers in favor of one summary label; the steps follow in full. */
-export function RouteDiagram({ option, request }: { option: JourneyOption; request: RouteRequest | null }) {
-  const { t } = useUi();
-  const steps = journeySteps(option, request);
-  const first = steps[0];
-  const startLabel =
-    request?.origin.label ??
-    (first?.kind === "ride" ? first.leg.boardLabel : first?.kind === "walk" ? first.fromLabel : null);
+function Ring({ color, size, border }: { color: string; size: number; border: number }) {
+  return <View style={{ width: size, height: size, borderRadius: size / 2, borderWidth: border, borderColor: color, backgroundColor: "#FFFFFF" }} />;
+}
 
-  const summary = steps
-    .map((s) =>
-      s.kind === "walk"
-        ? t.walkStep(formatMeters(s.leg.meters))
-        : `${t.modeNames[s.leg.mode]} ${s.leg.boardLabel} → ${s.leg.alightLabel} (${s.leg.headsign})`,
-    )
-    .join("; ");
-
+function GetOffPin() {
   return (
-    <Card>
-      <Heading level={2}>{t.diagramHeading}</Heading>
-      <View accessible accessibilityLabel={t.diagramA11y(summary)}>
-        <View importantForAccessibility="no-hide-descendants" accessibilityElementsHidden>
-          {startLabel ? <Node label={startLabel} /> : null}
-          {steps.map((s) =>
-            s.kind === "walk" ? (
-              <View key={s.number}>
-                <Segment color={legColors.walk} dashed text={`${t.walkName} ${formatMeters(s.leg.meters)}`} />
-                <Node label={s.toLabel ?? (s.number === steps.length ? request?.destination.label ?? "" : "")} />
-              </View>
-            ) : (
-              <View key={s.number}>
-                <Segment
-                  color={legColors[s.leg.mode]}
-                  text={`${t.modeNames[s.leg.mode]} · ${s.leg.headsign}`}
-                />
-                <Node label={`${t.getOffHere}: ${s.leg.alightLabel}`} />
-              </View>
-            ),
-          )}
+    <View style={styles.getOff}>
+      <View style={styles.getOffDot} />
+    </View>
+  );
+}
+
+function RideStops({ leg, pack }: { leg: RideLeg; pack: TransitPack | null }) {
+  const { t } = useUi();
+  const [open, setOpen] = useState(false);
+  const labels = pack ? rideStopLabels(pack, leg) : null;
+  if (!labels) return null;
+  const between = labels.slice(1, -1).map(stationName);
+  const count = labels.length - 1;
+  const preview = between.length > 3 ? `${between.slice(0, 2).join(", ")} … ${between[between.length - 1]}` : between.join(", ");
+  return (
+    <View style={styles.rideBox}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityState={{ expanded: open }}
+        accessibilityLabel={`${t.rideStops(count)}${preview ? `: ${preview}` : ""}`}
+        onPress={() => setOpen((o) => !o)}
+        style={({ pressed }) => [styles.rideButton, pressed && styles.pressed]}
+      >
+        <View style={styles.flex}>
+          <Text style={[text.subhead, styles.semibold]}>{t.rideStops(count)}</Text>
+          {preview ? <Text style={text.footnote}>{preview}</Text> : null}
         </View>
-      </View>
-    </Card>
-  );
-}
-
-function Node({ label }: { label: string }) {
-  return (
-    <View style={styles.nodeRow}>
-      <View style={styles.rail}>
-        <View style={styles.dot} />
-      </View>
-      <Text style={styles.nodeText}>{label}</Text>
+        <Icon name={open ? "chevronUp" : "chevronDown"} size={14} color={colors.textMuted} strokeWidth={3} />
+      </Pressable>
+      {open
+        ? labels.slice(1).map((label, i) => (
+            <Text key={`${label}_${i}`} style={[text.footnoteDark, styles.stopLine]}>
+              {i + 1}. {label}
+            </Text>
+          ))
+        : null}
     </View>
   );
 }
 
-function Segment({ color, text, dashed = false }: { color: string; text: string; dashed?: boolean }) {
-  return (
-    <View style={styles.segmentRow}>
-      <View style={styles.rail}>
-        <View style={[styles.line, { borderColor: color, borderStyle: dashed ? "dashed" : "solid" }]} />
-      </View>
-      <Text style={styles.segmentText}>{text}</Text>
-    </View>
-  );
-}
-
-export function JourneySteps({
+/** The whole journey as one timeline: board, ride, get off, walk, in order. */
+export function JourneyTimeline({
   option,
   request,
+  pack,
   onOnboard,
 }: {
   option: JourneyOption;
   request: RouteRequest | null;
+  pack: TransitPack | null;
   onOnboard?: (leg: RideLeg) => void;
 }) {
   const { t } = useUi();
   const steps = journeySteps(option, request);
+  const legs = option.legs;
+  const rides = legs.filter((l): l is RideLeg => l.kind === "ride");
+  const lastRideIndex = legs.reduce((last, leg, i) => (leg.kind === "ride" ? i : last), -1);
+
   return (
-    <>
-      <Heading level={2}>{t.stepsHeading}</Heading>
-      <Small>{t.followSteps}</Small>
-      {steps.map((step) =>
-        step.kind === "walk" ? (
-          <WalkStepCard key={step.number} step={step} />
-        ) : (
-          <RideStepCard key={step.number} step={step} onOnboard={onOnboard} />
-        ),
-      )}
-    </>
+    <View style={styles.timeline}>
+      {steps.map((step: JourneyStep, i) => {
+        const above = segmentOf(legs[i - 1]);
+        const here = segmentOf(legs[i]);
+        const below = segmentOf(legs[i + 1]);
+        if (step.kind === "walk") {
+          const { leg, fromLabel, toLabel } = step;
+          return (
+            <TimelineRow key={step.number} above={here} below={here} marker={null}>
+              <View style={styles.walkTitle}>
+                <Icon name="walk" size={16} color={colors.text} strokeWidth={2} />
+                <Text style={[text.subhead, styles.semibold]}>{t.walkStep(formatMeters(leg.meters))}</Text>
+              </View>
+              {fromLabel && toLabel ? <Text style={text.subhead}>{t.walkFromTo(fromLabel, toLabel)}</Text> : null}
+              {!fromLabel && toLabel ? <Text style={text.subhead}>{t.walkTo(toLabel)}</Text> : null}
+              {leg.instructions.length > 0 ? (
+                <View style={styles.instructions}>
+                  {leg.instructions.map((line, n) => (
+                    <View key={n} style={styles.instruction}>
+                      <Text style={[styles.instructionText, text.muted, styles.instructionNumber]}>
+                        {step.number}.{n + 1}
+                      </Text>
+                      <Text style={[styles.instructionText, styles.flex]}>{line}</Text>
+                    </View>
+                  ))}
+                </View>
+              ) : null}
+              <EvidenceLine evidence={leg.evidence} />
+            </TimelineRow>
+          );
+        }
+        const { leg } = step;
+        const final = i === lastRideIndex;
+        const color = modeColors[leg.mode].line;
+        const count = pack ? rideStopLabels(pack, leg) : null;
+        return (
+          <View key={step.number}>
+            <TimelineRow above={above} below={here} marker={<Ring color={color} size={18} border={4} />}>
+              <Text style={[text.body, styles.semibold]}>{leg.alreadyOnboard ? t.stayOnboard : t.boardAt(leg.boardLabel)}</Text>
+              <View
+                style={styles.badges}
+                accessible
+                accessibilityLabel={[`${t.rideOn} ${t.modeNames[leg.mode]}: ${leg.serviceName}`, `${t.directionSign}: ${leg.headsign}`, rides.length > 1 ? `${t.fareLabel}: ${legFareLine(leg.fare, t)}` : null].filter(Boolean).join(". ")}
+              >
+                <LegBadge kind={leg.mode} label={badgeLabel(leg.serviceName, t.modeNames[leg.mode])} small />
+                <DirectionSign headsign={leg.headsign} />
+                {rides.length > 1 ? <Text style={text.footnote}>{legFareLine(leg.fare, t)}</Text> : null}
+              </View>
+              {badgeLabel(leg.serviceName, t.modeNames[leg.mode]) !== leg.serviceName ? <Text style={text.footnote}>{leg.serviceName}</Text> : null}
+              {onOnboard && rides.length > 1 && !leg.alreadyOnboard ? (
+                <AppButton label={t.imOnThisVehicle} variant="link" onPress={() => onOnboard(leg)} style={styles.inlineLink} />
+              ) : null}
+            </TimelineRow>
+            <TimelineRow above={here} below={here} marker={null}>
+              <RideStops leg={leg} pack={pack} />
+            </TimelineRow>
+            <TimelineRow above={here} below={below} marker={final ? <GetOffPin /> : <Ring color={color} size={14} border={3} />}>
+              <Text style={[text.body, styles.semibold]}>{t.getOffAt(leg.alightLabel)}</Text>
+              {count && !leg.alreadyOnboard ? <Text style={text.footnote}>{t.stopsAfter(count.length - 1, stationName(leg.boardLabel))}</Text> : null}
+            </TimelineRow>
+          </View>
+        );
+      })}
+    </View>
+  );
+}
+
+/** Per-leg sources, check dates and fare basis, for the "Sources and checks" row. */
+export function SourcesList({ option }: { option: JourneyOption }) {
+  const { t } = useUi();
+  return (
+    <View style={styles.sources}>
+      {option.legs.map((leg, i) => (
+        <View key={i} style={styles.sourceItem}>
+          <Text style={[text.footnoteDark, styles.semibold]}>
+            {t.stepN(i + 1)} · {leg.kind === "walk" ? t.walkName : `${t.modeNames[leg.mode]} ${leg.serviceName}`}
+          </Text>
+          <EvidenceLine evidence={leg.evidence} />
+          {leg.kind === "ride" ? (
+            <Text style={text.footnote}>
+              {t.fareLabel}: {legFareLine(leg.fare, t)}
+              {leg.fare.basis ? ` · ${t.fareBasis(leg.fare.basis)}` : ""}
+            </Text>
+          ) : null}
+        </View>
+      ))}
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  strong: { fontWeight: "700" },
-  labelBlock: { gap: 2 },
-  place: { fontSize: type.subheading, fontWeight: "700", color: colors.text },
-  signboard: {
-    borderWidth: 3,
-    borderRadius: radius.md,
-    padding: spacing.md,
-    backgroundColor: colors.surfaceMuted,
-    gap: 2,
-  },
-  signText: { fontSize: type.heading, fontWeight: "800", color: colors.text },
-  nodeRow: { flexDirection: "row", alignItems: "center", minHeight: 28 },
-  segmentRow: { flexDirection: "row", alignItems: "stretch", minHeight: 44 },
+  flex: { flex: 1, minWidth: 0 },
+  semibold: { fontWeight: "600" },
+  pressed: { opacity: 0.6 },
+  timeline: { paddingTop: 14, paddingBottom: spacing.sm, paddingHorizontal: spacing.lg },
+  row: { flexDirection: "row", gap: spacing.md },
   rail: { width: 28, alignItems: "center" },
-  dot: { width: 14, height: 14, borderRadius: 7, backgroundColor: colors.text },
-  line: { flex: 1, width: 0, borderLeftWidth: 5 },
-  nodeText: { flex: 1, fontSize: type.body, fontWeight: "600", color: colors.text },
-  segmentText: { flex: 1, alignSelf: "center", fontSize: type.small, color: colors.textMuted, paddingVertical: spacing.sm },
+  rideRail: { width: 5 },
+  walkRail: { width: 0, borderLeftWidth: 4, borderStyle: "dotted" },
+  content: { flex: 1, minWidth: 0, gap: 6, paddingBottom: 14 },
+  badges: { flexDirection: "row", alignItems: "center", flexWrap: "wrap", gap: 6 },
+  getOff: { width: 20, height: 20, borderRadius: 10, backgroundColor: colors.getOff, alignItems: "center", justifyContent: "center" },
+  getOffDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: "#FFFFFF" },
+  rideBox: { backgroundColor: colors.surfaceMuted, borderRadius: radius.md },
+  rideButton: { flexDirection: "row", alignItems: "center", gap: spacing.sm, minHeight: 48, paddingHorizontal: spacing.md, paddingVertical: spacing.sm },
+  stopLine: { paddingHorizontal: spacing.md, paddingBottom: 4 },
+  walkTitle: { flexDirection: "row", alignItems: "center", gap: 6 },
+  instructions: { gap: 6, padding: spacing.md, backgroundColor: colors.surfaceMuted, borderRadius: radius.md },
+  instruction: { flexDirection: "row", gap: 6 },
+  instructionText: { fontSize: 14, lineHeight: 19, color: colors.text },
+  instructionNumber: { minWidth: 26 },
+  inlineLink: { alignSelf: "flex-start", minHeight: 44, paddingHorizontal: 0, paddingVertical: 0 },
+  sources: { gap: spacing.md, paddingHorizontal: spacing.lg, paddingBottom: spacing.md },
+  sourceItem: { gap: 2 },
 });

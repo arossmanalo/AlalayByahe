@@ -156,6 +156,81 @@ export function needsCoverageHint(aiText: string | null, aiCandidateCount: numbe
   return aiMissed || searchCandidateCount === 0;
 }
 
+/** Labels of the preference summary line on "Check your trip", in display order. */
+export interface PreferenceSummaryLabels {
+  allTransport: string;
+  modeNames: Record<Mode, string>;
+  priorityShort: Record<Priority, string>;
+  directOnlyShort: string;
+  walkUpTo: (meters: string) => string;
+  budgetShort: (amount: string) => string;
+  passengerFare: Record<JourneyPreferences["passenger"], string>;
+}
+
+/**
+ * One summary line for the preferences row: what came from the user's words is listed first and marked,
+ * then the rest. Invalid fields are left out here; the sheet shows their errors.
+ */
+export function preferenceSummary(
+  form: PreferenceForm,
+  explicit: Set<ExplicitField>,
+  l: PreferenceSummaryLabels,
+  formatAmount: (centavos: number) => string,
+  formatDistance: (meters: number) => string,
+): { fromWords: string[]; others: string[] } {
+  const fromWords: string[] = [];
+  const others: string[] = [];
+  const add = (fields: ExplicitField[], text: string) => (fields.some((f) => explicit.has(f)) ? fromWords : others).push(text);
+
+  if (form.directOnly) add(["directOnly"], l.directOnlyShort);
+  const allModes = ALL_MODES.every((m) => form.allowedModes.includes(m));
+  if (form.allowedModes.length > 0) {
+    add(["allowedModes"], allModes ? l.allTransport : ALL_MODES.filter((m) => form.allowedModes.includes(m)).map((m) => l.modeNames[m]).join(", "));
+  }
+  add(["priority"], l.priorityShort[form.priority]);
+  const walks = [form.accessText, form.transferText, form.egressText].map(parseMeters);
+  if (walks.every((w) => w.ok)) {
+    const longest = Math.max(...walks.map((w) => (w.ok ? w.value : 0)));
+    add(["maxAccessWalkMeters", "maxTransferWalkMeters", "maxEgressWalkMeters"], l.walkUpTo(formatDistance(longest)));
+  }
+  const budget = parsePesosToCentavos(form.budgetText);
+  if (budget.ok && budget.value !== null) add(["budgetCentavos"], l.budgetShort(formatAmount(budget.value)));
+  others.push(l.passengerFare[form.passenger]);
+  return { fromWords, others };
+}
+
+/** Walking limit after a stepper press: 100 m steps, never below 0 or above the 50,000 m input limit. */
+export function stepMeters(text: string, direction: 1 | -1, fallback: number, step = 100): number {
+  const current = parseMeters(text);
+  const value = current.ok ? current.value : fallback;
+  return Math.min(50_000, Math.max(0, value + direction * step));
+}
+
+/**
+ * Splits the typed trip into plain and highlighted parts, marking each word the AI read as a place.
+ * Matching is case-insensitive; the original text is never changed.
+ */
+export function highlightSpans(text: string, terms: readonly (string | null)[]): { text: string; mark: boolean }[] {
+  const lower = text.toLowerCase();
+  const ranges: [number, number][] = [];
+  for (const term of terms) {
+    const t = term?.trim().toLowerCase();
+    if (!t) continue;
+    const at = lower.indexOf(t);
+    if (at !== -1 && !ranges.some(([a, b]) => at < b && at + t.length > a)) ranges.push([at, at + t.length]);
+  }
+  ranges.sort((a, b) => a[0] - b[0]);
+  const out: { text: string; mark: boolean }[] = [];
+  let pos = 0;
+  for (const [a, b] of ranges) {
+    if (a > pos) out.push({ text: text.slice(pos, a), mark: false });
+    out.push({ text: text.slice(a, b), mark: true });
+    pos = b;
+  }
+  if (pos < text.length) out.push({ text: text.slice(pos), mark: false });
+  return out;
+}
+
 let counter = 0;
 
 /** Stable-format, collision-resistant ID per submission (lower_snake_case, `query_` prefix). */

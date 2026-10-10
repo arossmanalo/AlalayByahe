@@ -15,7 +15,7 @@ function SyncPackAfterBoot() {
   return null;
 }
 export function NativeUiBridge({ children }: PropsWithChildren) {
-  const { services } = useApplication();
+  const { services, status } = useApplication();
   const ui = useMemo<UiServices>(() => ({
     kind: "real", hideTestPackBanner: DEMO_BUILD, allowUnverifiedAlerts: DEMO_BUILD, controller: services.controller, ai: services.ai,
     repository: services.repository, modelManifest: MODEL_MANIFEST,
@@ -26,7 +26,7 @@ export function NativeUiBridge({ children }: PropsWithChildren) {
     location: createExpoLocationWatch(),
     createDropoffWatcher,
   }), [services]);
-  return <UiProvider services={ui}>
+  return <UiProvider services={ui} booting={status.initializing}>
     <SyncPackAfterBoot />
     {children}
   </UiProvider>;

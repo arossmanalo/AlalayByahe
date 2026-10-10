@@ -1,33 +1,38 @@
-// Member 3 (UI-001/UI-002): home: typed trip, readiness, manual and onboard entry points.
+// Member 3 (UI-001/UI-002): home: map, typed trip, readiness, manual and onboard entry points.
+// Design artboards "Welcome" and "Home: map and trip field". Welcome shows at launch until local AI is set up.
 import { useRouter } from "expo-router";
 import { useState } from "react";
+import { Text } from "react-native";
 import type { AppError } from "../src/contracts";
-import { AppButton, Body, ChipRow, ChoiceChip, Heading, LabeledInput, Notice, Small } from "../src/ui/components/primitives";
+import { Icon } from "../src/ui/components/icons";
+import { AppButton, Footnote, IconTile, ListGroup, ListRow, MapButton, Notice, SearchField, text } from "../src/ui/components/primitives";
+import { MAP_PALETTE, MapPill, SchematicMap } from "../src/ui/components/SchematicMap";
 import { Screen } from "../src/ui/components/Screen";
 import { ErrorCard } from "../src/ui/error-card";
 import { shouldShowError } from "../src/ui/error-logic";
 import { checkQueryText, MAX_QUERY_CHARS, newQueryId } from "../src/ui/form-logic";
-import type { UiLanguage } from "../src/ui/i18n";
-import { ReadinessSummary } from "../src/ui/readiness";
+import { coverageLayers, EMPTY_LAYERS } from "../src/ui/map-geometry";
+import { HomeStatusLink, networkLabel, useLoadedPack } from "../src/ui/readiness";
 import { useJourneySession, useReadiness, useUi } from "../src/ui/services";
-
-const LANGUAGES: UiLanguage[] = ["en", "fil"];
+import { colors, legColors, tileColors } from "../src/ui/theme";
+import { Welcome } from "../src/ui/welcome";
 
 export default function HomeScreen() {
   const router = useRouter();
-  const { t, language, setLanguage } = useUi();
-  const { modelState } = useReadiness();
+  const { t, welcomeDismissed, dismissWelcome } = useUi();
+  const { modelState, booting } = useReadiness();
+  const pack = useLoadedPack();
   const { session, setQueryText, interpret, startManual, cancelPending, planRoute } = useJourneySession();
   const [error, setError] = useState<AppError | null>(null);
   const [inputError, setInputError] = useState<string | null>(null);
 
   const aiReady = modelState.phase === "ready";
   const reading = session.pending?.kind === "interpret";
-  const text = session.queryText;
+  const query = session.queryText;
 
   const onRead = async () => {
     setError(null);
-    const check = checkQueryText(text);
+    const check = checkQueryText(query);
     if (!check.ok) {
       setInputError(check.reason === "too_long" ? t.queryTooLong(MAX_QUERY_CHARS) : t.queryEmpty);
       return;
@@ -49,57 +54,79 @@ export default function HomeScreen() {
     if (result.ok || shouldShowError(result.error)) router.push("/results");
   };
 
+  if (!booting && modelState.phase === "absent" && !welcomeDismissed) {
+    return (
+      <Screen layout="bare" title={t.appName}>
+        <Welcome
+          onStart={() => {
+            dismissWelcome();
+            router.push({ pathname: "/setup", params: { from: "welcome" } });
+          }}
+          onSettings={() => router.push("/settings")}
+        />
+      </Screen>
+    );
+  }
+
+  const network = pack ? networkLabel(pack, t) : null;
+  const tooLong = query.length > MAX_QUERY_CHARS;
+
   return (
-    <Screen title={t.appName}>
-      <Small>{t.languageLabel}</Small>
-      <ChipRow radioGroupLabel={t.languageLabel}>
-        {LANGUAGES.map((lang) => (
-          <ChoiceChip
-            key={lang}
-            kind="radio"
-            label={t.languageNames[lang]}
-            selected={language === lang}
-            onPress={() => setLanguage(lang)}
-          />
-        ))}
-      </ChipRow>
-
-      <Heading>{t.homeTitle}</Heading>
-      <Body muted>{t.homeIntro}</Body>
-
-      <ReadinessSummary onOpenSetup={() => router.push("/setup")} />
-
-      <LabeledInput
+    <Screen layout="map"
+      title={t.appName}
+      sheetRatio={446 / 844}
+      floatingRight={<MapButton icon="gear" label={t.settingsTitle} onPress={() => router.push("/settings")} />}
+      renderMap={(size) => (
+        <SchematicMap
+          {...size}
+          layers={pack ? coverageLayers(pack, MAP_PALETTE) : EMPTY_LAYERS}
+          accessibilityLabel={t.homeMapA11y(network ?? t.coverageNone)}
+          caption={pack ? t.mapCaption : undefined}
+          badge={
+            pack && network ? (
+              <MapPill>
+                <Icon name="lrt" size={14} color={legColors.lrt} strokeWidth={2.2} />
+                <Text style={[text.footnoteDark, { fontWeight: "600" }]}>
+                  {pack.kind === "test_fixture" ? t.mapSample(network) : t.mapCovered(network)}
+                </Text>
+              </MapPill>
+            ) : undefined
+          }
+        />
+      )}
+    >
+      <SearchField
         label={t.queryLabel}
-        hint={t.queryHint}
-        value={text}
+        placeholder={t.homeTitle}
+        value={query}
         onChangeText={(next) => {
           setQueryText(next);
           if (inputError) setInputError(null);
         }}
-        placeholder={t.queryPlaceholder}
+        clearLabel={t.clear}
         multiline
-        error={inputError ?? (text.length > MAX_QUERY_CHARS ? t.queryTooLong(MAX_QUERY_CHARS) : null)}
+        returnKeyType="go"
+        onSubmitEditing={aiReady && !reading ? () => void onRead() : undefined}
+        error={inputError ?? (tooLong ? t.queryTooLong(MAX_QUERY_CHARS) : null)}
       />
-      <Small>{t.charCount(text.length, MAX_QUERY_CHARS)}</Small>
+      <Footnote style={{ marginTop: -6, marginHorizontal: 4 }}>
+        {query.length > 0 ? t.charCount(query.length, MAX_QUERY_CHARS) : t.homeExample}
+      </Footnote>
 
       {aiReady ? (
-        <>
-          <AppButton
-            label={reading ? t.readingTrip : t.readTrip}
-            busy={reading}
-            disabled={text.length > MAX_QUERY_CHARS}
-            onPress={() => void onRead()}
-          />
-          {reading ? <AppButton label={t.cancel} variant="secondary" onPress={() => void cancelPending()} /> : null}
-        </>
+        query.trim().length > 0 || reading ? (
+          <>
+            <AppButton label={reading ? t.readingTrip : t.readTrip} busy={reading} disabled={tooLong} onPress={() => void onRead()} />
+            {reading ? <AppButton label={t.cancel} variant="secondary" onPress={() => void cancelPending()} /> : null}
+          </>
+        ) : null
       ) : (
         <Notice
           tone="warning"
           title={t.aiUnavailable}
           actions={<AppButton label={t.setUpAi} variant="secondary" onPress={() => router.push("/setup")} />}
         >
-          <Body>{t.aiUnavailableHome}</Body>
+          {t.aiUnavailableHome}
         </Notice>
       )}
 
@@ -115,20 +142,42 @@ export default function HomeScreen() {
         />
       ) : null}
 
-      <AppButton label={t.chooseManually} variant={aiReady ? "secondary" : "primary"} onPress={onManual} />
-      <AppButton label={t.alreadyRiding} variant="secondary" onPress={() => router.push("/onboard")} />
+      <ListGroup plain>
+        <ListRow
+          minHeight={60}
+          leading={<IconTile icon="lrt" color={tileColors.transit} size={36} round iconSize={19} />}
+          title={t.onboardTitle}
+          subtitle={t.ridingSubtitle}
+          accessory="chevron"
+          onPress={() => router.push("/onboard")}
+        />
+        <ListRow
+          minHeight={60}
+          leading={<IconTile icon="pin" color={tileColors.place} size={36} round iconSize={19} />}
+          title={t.choosePlaces}
+          subtitle={t.choosePlacesSubtitle}
+          accessory="chevron"
+          onPress={onManual}
+        />
+      </ListGroup>
 
       {/* An onboard trip is never repeated: its confirmed next stop is stale once the vehicle moves. */}
       {session.request && session.via && !session.request.onboard ? (
-        <AppButton
-          label={`${t.repeatLast}: ${session.request.origin.label} → ${session.request.destination.label}`}
-          variant="secondary"
-          busy={session.pending?.kind === "route"}
-          onPress={() => void onRepeat()}
-        />
+        <ListGroup plain header={t.thisSession}>
+          <ListRow
+            minHeight={56}
+            leading={<IconTile icon="clock" color={tileColors.session} size={36} round iconSize={19} />}
+            title={`${session.request.origin.label} → ${session.request.destination.label}`}
+            subtitle={t.repeatLast}
+            accessibilityLabel={`${t.repeatLast}: ${session.request.origin.label} → ${session.request.destination.label}`}
+            accessory={<Icon name="refresh" size={20} color={colors.primary} strokeWidth={2} />}
+            disabled={session.pending?.kind === "route"}
+            onPress={() => void onRepeat()}
+          />
+        </ListGroup>
       ) : null}
 
-      <AppButton label={t.aboutLink} variant="link" onPress={() => router.push("/about")} />
+      <HomeStatusLink onPress={() => router.push("/setup")} />
     </Screen>
   );
 }

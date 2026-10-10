@@ -4,10 +4,10 @@
 // Alerts are always visible text and announced to TalkBack, never vibration alone.
 import { activateKeepAwakeAsync, deactivateKeepAwake } from "expo-keep-awake";
 import { useCallback, useEffect, useMemo, useReducer, useRef, useState } from "react";
-import { AccessibilityInfo, AppState, Vibration } from "react-native";
+import { AccessibilityInfo, AppState, StyleSheet, Text, View, Vibration } from "react-native";
 import type { JourneyOption, Point } from "../contracts";
 import { createPreviewWatch } from "./alert-preview";
-import { AppButton, Body, Notice, Small } from "./components/primitives";
+import { AppButton, GroupFooterText, IconTile, ListGroup, ListRow, SwitchControl, text } from "./components/primitives";
 import {
   alertTargetFor,
   isWatching,
@@ -23,8 +23,24 @@ import {
   type LocationWatchPort,
 } from "./dropoff-alert";
 import { useReadiness, useUi } from "./services";
+import { colors, spacing, tileColors, toneColors } from "./theme";
 
-export function DropoffAlertCard({ option, onPosition }: { option: JourneyOption; onPosition?: (position: Point | null) => void }) {
+/** The near-stop message shown over the map while the phone is approaching or at the stop. */
+export interface AlertBanner {
+  title: string;
+  body: string | null;
+  onStop: () => void;
+}
+
+export function DropoffAlertCard({
+  option,
+  onPosition,
+  onBanner,
+}: {
+  option: JourneyOption;
+  onPosition?: (position: Point | null) => void;
+  onBanner?: (banner: AlertBanner | null) => void;
+}) {
   const { t, services } = useUi();
   const { pack } = useReadiness();
   const loaded = pack.status === "loaded" && pack.result.ok ? pack.result.value : null;
@@ -44,6 +60,7 @@ export function DropoffAlertCard({ option, onPosition }: { option: JourneyOption
       location={services.location}
       createWatcher={services.createDropoffWatcher}
       onPosition={onPosition}
+      onBanner={onBanner}
     />
   );
 }
@@ -53,11 +70,13 @@ function ActiveAlert({
   location,
   createWatcher,
   onPosition,
+  onBanner,
 }: {
   target: AlertTarget;
   location: LocationWatchPort;
   createWatcher: DropoffWatcherFactory;
   onPosition?: (position: Point | null) => void;
+  onBanner?: (banner: AlertBanner | null) => void;
 }) {
   const { t } = useUi();
   const [status, dispatch] = useReducer(nextAlertStatus, { phase: "off" });
@@ -150,6 +169,13 @@ function ActiveAlert({
     if (view.announce) AccessibilityInfo.announceForAccessibility(view.announce);
   }, [view.announce]);
 
+  // Approaching and arrived are also shown over the map, with their own "Stop alerts" button.
+  const near = status.phase === "approaching" || status.phase === "arrived";
+  useEffect(() => {
+    onBanner?.(near ? { title: view.title, body: view.body, onStop: stop } : null);
+  }, [near, view.title, view.body, stop, onBanner]);
+  useEffect(() => () => onBanner?.(null), [onBanner]);
+
   return (
     <AlertNotice
       view={view}
@@ -184,22 +210,85 @@ function AlertNotice({
   weakSignal?: string | null;
 }) {
   const { t } = useUi();
-  const actions =
-    view.primary || view.showStop || onPreview ? (
-      <>
-        {view.primary && onPrimary ? <AppButton label={view.primary.label} onPress={onPrimary} /> : null}
-        {view.showStop && onStop ? <AppButton label={t.alertStop} variant="secondary" onPress={onStop} /> : null}
-        {!view.showStop && onPreview ? <AppButton label={t.alertPreview} variant="secondary" onPress={onPreview} /> : null}
-      </>
-    ) : undefined;
+  const available = onPrimary !== undefined || onStop !== undefined;
+  // The switch is on while location is in use; on starts or resumes, off stops. Paused reads as off.
+  const on = view.showStop && view.primary === null;
+  const toggle = (next: boolean) => {
+    if (next && view.primary && onPrimary) onPrimary();
+    else if (!next && onStop) onStop();
+  };
+  const statusColor = view.tone === "warning" || view.tone === "danger" ? toneColors[view.tone].fg : colors.text;
+  // While off, the explanation is the group footer; every other state is a status line inside the group.
+  const resting = status(view) === "off";
+  const footer = [
+    resting || !available ? view.body : null,
+    previewing ? t.alertPreviewRunning : null,
+    sample ? t.alertSampleLocation : null,
+    showLimits ? t.alertLimits : null,
+    showLimits ? t.alertScreenOn : null,
+  ].filter((line): line is string => line !== null);
+  const statusTitle = !resting && available && view.title !== t.alertTitle ? view.title : null;
+  const statusBody = !resting && available ? view.body : null;
   return (
-    <Notice tone={view.tone} title={view.title} actions={actions}>
-      {view.body ? <Body>{view.body}</Body> : null}
-      {previewing ? <Body>{t.alertPreviewRunning}</Body> : null}
-      {sample ? <Small>{t.alertSampleLocation}</Small> : null}
-      {weakSignal ? <Body>{weakSignal}</Body> : null}
-      {showLimits ? <Small>{t.alertLimits}</Small> : null}
-      {showLimits ? <Small>{t.alertScreenOn}</Small> : null}
-    </Notice>
+    <ListGroup
+      header={t.stopAlertSection}
+      footer={
+        footer.length > 0 ? (
+          <>
+            {footer.map((line) => (
+              <GroupFooterText key={line}>{line}</GroupFooterText>
+            ))}
+          </>
+        ) : undefined
+      }
+    >
+      <ListRow
+        minHeight={52}
+        leading={<IconTile icon="bell" color={available ? tileColors.alert : tileColors.disabled} />}
+        title={t.alertStart}
+        disabled={!available}
+        accessory={<SwitchControl label={available ? t.alertStart : `${t.alertStart}. ${view.body ?? ""}`} value={on} disabled={!available} onValueChange={toggle} />}
+      />
+      {statusTitle || statusBody || weakSignal ? (
+        <View style={styles.status} accessibilityLiveRegion="polite" accessible>
+          {statusTitle ? <Text style={[text.subhead, styles.semibold, { color: statusColor }]}>{statusTitle}</Text> : null}
+          {statusBody ? <Text style={text.subhead}>{statusBody}</Text> : null}
+          {weakSignal ? <Text style={text.subhead}>{weakSignal}</Text> : null}
+        </View>
+      ) : null}
+      {view.showStop && view.primary !== null && onStop ? <ListRow title={t.alertStop} tinted onPress={onStop} /> : null}
+      {!view.showStop && onPreview ? <ListRow title={t.alertPreview} tinted onPress={onPreview} /> : null}
+    </ListGroup>
   );
 }
+
+/** "off": the resting state that offers to start (its body is the explanation). */
+function status(view: AlertView): "off" | "other" {
+  return view.primary?.action === "start" && view.tone === "info" ? "off" : "other";
+}
+
+/** Floating near-stop message over the map (design artboard "Stop alert: near your stop"). */
+export function AlertBannerCard({ banner }: { banner: AlertBanner }) {
+  const { t } = useUi();
+  return (
+    <View accessibilityRole="alert" style={styles.banner}>
+      <View style={styles.bannerTop}>
+        <IconTile icon="bell" color={tileColors.alert} size={38} round iconSize={20} />
+        <View style={styles.flex}>
+          <Text style={[text.body, styles.semibold]}>{banner.title}</Text>
+          {banner.body ? <Text style={[text.subhead, { color: colors.textTertiary }]}>{banner.body}</Text> : null}
+        </View>
+      </View>
+      <AppButton label={t.alertStop} variant="secondary" onPress={banner.onStop} style={styles.bannerButton} />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  flex: { flex: 1, minWidth: 0, gap: 2 },
+  semibold: { fontWeight: "600" },
+  status: { gap: 4, paddingLeft: 58, paddingRight: spacing.lg, paddingTop: 10, paddingBottom: spacing.md },
+  banner: { gap: spacing.md, padding: 14, backgroundColor: colors.surface, borderRadius: 20, boxShadow: "0 10px 32px rgba(0,0,0,0.18)" },
+  bannerTop: { flexDirection: "row", alignItems: "flex-start", gap: spacing.md },
+  bannerButton: { minHeight: 44 },
+});
