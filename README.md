@@ -6,11 +6,17 @@ An Android commute assistant for Filipino, English and Taglish requests. A small
 
 ## Download the app (Android)
 
-**Get the final app from Google Drive, not from GitHub:** **[AlalayByahe APK on Google Drive](GDRIVE_LINK_HERE)**
+**Get the final app from Google Drive, not from GitHub:** **[AlalayByahe APK on Google Drive](https://drive.google.com/drive/folders/1R51SMe-PDdaEWGvKj4wZOhuDvDT39RPE)**
 
 GitHub holds the source code only. APK files are never committed to the repository.
 
-1. On the Android phone, open the Google Drive link and download the `.apk` file.
+| | |
+|---|---|
+| File | `alalaybyahe-0.1.0-197394a-demo.apk` (about 119 MB) |
+| Build | **Demo build** (`EXPO_PUBLIC_DEMO_BUILD=1`) of version 0.1.0, built from commit `197394a` on `main` |
+| Data inside | The verified LRT-1 release pack **plus demonstration data**: unverified road-route drafts, an invented Luzon network and invented "DEMO connector" links, so that every pair of demo places plans. Demo journeys are samples, not travel advice. See [Three Android builds](#three-android-builds-never-mixed-up) and [Data in each build](#data-in-each-build). |
+
+1. On the Android phone, open the Google Drive folder and download `alalaybyahe-0.1.0-197394a-demo.apk`.
 2. Open the file. If Android asks, allow your browser or Files app to "install unknown apps". The APK is a test build signed with a local key; it is not on the Play Store.
 3. Open **AlalayByahe**. Android 7.0 or newer is needed (minimum SDK 24). iPhone is not supported.
 
@@ -30,7 +36,7 @@ The app reads your request with a **local AI model that runs on the phone itself
 - **First time only:** on the Get ready / Setup screen tap **Download and set up** (use Wi-Fi). The app downloads the 491 MB model, then checks the whole file (SHA-256) before using it. On the test phone (Honor X9b) the download took about 6 to 7 minutes on Wi-Fi and the check took up to about 5 minutes. Keep the app open until it shows **Ready**.
 - **Every time the app starts:** the model is loaded from the phone's storage into memory. On the test phone the AI showed **Ready** within about 13 seconds of relaunching, with no new download.
 - **Your first request after a start is the slowest.** In the recorded run the phone took about 8 seconds to read the prompt and about 4 seconds to write its answer (about 12.5 seconds in total). The app allows up to 30 seconds for the first request and 15 seconds after that, then lets you pick places manually.
-- After setup, trips between stored places work **offline**. Without the model you can still choose places manually; the app labels that the AI was not used.
+- After setup, trips between stored places are designed to work **offline** (the airplane-mode test on a phone is not yet recorded). Without the model you can still choose places manually; the app labels that the AI was not used.
 
 These times come from one phone; other phones can be slower or faster.
 
