@@ -3,14 +3,18 @@
 // build time (EXPO_PUBLIC_GEOAPIFY_KEY); without either, the journey text is the result and nothing is
 // requested. No request is made until the user taps "Show map". It is not a pannable live map.
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Image } from "react-native";
+import { Image, StyleSheet, View } from "react-native";
 import type { Point, TransitPack, JourneyOption } from "../contracts";
 import { buildTripPins } from "../routing/tripPins";
-import { AppButton, Body, Card, Heading, Small } from "./components/primitives";
+import { AppButton, Footnote, GroupFooterText, ListGroup, Small } from "./components/primitives";
 import { useUi } from "./services";
 import { buildStaticMapUrl, shouldRefreshMap } from "./trip-map-url";
+import { spacing } from "./theme";
 
 const API_KEY: string = process.env.EXPO_PUBLIC_GEOAPIFY_KEY ?? "";
+
+/** Whether this build can request map pictures at all (a key was set at build time). */
+export const mapPicturesAvailable = API_KEY.trim() !== "";
 
 export function TripMap({ option, pack, position }: { option: JourneyOption; pack: TransitPack; position: Point | null }) {
   const { t } = useUi();
@@ -36,49 +40,55 @@ export function TripMap({ option, pack, position }: { option: JourneyOption; pac
 
   if (!API_KEY) {
     return (
-      <Card>
-        <Heading level={2}>{t.mapTitle}</Heading>
-        <Small>{t.mapNotInBuild}</Small>
-      </Card>
+      <ListGroup header={t.mapTitle}>
+        <View style={styles.block}>
+          <Small>{t.mapNotInBuild}</Small>
+        </View>
+      </ListGroup>
     );
   }
   if (trip.pins.length === 0) return null;
 
   return (
-    <Card>
-      <Heading level={2}>{t.mapTitle}</Heading>
-      {!shown ? (
-        <>
-          <Body>{t.mapDisclosure}</Body>
-          <AppButton label={t.mapShow} onPress={() => setShown(true)} />
-        </>
-      ) : (
-        <>
-          {url && !failed ? (
-            <Image
-              source={{ uri: url }}
-              style={{ width: "100%", aspectRatio: 640 / 400, borderRadius: 8 }}
-              resizeMode="contain"
-              accessibilityLabel={t.mapA11y}
-              onError={() => setFailed(true)}
+    <ListGroup header={t.mapTitle} footer={shown ? <GroupFooterText>{t.mapAttribution}</GroupFooterText> : undefined}>
+      <View style={styles.block}>
+        {!shown ? (
+          <>
+            <Small muted={false}>{t.mapDisclosure}</Small>
+            <AppButton label={t.mapShow} variant="secondary" onPress={() => setShown(true)} />
+          </>
+        ) : (
+          <>
+            {url && !failed ? (
+              <Image
+                source={{ uri: url }}
+                style={styles.image}
+                resizeMode="contain"
+                accessibilityLabel={t.mapA11y}
+                onError={() => setFailed(true)}
+              />
+            ) : (
+              <Small muted={false}>{t.mapFailed}</Small>
+            )}
+            <Footnote>{t.mapLegend}</Footnote>
+            <AppButton
+              label={t.mapHide}
+              variant="secondary"
+              onPress={() => {
+                setShown(false);
+                setFailed(false);
+                setMapPosition(null);
+                last.current = { at: 0, point: null };
+              }}
             />
-          ) : (
-            <Body>{t.mapFailed}</Body>
-          )}
-          <Small>{t.mapLegend}</Small>
-          <Small>{t.mapAttribution}</Small>
-          <AppButton
-            label={t.mapHide}
-            variant="secondary"
-            onPress={() => {
-              setShown(false);
-              setFailed(false);
-              setMapPosition(null);
-              last.current = { at: 0, point: null };
-            }}
-          />
-        </>
-      )}
-    </Card>
+          </>
+        )}
+      </View>
+    </ListGroup>
   );
 }
+
+const styles = StyleSheet.create({
+  block: { paddingHorizontal: spacing.lg, paddingVertical: spacing.md, gap: 10 },
+  image: { width: "100%", aspectRatio: 640 / 400, borderRadius: 8 },
+});

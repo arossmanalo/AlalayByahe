@@ -85,6 +85,9 @@ interface UiContextValue {
   language: UiLanguage;
   setLanguage: (language: UiLanguage) => void;
   t: Strings;
+  /** Welcome was dismissed in this app session (it is not stored). */
+  welcomeDismissed: boolean;
+  dismissWelcome: () => void;
 }
 
 interface ReadinessContextValue {
@@ -92,6 +95,8 @@ interface ReadinessContextValue {
   startModelSetup: () => Promise<void>;
   pack: PackState;
   reloadPack: () => Promise<void>;
+  /** True while the app layer is still starting, before it has checked whether the model file exists. */
+  booting: boolean;
 }
 
 interface SessionContextValue {
@@ -119,13 +124,18 @@ function sameModelState(a: ModelState, b: ModelState): boolean {
 export function UiProvider({
   services,
   initialLanguage = "en",
+  booting = false,
   children,
 }: {
   services: UiServices;
   initialLanguage?: UiLanguage;
+  /** Passed by the app layer while it initializes storage and checks the model file. */
+  booting?: boolean;
   children: ReactNode;
 }) {
   const [language, setLanguage] = useState<UiLanguage>(initialLanguage);
+  const [welcomeDismissed, setWelcomeDismissed] = useState(false);
+  const dismissWelcome = useCallback(() => setWelcomeDismissed(true), []);
 
   // --- Readiness: AI and transit data are tracked separately (AGENTS.md).
   const [modelState, setModelState] = useState<ModelState>(() => services.ai.getState());
@@ -250,12 +260,12 @@ export function UiProvider({
   }, []);
 
   const uiValue = useMemo<UiContextValue>(
-    () => ({ services, language, setLanguage, t: strings[language] }),
-    [services, language],
+    () => ({ services, language, setLanguage, t: strings[language], welcomeDismissed, dismissWelcome }),
+    [services, language, welcomeDismissed, dismissWelcome],
   );
   const readinessValue = useMemo<ReadinessContextValue>(
-    () => ({ modelState, startModelSetup, pack, reloadPack }),
-    [modelState, startModelSetup, pack, reloadPack],
+    () => ({ modelState, startModelSetup, pack, reloadPack, booting }),
+    [modelState, startModelSetup, pack, reloadPack, booting],
   );
   const sessionValue = useMemo<SessionContextValue>(
     () => ({ session, setQueryText, interpret, startManual, planRoute, cancelPending, resetTrip }),
