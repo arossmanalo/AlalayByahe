@@ -1,8 +1,10 @@
 # AlalayByahe
 
-An Android commute assistant for Filipino, English and Taglish requests. A small language model running on the phone reads the typed request into editable fields; the user confirms them; a deterministic engine then plans a journey from stored, source-checked data (documented rides, legal boarding and drop-off stops, walking links where they exist, and fare evidence). The model never supplies routes, stops, directions or fares. iOS is out of scope (decision of 2026-10-10). Scanner and street maps are deferred.
+An Android commute assistant for Filipino, English and Taglish requests. A small language model running on the phone reads the typed request into editable fields; the user confirms them; a deterministic engine then plans a journey from stored, source-checked data (documented rides, legal boarding and drop-off stops, walking links where they exist, and fare evidence). The model never supplies routes, stops, directions or fares. iOS is out of scope (decision of 2026-10-10). Scanner and interactive street maps are deferred; the app draws a simple schematic map on the phone from stored stop coordinates.
 
 **Status (2026-10-10):** Android only. The real AI, routing and UI adapters are integrated and tested in Node (`npm test`). On one phone (Honor X9b, Android 15) the app installed and launched, the AI model downloaded, passed its SHA-256 check and loaded, and the app ran **local AI inference on the phone** (recorded in `docs/evidence/native-gate.md`). That first recorded run's output was rejected because of a chat-template header; the fix is merged and the team reports the AI now works, but that re-run, the offline (airplane-mode) proof and accuracy measurements are **not yet recorded**. The release build's data is **LRT-1 stations only**: 25 stations, stored-value fares, no walking links, no road services. None of the three requested corridors is supported end to end: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
+
+**Demo video:** **[Watch the AlalayByahe demo on Google Drive](https://drive.google.com/file/d/1PGxJ_ttk8e0epaubQUlu7zzg5Nrx9gE6/view)**.
 
 ## Download the app (Android)
 
@@ -40,9 +42,19 @@ The app reads your request with a **local AI model that runs on the phone itself
 
 These times come from one phone; other phones can be slower or faster.
 
+### Try it (demo build)
+
+After the AI shows **Ready**, type a request on Home and tap **Read my trip**, check the fields, then tap **Find routes**. For example:
+
+- `Paano pumunta mula Vito Cruz papuntang Baclaran?` (LRT-1, verified data)
+- `SM City Lipa papuntang Candelaria public market` (demo road drafts)
+- `From SM City Lipa to Taft Avenue near DLSU, ayoko ng tricycle` (no-tricycle preference)
+
+Or skip the AI and pick the origin and destination yourself. Both ways show the same route and the same short trip summary. Any two of the demo build's 81 places give a route, but routes outside LRT-1 are demonstration data, not real coverage. These three trips plan with the demo data (checked in Node); how well the AI reads each sentence on a phone is not recorded, so check the fields before routing.
+
 ## Contents
 
-1. [Download the app (Android)](#download-the-app-android) and the [local AI model](#the-local-ai-model-and-why-the-first-start-takes-time)
+1. [Download the app (Android)](#download-the-app-android), the [local AI model](#the-local-ai-model-and-why-the-first-start-takes-time) and [Try it](#try-it-demo-build)
 2. [Verification status](#verification-status)
 3. [Get the installed baseline](#get-the-installed-baseline)
 4. [Android build on Windows](#android-build-on-windows) and the [three Android builds](#three-android-builds-never-mixed-up)
@@ -57,7 +69,7 @@ These times come from one phone; other phones can be slower or faster.
 | Item | Status |
 |---|---|
 | Node tests, typecheck, pack validation | Run and passing on `main` (see the commit's checks) |
-| Release APK built | Built at `0c43c2f` (release and benchmark, recorded in `native-gate.md`); the current `main` needs a new build |
+| APKs built | Release and benchmark at `0c43c2f` (recorded in `native-gate.md`). Final **demo** APK `alalaybyahe-0.1.0-197394a-demo.apk` at `197394a`, shared on [Google Drive](#download-the-app-android). No release APK of `197394a` yet (later commits change only this README) |
 | Install and launch on a phone | Pass on Honor X9b, Android 15 (USB connected); standalone launch without USB/Metro Not Run |
 | Model download and SHA-256 on a phone | Pass on Honor X9b: downloaded on Wi-Fi, hash verified, Ready, kept after force-stop |
 | Phone-local AI inference | Ran on Honor X9b (probe run 1): output rejected for a chat-template header; fix merged; working re-run reported by the team, not yet recorded |
@@ -82,7 +94,7 @@ npm run data:validate
 npm run release:check
 ```
 
-`release:check` intentionally fails until a reviewed pack is bundled and matching Android physical evidence exists. (The release gate in `src/application/release-gate.ts` now requires Android evidence only, because iOS was excluded from production on 2026-10-10.) A passing fixture validation or build cannot make a release ready.
+`release:check` intentionally fails until a release-variant APK of the current runtime is recorded in `docs/evidence/native-artifacts.json` and matching Android physical evidence exists. (The release gate in `src/application/release-gate.ts` now requires Android evidence only, because iOS was excluded from production on 2026-10-10.) A passing fixture validation or build cannot make a release ready.
 
 Build identities belong in `docs/evidence/native-artifacts.json`; completed acceptance reports belong in `docs/evidence/physical-release.json` using the example template. Reports must match the actual APK hash, build source commit, pack and model. Runtime changes invalidate old artifacts; documentation-only changes do not.
 
@@ -126,7 +138,7 @@ All three share one package name, so installing one replaces another. Build each
 
 ## Phone test script (Android)
 
-**Status: every step is Not Run.** No APK from current `main` exists yet and no one has run the app on a phone. This page is the script and the form. Fill a cell only after a person has watched the result on the phone.
+**Status: every step is Not Run.** The phone results recorded so far (install, model download and hash, first inference on the Honor X9b) came from an earlier, USB-connected session at `0c43c2f` and are in `docs/evidence/native-gate.md`, not in this form. No release APK of the current runtime (`197394a`) has been built. This page is the script and the form. Fill a cell only after a person has watched the result on the phone.
 
 Android only. iOS is out of scope. Test the **release APK only** (no flags, frozen pack `lrt1_2026_10_10_1`, LRT-1 stations only). The benchmark and demo builds are never release evidence. Do not mix builds: they share one package name, so installing one replaces another. Record which build is installed before every session.
 
@@ -159,7 +171,7 @@ How to use it: do the step, look at the phone, write **Pass**, **Fail** or **Not
 | ID | Do | Observe | Record in | Result |
 |---|---|---|---|---|
 | P-04 | Make sure no Metro/dev server is running on the laptop. Unplug USB. Force-quit the app (recents, swipe away). Launch it from the home screen. | It opens to Home with no red/yellow error screen, no "Unable to load script", no dev menu. | standaloneColdLaunch | Not Run |
-| P-05 | Open **Setup and status**. | "Transit data: Loaded", pack version `lrt1_2026_10_10_1`, coverage "LRT-1 only". AI is shown separately and says "Not downloaded" (first run). | Notes | Not Run |
+| P-05 | Open setup (**Open setup** on Home, the **Get ready** screen). | "Transit data: Loaded", pack version `lrt1_2026_10_10_1`, coverage "LRT-1 only". AI is shown separately and says "Not downloaded" (first run). | Notes | Not Run |
 
 ### C. Model download, hash and persistence
 
@@ -185,7 +197,7 @@ Limit of this test: the release build can reinstall its bundled pack when the da
 |---|---|---|---|---|
 | P-12 | With the model Ready, type a new sentence not used before, for example: `Paano pumunta mula Vito Cruz papuntang Baclaran?` and tap **Read my trip**. | The confirm screen opens in a few seconds. It states the trip was read by AI on this phone with the model name. Origin Vito Cruz and destination Baclaran are shown as editable fields. **Nothing is routed yet.** Write the elapsed time (stopwatch). | phoneLocalInference | Not Run |
 | P-13 | Check the roles. | Origin is Vito Cruz, destination Baclaran, not swapped. If swapped or wrong, record Fail with a photo; it must have been flagged for confirmation. | Notes | Not Run |
-| P-14 | Confirm and tap **Find verified routes**. | One LRT-1 ride, board "Vito Cruz (LRT-1 platform)", sign "Dr. Santos", get off "Baclaran (LRT-1 platform)", 0 transfers, **₱21.00 total (verified)**, warnings that routes are documented not live. | phoneLocalInference | Not Run |
+| P-14 | Confirm and tap **Find routes**. | One LRT-1 ride, board "Vito Cruz (LRT-1 platform)", sign "Dr. Santos", get off "Baclaran (LRT-1 platform)", 0 transfers, **₱21.00 total (verified)**, warnings that routes are documented not live. | phoneLocalInference | Not Run |
 | P-15 | Type `Pauwi na ako.` and read it. | A request to choose a destination/home. No guessed place, no route. | Notes | Not Run |
 | P-16 | Type `Lipa papuntang Candelaria` and confirm if offered. | No stored match or "No verified complete journey available". **No route is shown.** The supported coverage is stated. | Notes | Not Run |
 
@@ -249,11 +261,11 @@ Mode, walking, direct-only and budget preferences remain strict. Unknown fare is
 
 The setup screen explicitly downloads Qwen2.5 0.5B Instruct Q4_K_M: **491,400,032 bytes**, pinned revision and SHA-256. It downloads to a private partial file, hashes bounded chunks, and promotes only a verified file. Setup can be cancelled/retried. Boot never silently downloads the model. Measured once on an Honor X9b (Android 15): download about 6 to 7 minutes on Wi-Fi, SHA-256 check up to about 5 minutes, Ready within about 13 s after a relaunch, and about 12.5 s for the first recorded request. Peak RAM and accuracy remain unmeasured. See [Download the app](#download-the-app-android).
 
-After setup, the target is local extraction plus offline journeys for stored places and a verified installed graph. New arbitrary addresses/walking paths may need an explicit online helper. Helpers are disabled; no cloud AI or paid service is wired. Scanner/OCR and maps are outside the overnight P0 baseline.
+After setup, the target is local extraction plus offline journeys for stored places and a verified installed graph. New arbitrary addresses/walking paths may need an explicit online helper. Helpers are disabled; no cloud AI or paid service is wired. Scanner/OCR and interactive maps are outside the overnight P0 baseline; the schematic trip map is drawn on the phone without network requests, and the optional Geoapify map picture is described under [What leaves the phone](#what-leaves-the-phone).
 
 ## Disclosures, attribution and limitations
 
-Draft for the submission and the video. Everything here was checked against the repository on 2026-10-10. It states what the code does and what data it holds. It does **not** state any device result: nothing has been run on a phone yet.
+Draft for the submission and the video. Everything here was checked against the repository on 2026-10-10. It states what the code does and what data it holds. Device results are only those in [Verification status](#verification-status); everything else here describes the code, not a phone measurement.
 
 ### What the app is
 
@@ -266,7 +278,7 @@ An Android commute assistant for Filipino, English and Taglish requests. A small
 - Spelling hints sent to the model are the stored places the request mentions, not a fixed list, so every stored place is treated alike.
 - Its output is parsed and validated; truncated or malformed output is rejected. Every extracted field is shown for confirmation before any route is planned. A language model can still mis-read roles or places; that is why confirmation is mandatory.
 - Model: Qwen2.5-0.5B-Instruct, Q4_K_M, Apache-2.0, revision `9217f5db79a29953eb74d5343926648285ec7e67`, 491,400,032 bytes, SHA-256 `74a4da8c9fdbcd15bd1f6d01d621410d31c6fc00986f5eb687824e7b93d7a9db`. The weights are not in the repository or the APK.
-- **Phone inference has not been verified.** Accuracy, speed and memory on a phone are unmeasured. Tests in the repository use a fake runtime.
+- **Phone inference is only partly verified.** It ran once on an Honor X9b (load 1,025 ms, about 12.5 s for the first request), but that output was rejected for a chat-template header; the fix is merged and the working re-run is reported by the team, not recorded. Accuracy and memory on a phone are unmeasured. Tests in the repository use a fake runtime.
 
 ### What leaves the phone
 
@@ -309,7 +321,7 @@ No paid service is used and no paid tier or automatic upgrade exists.
 - Fares are stored-value fares. Unknown fares are shown as unknown, never zero; a partial subtotal is labelled as not the full total. No student/senior/PWD discount is documented, so the regular fare is shown as an estimate.
 - Offline use depends on the model and data being set up first (one-time download). New addresses and uncached walking paths are not supported offline.
 - Android only. iOS was never built or tested.
-- **Not yet verified on any phone:** local inference, the AI trip summary's quality and speed, the near-stop alert with real GPS, the optional map request, offline operation, SQLite persistence, cold launch, memory and speed.
+- **Not yet verified on any phone:** a recorded accepted local extraction, the AI trip summary's quality and speed, the near-stop alert with real GPS, the optional map request, offline operation, SQLite persistence across reboot, cold launch without USB/Metro, memory, and accuracy. (Install, model download and hash, and one inference run were recorded on the Honor X9b; see [Verification status](#verification-status).)
 - The demo build's connectors and road drafts are invented or unverified; demo journeys are samples, not travel advice.
 - 19 high npm advisories remain in build tooling (`braces`, `node-forge`) with no published fix; they are not in the app bundle. See `docs/evidence/dependency-advisories.md`.
 
@@ -375,7 +387,7 @@ Source of the event rules: the public event page, `https://cerebralvalley.ai/e/a
 | Open-source and AI-tool disclosure | The Disclosures section above lists libraries, licences, the model and, as reported by the team on 2026-10-10, the AI assistants: Claude (Members 1, 3 and 4, with Member 4 using Claude Code) and Claude plus Codex (Member 2) | Based on the team's statement, not independently checked. Add versions only if accurate. The page requires disclosure; the exact form it takes is not stated |
 | Licence file | **There is no `LICENSE` file** in the repository | Choosing a licence is the team's decision. Dependencies are MIT/Apache-2.0 (see disclosures). Not created here |
 | Team size | `git log` shows five author names on `main`: Aryl Manalo, Aryl Ross A. Manalo, Yohann Joachim Zapata, Allen, EnzoGRosas | Two names are probably one person on two git identities, but the page limits teams to 4. The team should confirm the registered members. Do not assume |
-| Demo video | None exists | Not Run |
+| Demo video | [Demo video on Google Drive](https://drive.google.com/file/d/1PGxJ_ttk8e0epaubQUlu7zzg5Nrx9gE6/view); not stored in the repository | Uploaded by the team; event submission not done here |
 | Social posts | None published; draft only in `docs/submission.md` | Needs the user's authorization and the missing format details |
 | Secrets, signing material, model files | `.gitignore` excludes `*.gguf`, `*.apk`, keystores, `.env`; `release:check` fails if such files are tracked | Passing today; rechecked by `npm run release:check` |
 | No paid services | None configured in the code; online helpers disabled | Confirmed in the Disclosures section above |
@@ -388,6 +400,7 @@ Source of the event rules: the public event page, `https://cerebralvalley.ai/e/a
 4. Decide on a licence and add a `LICENSE` file.
 5. Confirm the AI-tool list in the AI-assisted development disclosure above (Claude; Codex for Member 2) is complete and correct, since it is based on a verbal report.
 6. Decide whether the team will present at Demo Day (finalists must attend in person) and what runs on the demo phone.
+7. Check that the [Google Drive folder](https://drive.google.com/drive/folders/1R51SMe-PDdaEWGvKj4wZOhuDvDT39RPE) and the [demo video](https://drive.google.com/file/d/1PGxJ_ttk8e0epaubQUlu7zzg5Nrx9gE6/view) open for anyone with the link (try a private browser window).
 
 
 ## Team integration
@@ -401,6 +414,4 @@ Screens receive real ports through `NativeUiBridge`/`UiProvider`; the shared app
 
 See [integration handoff](docs/evidence/integration.md), [execution dashboard](docs/planning/04-team-execution.md), [acceptance plan](docs/planning/06-acceptance-and-demo.md) and [submission draft](docs/submission.md). No post, video upload or event submission has been performed.
 
-Optional maps: [free provider research](docs/evidence/maps-options.md) recommends Geoapify with MapLibre React Native. It is a proposal; map dependencies and online helpers are not enabled.
-
-Optional maps: [free provider research](docs/evidence/maps-options.md) recommends Geoapify with MapLibre React Native. It is a proposal; map dependencies and online helpers are not enabled.
+Optional maps: [free provider research](docs/evidence/maps-options.md) recommended Geoapify with MapLibre React Native. Only the optional Geoapify static map picture was built (off unless the APK has a key, and only after a tap); no interactive map library is installed and the online address/walking helpers stay disabled.
