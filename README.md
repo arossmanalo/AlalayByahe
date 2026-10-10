@@ -2,28 +2,59 @@
 
 An Android commute assistant for Filipino, English and Taglish requests. A small language model running on the phone reads the typed request into editable fields; the user confirms them; a deterministic engine then plans a journey from stored, source-checked data (documented rides, legal boarding and drop-off stops, walking links where they exist, and fare evidence). The model never supplies routes, stops, directions or fares. iOS is out of scope (decision of 2026-10-10). Scanner and street maps are deferred.
 
-**Status (2026-10-10):** the real AI, routing and UI adapters are integrated and tested in Node (`npm test`). **Nothing has been run on a phone yet:** phone inference, offline operation, SQLite persistence and cold launch are unverified, and no current APK exists (the one recorded in `docs/evidence/native-artifacts.json` is stale). The release build's data is **LRT-1 stations only**: 25 stations, stored-value fares, no walking links, no road services. None of the three requested corridors is supported end to end: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
+**Status (2026-10-10):** Android only. The real AI, routing and UI adapters are integrated and tested in Node (`npm test`). On one phone (Honor X9b, Android 15) the app installed and launched, the AI model downloaded, passed its SHA-256 check and loaded, and the app ran **local AI inference on the phone** (recorded in `docs/evidence/native-gate.md`). That first recorded run's output was rejected because of a chat-template header; the fix is merged and the team reports the AI now works, but that re-run, the offline (airplane-mode) proof and accuracy measurements are **not yet recorded**. The release build's data is **LRT-1 stations only**: 25 stations, stored-value fares, no walking links, no road services. None of the three requested corridors is supported end to end: Lipa–Candelaria, Lipa–San Pablo and Candelaria–Vito Cruz/Taft.
+
+## Download the app (Android)
+
+**Get the final app from Google Drive, not from GitHub:** **[AlalayByahe APK on Google Drive](GDRIVE_LINK_HERE)**
+
+GitHub holds the source code only. APK files are never committed to the repository.
+
+1. On the Android phone, open the Google Drive link and download the `.apk` file.
+2. Open the file. If Android asks, allow your browser or Files app to "install unknown apps". The APK is a test build signed with a local key; it is not on the Play Store.
+3. Open **AlalayByahe**. Android 7.0 or newer is needed (minimum SDK 24). iPhone is not supported.
+
+### The local AI model, and why the first start takes time
+
+The app reads your request with a **local AI model that runs on the phone itself**:
+
+| | |
+|---|---|
+| Model | **Qwen2.5-0.5B-Instruct**, quantized **Q4_K_M** (GGUF), by the Qwen team, **Apache-2.0** |
+| Runtime | **llama.rn 0.12.9** (llama.cpp for React Native), CPU only |
+| Size | 491,400,032 bytes (about 491 MB), pinned revision `9217f5db79a29953eb74d5343926648285ec7e67`, checked by SHA-256 |
+| Used for | Reading your typed trip into editable fields, and writing a checked summary of a planned route. It never decides routes, stops or fares. |
+
+**Loading the model takes time. Please wait for it.**
+
+- **First time only:** on the Get ready / Setup screen tap **Download and set up** (use Wi-Fi). The app downloads the 491 MB model, then checks the whole file (SHA-256) before using it. On the test phone (Honor X9b) the download took about 6 to 7 minutes on Wi-Fi and the check took up to about 5 minutes. Keep the app open until it shows **Ready**.
+- **Every time the app starts:** the model is loaded from the phone's storage into memory. On the test phone the AI showed **Ready** within about 13 seconds of relaunching, with no new download.
+- **Your first request after a start is the slowest.** In the recorded run the phone took about 8 seconds to read the prompt and about 4 seconds to write its answer (about 12.5 seconds in total). The app allows up to 30 seconds for the first request and 15 seconds after that, then lets you pick places manually.
+- After setup, trips between stored places work **offline**. Without the model you can still choose places manually; the app labels that the AI was not used.
+
+These times come from one phone; other phones can be slower or faster.
 
 ## Contents
 
-1. [Verification status](#verification-status)
-2. [Get the installed baseline](#get-the-installed-baseline)
-3. [Android build on Windows](#android-build-on-windows) and the [three Android builds](#three-android-builds-never-mixed-up)
-4. [Phone test script (Android)](#phone-test-script-android)
-5. [Data, local AI and offline boundary](#connect-verified-data)
-6. [Disclosures, attribution and limitations](#disclosures-attribution-and-limitations)
-7. [Event requirements check](#event-requirements-check)
-8. [Team, evidence and further reading](#team-integration)
+1. [Download the app (Android)](#download-the-app-android) and the [local AI model](#the-local-ai-model-and-why-the-first-start-takes-time)
+2. [Verification status](#verification-status)
+3. [Get the installed baseline](#get-the-installed-baseline)
+4. [Android build on Windows](#android-build-on-windows) and the [three Android builds](#three-android-builds-never-mixed-up)
+5. [Phone test script (Android)](#phone-test-script-android)
+6. [Data, local AI and offline boundary](#connect-verified-data)
+7. [Disclosures, attribution and limitations](#disclosures-attribution-and-limitations)
+8. [Event requirements check](#event-requirements-check)
+9. [Team, evidence and further reading](#team-integration)
 
 ## Verification status
 
 | Item | Status |
 |---|---|
 | Node tests, typecheck, pack validation | Run and passing on `main` (see the commit's checks) |
-| Release APK built and checked clean | Not Run |
-| Install, cold launch without Metro/USB | Not Run |
-| Model download and SHA-256 on a phone | Not Run |
-| Phone-local extraction into real routing | Not Run |
+| Release APK built | Built at `0c43c2f` (release and benchmark, recorded in `native-gate.md`); the current `main` needs a new build |
+| Install and launch on a phone | Pass on Honor X9b, Android 15 (USB connected); standalone launch without USB/Metro Not Run |
+| Model download and SHA-256 on a phone | Pass on Honor X9b: downloaded on Wi-Fi, hash verified, Ready, kept after force-stop |
+| Phone-local AI inference | Ran on Honor X9b (probe run 1): output rejected for a chat-template header; fix merged; working re-run reported by the team, not yet recorded |
 | Offline proof (airplane mode, fresh query) | Not Run |
 | AI trip summary (chat and manual trips) | Checks and fallback tested in Node with a fake model; on a phone Not Run |
 | Demo build: every pair of demo places plans | Verified in software (all 6,480 ordered pairs); on a phone Not Run |
@@ -210,7 +241,7 @@ Mode, walking, direct-only and budget preferences remain strict. Unknown fare is
 
 ## Local AI setup and offline boundary
 
-The setup screen explicitly downloads Qwen2.5 0.5B Instruct Q4_K_M: **491,400,032 bytes**, pinned revision and SHA-256. It downloads to a private partial file, hashes bounded chunks, and promotes only a verified file. Setup can be cancelled/retried. Boot never silently downloads the model. Download speed, peak RAM and phone accuracy remain unmeasured.
+The setup screen explicitly downloads Qwen2.5 0.5B Instruct Q4_K_M: **491,400,032 bytes**, pinned revision and SHA-256. It downloads to a private partial file, hashes bounded chunks, and promotes only a verified file. Setup can be cancelled/retried. Boot never silently downloads the model. Measured once on an Honor X9b (Android 15): download about 6 to 7 minutes on Wi-Fi, SHA-256 check up to about 5 minutes, Ready within about 13 s after a relaunch, and about 12.5 s for the first recorded request. Peak RAM and accuracy remain unmeasured. See [Download the app](#download-the-app-android).
 
 After setup, the target is local extraction plus offline journeys for stored places and a verified installed graph. New arbitrary addresses/walking paths may need an explicit online helper. Helpers are disabled; no cloud AI or paid service is wired. Scanner/OCR and maps are outside the overnight P0 baseline.
 
@@ -261,7 +292,8 @@ No paid service is used and no paid tier or automatic upgrade exists.
 | Demo walks and demo place pins | Valhalla routing on OpenStreetMap data (FOSSGIS server), Nominatim | ODbL 1.0, **© OpenStreetMap contributors**. Computed, not walked. |
 | Language model | Qwen2.5-0.5B-Instruct-GGUF by the Qwen team | Apache-2.0 |
 | Optional map picture | Geoapify Static Maps (only if built with a key and the user taps Show map) | Free tier; attribution shown under the map: Geoapify, OpenMapTiles, © OpenStreetMap contributors |
-| Runtime and libraries | llama.rn 0.12.9, React Native 0.86.3, Expo 57.0.27, expo-sqlite, expo-router, expo-file-system, React 19.2.3, @noble/hashes 2.4.0 | MIT (read from the installed `package.json` files) |
+| Runtime and libraries | llama.rn 0.12.9, React Native 0.86.3, Expo 57.0.27, expo-sqlite, expo-router, expo-file-system, expo-location, expo-keep-awake, react-native-svg 15.15.4, React 19.2.3, @noble/hashes 2.4.0 | MIT (from the packages' `package.json` / npm metadata) |
+| UI design | Screen design drafted as "Claude design" artboards during the event and implemented in the app (PR #24); the schematic map is drawn on the phone from stored stop coordinates, with no map tiles or network requests | Created by the team with Claude |
 
 ### Known limitations (state these plainly)
 
